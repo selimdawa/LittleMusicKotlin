@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.example.jean.jcplayer.view.JcPlayerView
+        android:id="@+id/jcPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?colorOnBackground"
+        android:visibility="gone"
+        app:next_icon_color="?trackColor"
+        app:pause_icon_color="?trackColor"
+        app:play_icon_color="?trackColor"
+        app:previous_icon_color="?trackColor"
+        app:progress_color="?trackColor"
+        app:random_icon_color="?trackColor"
+        app:repeat_icon_color="?trackColor"
+        app:seek_bar_color="?trackColor"
+        app:text_audio_current_duration_color="?colorError"
+        app:text_audio_duration_color="?colorError"
+        app:text_audio_title_color="?colorError" />
+
+</layout>
