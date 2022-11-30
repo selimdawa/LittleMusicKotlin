@@ -13,8 +13,8 @@ android {
         applicationId "com.flatcode.littlemusic"
         minSdk 23
         targetSdk 33
-        versionCode 3
-        versionName "1.2"
+        versionCode 4
+        versionName "1.25"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

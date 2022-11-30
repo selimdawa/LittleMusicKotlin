@@ -27,7 +27,7 @@ class SettingsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentSettingsBinding.inflate(
@@ -126,8 +126,7 @@ class SettingsFragment : Fragment() {
         val item = Setting("1", "Edit Profile", R.drawable.ic_edit_white, 0, CLASSv.PROFILE_EDIT)
         val item2 = Setting("2", "My Albums", R.drawable.ic_album, myAlbums, CLASSv.MY_ALBUMS)
         val item3 = Setting("3", "My Artists", R.drawable.ic_mic, myArtists, CLASSv.MY_ARTISTS)
-        val item4 = Setting(
-            "4",
+        val item4 = Setting("4",
             "My Categories",
             R.drawable.ic_category_gray,
             myCategories,

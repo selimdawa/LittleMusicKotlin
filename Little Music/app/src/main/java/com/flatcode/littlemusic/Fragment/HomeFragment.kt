@@ -54,6 +54,7 @@ class HomeFragment : Fragment() {
             ), container, false
         )
 
+        loadCategories()
 
         binding!!.showMore.setOnClickListener {
             VOID.IntentExtra3(
@@ -151,7 +152,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun start() {
-        loadCategories()
         loadPostEditorsChoice(
             DATAv.EDITORS_CHOICE,
             list,

@@ -12,6 +12,7 @@ import com.flatcode.littlemusic.Adapterimport.AlbumAdapter
 import com.flatcode.littlemusic.Adapterimport.SongAdapter
 import com.flatcode.littlemusic.Modelimport.Album
 import com.flatcode.littlemusic.Modelimport.Song
+import com.flatcode.littlemusic.Unit.VOID
 import com.flatcode.littlemusic.Unitimport.DATAv
 import com.flatcode.littlemusic.Unitimport.THEME
 import com.flatcode.littlemusic.databinding.ActivityCategorySongsBinding
@@ -56,6 +57,24 @@ class CategorySongsActivity : AppCompatActivity() {
             DATAv.searchStatus = true
         }
         binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+
+        VOID.isInterested(binding!!.switchBarSongs.interest, categoryId, DATAv.CATEGORIES)
+        binding!!.switchBarSongs.add.setOnClickListener {
+            VOID.checkInterested(
+                binding!!.switchBarSongs.interest,
+                DATAv.CATEGORIES,
+                categoryId
+            )
+        }
+
+        VOID.isInterested(binding!!.switchBarAlbums.interest, categoryId, DATAv.CATEGORIES)
+        binding!!.switchBarAlbums.add.setOnClickListener {
+            VOID.checkInterested(
+                binding!!.switchBarAlbums.interest,
+                DATAv.CATEGORIES,
+                categoryId
+            )
+        }
 
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}

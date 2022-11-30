@@ -94,7 +94,7 @@
                             app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
                             app:spanCount="2"
                             app:stackFromEnd="true"
-                            tools:listitem="@layout/item_book_staggered" />
+                            tools:listitem="@layout/item_album" />
 
                     </LinearLayout>
 

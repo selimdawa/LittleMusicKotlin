@@ -223,14 +223,18 @@ object VOID {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
                 var lovesCount = DATAv.EMPTY + snapshot.child(childDB!!).value
-                if (lovesCount == DATAv.EMPTY || lovesCount == DATAv.NULL) {
+                if (lovesCount == DATAv.EMPTY || lovesCount == DATAv.NULL)
                     lovesCount = DATAv.EMPTY + DATAv.ZERO
+
+                val i = lovesCount.toInt()
+                if (i > 0) {
+                    val removeLovesCount = lovesCount.toInt() - 1
+                    val hashMap = HashMap<String?, Any>()
+                    hashMap[childDB] = removeLovesCount
+
+                    val reference = FirebaseDatabase.getInstance().getReference(database)
+                    reference.child(id).updateChildren(hashMap)
                 }
-                val removeLovesCount = lovesCount.toLong() - 1
-                val hashMap = HashMap<String?, Any>()
-                hashMap[childDB] = removeLovesCount
-                val reference = FirebaseDatabase.getInstance().getReference(database)
-                reference.child(id).updateChildren(hashMap)
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -649,9 +653,12 @@ object VOID {
         dialog.show()
         val reference = FirebaseDatabase.getInstance().getReference(nameDB!!)
         reference.child(id!!).removeValue().addOnSuccessListener {
-            incrementItemRemoveCount(DB, idDB, childDB)
-            incrementItemRemoveCount(DB2, idDB2, childDB2)
-            incrementItemRemoveCount(DB3, idDB3, childDB3)
+            if ((DB != null) and (idDB != null) and (childDB != null))
+                incrementItemRemoveCount(DB, idDB, childDB)
+            if ((DB2 != null) and (idDB2 != null) and (childDB2 != null))
+                incrementItemRemoveCount(DB2, idDB2, childDB2)
+            if ((DB3 != null) and (idDB3 != null) and (childDB3 != null))
+                incrementItemRemoveCount(DB3, idDB3, childDB3)
             DATAv.isChange = true
             activity.onBackPressed()
             dialog.dismiss()

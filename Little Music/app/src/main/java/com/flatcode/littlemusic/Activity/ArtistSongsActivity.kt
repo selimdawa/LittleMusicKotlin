@@ -55,6 +55,24 @@ class ArtistSongsActivity : AppCompatActivity() {
         binding!!.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
         type = DATAv.TIMESTAMP
 
+        VOID.isInterested(binding!!.switchBarSongs.interest, artistId, DATAv.ARTISTS)
+        binding!!.switchBarSongs.add.setOnClickListener {
+            VOID.checkInterested(
+                binding!!.switchBarSongs.interest,
+                DATAv.ARTISTS,
+                artistId
+            )
+        }
+
+        VOID.isInterested(binding!!.switchBarAlbums.interest, artistId, DATAv.ARTISTS)
+        binding!!.switchBarAlbums.add.setOnClickListener {
+            VOID.checkInterested(
+                binding!!.switchBarAlbums.interest,
+                DATAv.ARTISTS,
+                artistId
+            )
+        }
+
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE

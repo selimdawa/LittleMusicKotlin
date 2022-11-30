@@ -53,6 +53,16 @@ class AlbumSongsActivity : AppCompatActivity() {
             DATAv.searchStatus = true
         }
         binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+
+        VOID.isInterested(binding!!.switchBar.interest, albumId, DATAv.ALBUMS)
+        binding!!.switchBar.add.setOnClickListener {
+            VOID.checkInterested(
+                binding!!.switchBar.interest,
+                DATAv.ALBUMS,
+                albumId
+            )
+        }
+
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
