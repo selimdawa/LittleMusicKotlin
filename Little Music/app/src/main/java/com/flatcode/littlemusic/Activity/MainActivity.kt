@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.etebarian.meowbottomnavigation.MeowBottomNavigation
 import com.flatcode.littlemusic.Fragment.SettingsFragment
 import com.flatcode.littlemusic.Fragment.mySongsFragment
 import com.flatcode.littlemusic.Fragmentimport.CategoriesFragment
@@ -26,7 +27,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import meow.bottomnavigation.MeowBottomNavigation
 import java.util.*
 
 class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
