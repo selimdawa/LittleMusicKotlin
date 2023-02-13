@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         } else if (sharedPreferences.getString(DATAv.COLOR_OPTION, "NIGHT_ONE") == "NIGHT_ONE") {
             binding!!.toolbar.mode.setBackgroundResource(R.drawable.moon)
         }
+
         meowBottomNavigation = binding!!.bottomNavigation
         meowBottomNavigation!!.add(MeowBottomNavigation.Model(1, R.drawable.ic_settings))
         meowBottomNavigation!!.add(MeowBottomNavigation.Model(2, R.drawable.ic_home))

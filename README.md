@@ -18,7 +18,7 @@ Favorites Music | Categories | My Profile
 --- | --- | --- | 
 ![](https://blogger.googleusercontent.com/img/a/AVvXsEiKEl8YyiEKmNJgp3iph2a28usAcMUTA5tEYEJxjLsECgPxXkg_LlCCtX-NCIANTW0MYbCLoV9ngCCWZVAXRVJM1kMwEE5IIHKVEhPPaGX1GrrmksoZ-wGtVKIqhypzX3Y-97JaWjStw5d7b5QPBDZhLSVJNmo-rNceF-KC-PtoR1U9m8ADPy3or_NbDQ) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEinnT_chq_CDSQhuQ-9X1Z0mvsoL1HmxD4kSs2dMrMiVYspZHoG-WxiHDJleYCtgkNPdxdVTPlOpkfts4PDEGAENJkRyJ7s6xrmRdsKDWASf5CLZUGP9TVz_aYv8Wt3k1rS9wld7hM2-TPv9e10tLmA1YmsZgma3wKzPCEQu6utT7-0xUE5UfpdvPYuQw) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEie52nXTWyyKFOy5xCCfjeAxD7cHRfkC5CDADPyNnoH_dqJuferZrRgToBNLY_d7qAucu-jHSWSF9ICvENbv9N_Ou9zRNSN2sCcrJHaTNn6QMMFielQBEX3178g1kv8kmpBRDCkb_ZttqnsgtTINT-BMmpbriOWaqmtX3fsPc0p3KIXpkC7_FgxShA6UA) | 
 
-Edit Profile | Cayegory Albums | Cayegory Songs 
+Edit Profile | Category Albums | Category Songs 
 --- | --- | --- | 
 ![](https://blogger.googleusercontent.com/img/a/AVvXsEjO60CoBc2TxdYl8pEqj3LlEhToxuOdRm4GvFTC1VACbxR73mwvCPibUO8sL11jZsPghjm1bOO-fkI3lkSD3jDwXKhDLJ8XXE9m0wePvy2hsZhbYiLCuOI49RO_7vhw9ZD4rVHCnnMTksxwEtGnb5FkomAzY0uzgGXRKj1krqx2eIhQKLe5S2x4oHPILA) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEiuJh6OO7CANaJYRzhmxXPT4IrsX2t5F1dxMuh0c6QbqdYX8tH-LxR8d_oLqyEpJ5RhiGzceRQEPUKvsU34mgq8iG0_HbpufQ_qpLlB17Cey8nT10AYDDzxD3FUXzC_r1wJF0SwYxNrZrhhuuGsBln3vxmSHWFneRrntB1cePNpSdBlGQauNNB5TakRdw) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEjMb9C2060nM0mp0ONoDD9UE0MEebq6G65wDt4YUmzOZgOYeHipg-ceyGF-LOoDDhhS_ymaPwT1JfgRJlFyxOlnvb2BAvxr3fvY0_stwdFxZhuGw8pu8hIxSOlqWnHpMRenw0ldqxkO4Xb6BiFSM1RX06Sg33zDziex8qNFVAzhexIG6VI3ZjYXYsj_uQ) | 
 
@@ -30,7 +30,7 @@ My Albums | Albums | My Artists
 --- | --- | --- | 
 ![](https://blogger.googleusercontent.com/img/a/AVvXsEgoFQhG_HRUgloBTvw-LrWXFj3728OGEA11Uh3PneYI0DGvdVdru8sWx4gvU25_UwDL8O0FOobFyRTX-IMHWh45c1nJefyv0K4AojfxelC8gZghO73bcGfcTrXQU44QckZASKlYqKU79qBuzgaMPTp4ACYTFtyCj2nWtUehiLZ6t2gWTP4dOV_qkVfOeQ) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEhGT6_zqOf9Vcw8bgnb3du6wzAZ6HJbZSwghnU_2hMcJnO7F_m6GrP_D-vGZOSqJWp5EO6STzfoUhD-1Mwm21S5TxsPaoIOmSyjhz7qAYA4wmx5LN6xJKdvsY-GL4lQN_dIUPgrGqiJeDjgetNlyiebAlZRZnCBjo_lk6IFvOY0pNfhjzEP2DEKv5gGaw) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEi3UjjMu0u7sY2rpg-yImv5NokWgrdeo8K6Jqkny1laMonBQrw9awOI42mAY2ZeaAbKx192Zp_DNQCnLvLBNFEe3dk-j9jJPtqu1jghho5l1nu-y2qyh7M6l5lGihciZ_0OH41gZjhGkD5K2US9iDSW1HuAfbH1s4xVEQy6VzdtWLzDhtK2tAzw42G0MA) | 
 
-Artists | My Cayegories | Cayegories 
+Artists | My Categories | Categories 
 --- | --- | --- | 
 ![](https://blogger.googleusercontent.com/img/a/AVvXsEg4THW4pEEbTqOpgkryfi5jYIesuJOWITsXT_YIJBY97KqHfY7yZVNjn3dQ2VvUQ0vzCKd6eVaTj7SddjpFRjcf2fDjzPLja0V6peeqHw6HxwEUweoXQR11x0RZB5x3Jr2269zR_Dy9tYTElfygOnsuRISlrwcopYFw38OpVBgKnThdcojGKi9fTX6BQg) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEgZC4ZHvBoihCcT5YI4IoS64h3CkG2FJQoTUsghGbOmunOcA_Sgn5-H4kuHckG66nyrK_jyBSKA1Tp2csdSRm658ONdAyQRPCdEXPNm_5v7BkbeKZrd0mmDTYw_cMsHN_chCTK1Ri--8s_AL8nEW1JNEeovGDJmc6sHrSKTfDhpCcpYte9G9rHoBREzMA) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEgOuUYscnvCkJ7Vh8_MTI3_ddo1_-49DXJQ0LSh9f-XDinn-OsSD_sOyMI-3dkRMM3-5ZNDxHKxvz5Rp5MdKBV1xhe9WYSaKopQeCNm5R4aWGr6tYpgwi6Vhhu3AidfxbcX3pIF0DUo1JvDZdjVTMASmdVcu__AEW95yPvC0dkk5Xj08Tqx2D9B2ZW4ZQ) | 
 
@@ -55,7 +55,7 @@ Favorites Music | Categories | My Profile
 --- | --- | --- | 
 ![](https://blogger.googleusercontent.com/img/a/AVvXsEhTVo8mennmB-idq4gec85_YAd3XOcuDuMFPvwTRvISLALr2pLhoJ0jyvwomis-k2zcg8wUIUnMe90p0bx1KJIlNMphj6xjjc-A3-VVYfTL9884jpjtF8-xLIsI8-PMBMDvpff6d-YcPvhPfboodwHXjSOSHT5L7xWPGA3aDS4ytbltyrbZjeTaii0G3w) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEiE7I6hfCmh0lYwKw9JjWBFzatpCN_9nWvfPKQWfpiXnTeo00hdJVjeEGYJS4c37CV5Hcv7H2TFdXtRywqqO0pU43SNq_FIj9LVq7A75LZr-8tfRq7tgH5ZV1UaXFXqBjBCO4dxHtnsy2gTmks27DvvqE-XKvqS15T5_S4HoEdmtrdYwJDD9NyzAF6gZg) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEhmx7WW4AoAuJQn-Vgnb9DvjWPWyRrn1dT3Q89EhnQ9j9PDzoa9rYH6rD3LJ6pKw9TItOL37yTzEc89zNYUqLFXUxrmXhkdp_rsgY7aXfCkHtuRnjkTpyOG5HwDicnmq1fCUB_H627lSshlEKzUFjBSfs9mr69BwoPFkW1x68EUIpX__UCrUsfIKG11sA) | 
 
-Edit Profile | Cayegory Albums | Cayegory Songs 
+Edit Profile | Category Albums | Category Songs 
 --- | --- | --- | 
 ![](https://blogger.googleusercontent.com/img/a/AVvXsEjjrHu1i74ufImwSunT-patEp6pgKjCFpGY3SRy8Usbow2IPcQPPfSXuPHmv9j8f7uZ15K8oXKMjXegWvklHQH71n02HhWlFoibJMV4iQBfFA9qSzwaRfsk0783V8kJbJr66ULiCbu9z1OLu8bCVu6wjEhu4gBImrGOqH4c_Xt0sfC8iVggVZvLCt36SQ) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEi7zkv3oE6uYXAHfn8IIlh2Ox_ybSMcoOaCvH4lGhSJ0mcmncePZdmaxNSqyMGSo8FoayVZRLT_BcRj7l1NLP5ZJ_J11RNeGCqKSGg_IABsPcKyVvY1fnHE0ga3ewa9mgz9UkaxTvP4lbYZW0olbv6WFB6guUjiSpuJM8-zwRBCbUE7RlUeBU06J4wJlA) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEg6sLHhFfAaAU0cO9Ueahje-Z8Z2F80KSumkIFMYtOQz-44k_LjBQ8uOGP5saExnhltjwhCypGebvUOZTVtTr3V8qDl-tjlivbHPwYT2VSXRPI_a9SAyCTNuWeIW_7549we8YKRn_vVKc-XQCwzGsnaAZ9GXS9NfR9iRVcgLKaz2xpPAxqULt9dpEWJQQ) | 
 
@@ -67,7 +67,7 @@ My Albums | Albums | My Artists
 --- | --- | --- | 
 ![](https://blogger.googleusercontent.com/img/a/AVvXsEhlq582AOSlf_yxtZSQnJQ1-mTKkX-4r8i0euN8hAAQhWjldzdX2M1yokn5y1kLYzVzemgXnkkzWfBSj-ACblQfMXrxE2ZsNfbQ3uTRRd9Cl8Mnxj27js4HziogTNVvd2qr47WojreeL-kv1thpxz-qdzk5r2i8tLnlSaRXtETl2kpUrKdngv67veszlg) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEgho6KpBqXmm-_cPCrXxUXtcfvRWctQsx9wdQJGDIVangPjLOkqxZJ_hg6_4OpF9BqqiKB0i7XhehDyALvSH6CCpmdoXrhxeq6swKBG3_fVIDHBF4f4bRdrJlYOjKY3sS42lRibYwYUizm-cWMprQhXvc6TCcPA1SNPMz3sCQCaWY5waqM1OzZ-3a2CDQ) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEjCcOiA6imWuC9j9NMQtwGX5SV6SLzD-1vp_hgBYdKfVEPZCFN7NM_lmDSTmB-M1vjK6Dl74Sq-CTUIxPXmTaxioz5qni12xDlyrKheKc_TlZBWrF1bYeHPiUlVfFaWbby6uP_4xb_Zt1_WWq6l3f6LLRqtESFtHDFIEfjk-QKoCGxkZYugkYH4nP7lAg) | 
 
-Artists | My Cayegories | Cayegories  
+Artists | My Categories | Categories  
 --- | --- | --- | 
 ![](https://blogger.googleusercontent.com/img/a/AVvXsEjWVkbOw74bJgR4Xy6BymCc2IFEJg2Wrpu713ed-BM53gEKfUCcOEnLGSqri6CLtekVZPPpZ8w3O83lfcQhFL9UBSCKeA4sHF0zZYmMQP16GeQNmzXMgo1tba2aStAjdzZp97wJN3N0UtOZXI_l61pU11837cwM6IExpUxqzRUh6o6nfMbCZ40gKINT1w) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEgDseC4LLpyWocRfwKQEF5ALGbI1_ut9Ery_FdREqko0eo8H55K8_jf3MPu5zEvC-KkxsqwXL_PX0HIx5Ow_ERmpVzxf5V7gQUorHuECSuhq9P-4HmRUTh5qLioOCi0HDMd7UsucL-5JEuXYFvLOIU48DtATF6C_fPUcVBP5A1YJpZqtBgnB24eozOYsw) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEjVnWzYaXR2jlsHJSk3cUdvDjYmx5XTvOOpjE8UgQ_4ZFvTO-uyKJj5EVOUQ8dLMUCHQkgE8GmL-s39QVrII_7QttfHyTxW4liTxhE2_HT4VfwngwKpSJnUt_vqOnLJuNW9HIeeIbmFqxvHBwYxS38Ha9YlF8ziqzzfjbH5L7g1bp6xP9Get0Nv4xl4kA) | 
 
