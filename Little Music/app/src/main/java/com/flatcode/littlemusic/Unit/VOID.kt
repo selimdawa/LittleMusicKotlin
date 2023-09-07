@@ -14,13 +14,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
-import com.flatcode.littlemusic.BuildConfig
 import com.bumptech.glide.request.RequestOptions
+import com.flatcode.littlemusic.BuildConfig
 import com.flatcode.littlemusic.R
-import com.google.firebase.database.*
 import com.flatcode.littlemusic.Unitimport.CLASSv
 import com.flatcode.littlemusic.Unitimport.DATAv
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import jp.wasabeef.glide.transformations.BlurTransformation
@@ -50,7 +54,7 @@ object VOID {
         key: String?,
         value: String?,
         key2: String?,
-        value2: String?
+        value2: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -66,7 +70,7 @@ object VOID {
         key2: String?,
         value2: String?,
         key3: String?,
-        value3: String?
+        value3: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -85,7 +89,7 @@ object VOID {
         key3: String?,
         value3: String?,
         key4: String?,
-        value4: String?
+        value4: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -165,13 +169,13 @@ object VOID {
 
     fun shareApp(context: Context?) {
         val shareIntent = Intent(Intent.ACTION_SEND)
-        shareIntent.setType("text/plain")
+        shareIntent.type = "text/plain"
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "share app")
         shareIntent.putExtra(
             Intent.EXTRA_TEXT,
-            " Download the app now from Google Play " + " https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID
+            " Download the app now from Google Play " + " https://play.google.com/store/apps/details?id=" + context!!.packageName
         )
-        context!!.startActivity(Intent.createChooser(shareIntent, "Choose how to share"))
+        context.startActivity(Intent.createChooser(shareIntent, "Choose how to share"))
     }
 
     fun rateApp(context: Context?) {
@@ -238,8 +242,8 @@ object VOID {
         val name: TextView = dialog.findViewById(R.id.name)
         val aboutTheArtist: TextView = dialog.findViewById(R.id.aboutTheArtist)
         GlideImage(false, context, imageDB, image)
-        name.setText(MessageFormat.format("{0}{1}", DATAv.EMPTY, nameDB))
-        aboutTheArtist.setText(MessageFormat.format("{0}{1}", DATAv.EMPTY, aboutDB))
+        name.text = MessageFormat.format("{0}{1}", DATAv.EMPTY, nameDB)
+        aboutTheArtist.text = MessageFormat.format("{0}{1}", DATAv.EMPTY, aboutDB)
         dialog.show()
         dialog.window!!.attributes = lp
     }
@@ -282,7 +286,7 @@ object VOID {
 
     fun isFavorite(add: ImageView, Id: String?, UserId: String?) {
         val reference: DatabaseReference =
-            FirebaseDatabase.getInstance().getReference().child(DATAv.FAVORITES).child(UserId!!)
+            FirebaseDatabase.getInstance().reference.child(DATAv.FAVORITES).child(UserId!!)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.child(Id!!).exists()) {
@@ -303,10 +307,9 @@ object VOID {
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
-                var lovesCount = DATAv.EMPTY + snapshot.child(DATAv.LOVES_COUNT).getValue()
-                if (lovesCount == DATAv.EMPTY || lovesCount == DATAv.NULL) {
+                var lovesCount = DATAv.EMPTY + snapshot.child(DATAv.LOVES_COUNT).value
+                if (lovesCount == DATAv.EMPTY || lovesCount == DATAv.NULL)
                     lovesCount = "0"
-                }
                 val newLovesCount = lovesCount.toLong() + 1
                 val hashMap = HashMap<String, Any>()
                 hashMap[DATAv.LOVES_COUNT] = newLovesCount
@@ -324,7 +327,7 @@ object VOID {
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
-                var lovesCount = DATAv.EMPTY + snapshot.child("lovesCount").getValue()
+                var lovesCount = DATAv.EMPTY + snapshot.child("lovesCount").value
                 if (lovesCount == DATAv.EMPTY || lovesCount == DATAv.NULL) {
                     lovesCount = "0"
                 }
@@ -342,11 +345,11 @@ object VOID {
 
     fun checkFavorite(image: ImageView, id: String?) {
         if (image.tag == "add") {
-            FirebaseDatabase.getInstance().getReference().child(DATAv.FAVORITES)
+            FirebaseDatabase.getInstance().reference.child(DATAv.FAVORITES)
                 .child(DATAv.FirebaseUserUid)
                 .child(id!!).setValue(true)
         } else {
-            FirebaseDatabase.getInstance().getReference().child(DATAv.FAVORITES)
+            FirebaseDatabase.getInstance().reference.child(DATAv.FAVORITES)
                 .child(DATAv.FirebaseUserUid)
                 .child(id!!).removeValue()
         }
@@ -355,12 +358,12 @@ object VOID {
     fun checkInterested(image: ImageView, type: String?, id: String?) {
         if (image.tag == "add") {
             incrementInterestedCount(id, type)
-            FirebaseDatabase.getInstance().getReference().child(DATAv.INTERESTED)
+            FirebaseDatabase.getInstance().reference.child(DATAv.INTERESTED)
                 .child(DATAv.FirebaseUserUid)
                 .child(type!!).child(id!!).setValue(true)
         } else {
             incrementInterestedRemoveCount(id, type)
-            FirebaseDatabase.getInstance().getReference().child(DATAv.INTERESTED)
+            FirebaseDatabase.getInstance().reference.child(DATAv.INTERESTED)
                 .child(DATAv.FirebaseUserUid)
                 .child(type!!).child(id!!).removeValue()
         }
@@ -380,7 +383,7 @@ object VOID {
 
     fun isLoves(image: ImageView, id: String?) {
         val reference: DatabaseReference =
-            FirebaseDatabase.getInstance().getReference().child(DATAv.LOVES).child(id!!)
+            FirebaseDatabase.getInstance().reference.child(DATAv.LOVES).child(id!!)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.child(DATAv.FirebaseUserUid).exists()) {
@@ -417,10 +420,10 @@ object VOID {
 
     fun nrLoves(number: TextView, id: String?) {
         val reference: DatabaseReference =
-            FirebaseDatabase.getInstance().getReference().child(DATAv.LOVES).child(id!!)
+            FirebaseDatabase.getInstance().reference.child(DATAv.LOVES).child(id!!)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                number.setText(MessageFormat.format(" {0} ", dataSnapshot.getChildrenCount()))
+                number.text = MessageFormat.format(" {0} ", dataSnapshot.childrenCount)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {}
@@ -440,7 +443,7 @@ object VOID {
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
-                var viewsCount = DATAv.EMPTY + snapshot.child(DATAv.VIEWS_COUNT).getValue()
+                var viewsCount = DATAv.EMPTY + snapshot.child(DATAv.VIEWS_COUNT).value
                 if (viewsCount == DATAv.EMPTY || viewsCount == DATAv.NULL) {
                     viewsCount = "0"
                 }
@@ -462,7 +465,7 @@ object VOID {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
                 var interestedCount =
-                    DATAv.EMPTY + snapshot.child(DATAv.INTERESTED_COUNT).getValue()
+                    DATAv.EMPTY + snapshot.child(DATAv.INTERESTED_COUNT).value
                 if (interestedCount == DATAv.EMPTY || interestedCount == DATAv.NULL) {
                     interestedCount = "0"
                 }
@@ -483,7 +486,7 @@ object VOID {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
                 var interestedCount =
-                    DATAv.EMPTY + snapshot.child(DATAv.INTERESTED_COUNT).getValue()
+                    DATAv.EMPTY + snapshot.child(DATAv.INTERESTED_COUNT).value
                 if (interestedCount == DATAv.EMPTY || interestedCount == DATAv.NULL) {
                     interestedCount = "0"
                 }
@@ -502,8 +505,8 @@ object VOID {
         val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference(database!!)
         reference.child(dataId!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val Name = DATAv.EMPTY + snapshot.child(DATAv.NAME).getValue()
-                name.setText(MessageFormat.format("{0}{1}", DATAv.EMPTY, Name))
+                val Name = DATAv.EMPTY + snapshot.child(DATAv.NAME).value
+                name.text = MessageFormat.format("{0}{1}", DATAv.EMPTY, Name)
             }
 
             override fun onCancelled(error: DatabaseError) {}

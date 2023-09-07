@@ -236,7 +236,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
     }
 
     // Color Mode ----------------------------- Start
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key == "color_option") {
             recreate()
         }
