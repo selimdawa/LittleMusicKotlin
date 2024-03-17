@@ -13,7 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Model.Album
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumAddBinding
@@ -46,13 +46,14 @@ class AlbumEditActivity : AppCompatActivity() {
         val view = binding!!.root
         setContentView(view)
 
-        albumId = intent.getStringExtra(DATAv.ALBUM_ID)
-        category = intent.getStringExtra(DATAv.CATEGORY_ID)
-        artist = intent.getStringExtra(DATAv.ARTIST_ID)
+        albumId = intent.getStringExtra(DATA.ALBUM_ID)
+        category = intent.getStringExtra(DATA.CATEGORY_ID)
+        artist = intent.getStringExtra(DATA.ARTIST_ID)
 
         dialog = ProgressDialog(activity)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
+
         loadCategories()
         loadArtists()
         loadInfo()
@@ -65,7 +66,7 @@ class AlbumEditActivity : AppCompatActivity() {
         binding!!.toolbar.ok.setOnClickListener { validateData() }
     }
 
-    private var name = DATAv.EMPTY
+    private var name = DATA.EMPTY
     private var selectedCategoryId: String? = null
     private var selectedCategoryTitle: String? = null
     private var selectedArtistId: String? = null
@@ -77,14 +78,10 @@ class AlbumEditActivity : AppCompatActivity() {
         //validate data
         if (TextUtils.isEmpty(name)) Toast.makeText(activity, "Enter Name...", Toast.LENGTH_SHORT)
             .show() else if (artist!!.isEmpty() && TextUtils.isEmpty(selectedArtistId)) Toast.makeText(
-            activity,
-            "Enter Artist...",
-            Toast.LENGTH_SHORT
+            activity, "Enter Artist...", Toast.LENGTH_SHORT
         )
             .show() else if (category!!.isEmpty() && TextUtils.isEmpty(selectedCategoryId)) Toast.makeText(
-            activity,
-            "Enter Category...",
-            Toast.LENGTH_SHORT
+            activity, "Enter Category...", Toast.LENGTH_SHORT
         ).show() else update()
     }
 
@@ -92,28 +89,24 @@ class AlbumEditActivity : AppCompatActivity() {
         dialog!!.setMessage("Updating Album image...")
         dialog!!.show()
         val hashMap = HashMap<String?, Any>()
-        hashMap[DATAv.NAME] = DATAv.EMPTY + name
-        hashMap[DATAv.CATEGORY_ID] = DATAv.EMPTY + selectedCategoryId
-        hashMap[DATAv.ARTIST_ID] = DATAv.EMPTY + selectedArtistId
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.ALBUMS)
+        hashMap[DATA.NAME] = DATA.EMPTY + name
+        hashMap[DATA.CATEGORY_ID] = DATA.EMPTY + selectedCategoryId
+        hashMap[DATA.ARTIST_ID] = DATA.EMPTY + selectedArtistId
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.ALBUMS)
         reference.child(albumId!!).updateChildren(hashMap).addOnSuccessListener {
             dialog!!.dismiss()
             Toast.makeText(activity, "Album updated...", Toast.LENGTH_SHORT).show()
         }.addOnCompleteListener {
             if (selectedCategoryId != category) {
-                VOID.incrementItemCount(DATAv.CATEGORIES, selectedCategoryId, DATAv.ALBUMS_COUNT)
+                VOID.incrementItemCount(DATA.CATEGORIES, selectedCategoryId, DATA.ALBUMS_COUNT)
                 if (category != null) VOID.incrementItemRemoveCount(
-                    DATAv.CATEGORIES,
-                    category,
-                    DATAv.ALBUMS_COUNT
+                    DATA.CATEGORIES, category, DATA.ALBUMS_COUNT
                 )
             }
             if (selectedArtistId != artist) {
-                VOID.incrementItemCount(DATAv.ARTISTS, selectedArtistId, DATAv.ALBUMS_COUNT)
+                VOID.incrementItemCount(DATA.ARTISTS, selectedArtistId, DATA.ALBUMS_COUNT)
                 if (artist != null) VOID.incrementItemRemoveCount(
-                    DATAv.ARTISTS,
-                    artist,
-                    DATAv.ALBUMS_COUNT
+                    DATA.ARTISTS, artist, DATA.ALBUMS_COUNT
                 )
             }
             if (imageUri != null) {
@@ -124,9 +117,7 @@ class AlbumEditActivity : AppCompatActivity() {
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()
             Toast.makeText(
-                activity,
-                "Failed to update db duo to : " + e.message,
-                Toast.LENGTH_SHORT
+                activity, "Failed to update db duo to : " + e.message, Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -136,21 +127,18 @@ class AlbumEditActivity : AppCompatActivity() {
         dialog!!.show()
         val filePathAndName = "Images/Album/$albumId"
         val reference = FirebaseStorage.getInstance().getReference(
-            filePathAndName
-                    + DATAv.DOT + VOID.getFileExtension(imageUri, activity)
+            filePathAndName + DATA.DOT + VOID.getFileExtension(imageUri, activity)
         )
         reference.putFile(imageUri!!)
             .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
                 val uriTask = taskSnapshot.storage.downloadUrl
                 while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATAv.EMPTY + uriTask.result
+                val uploadedImageUrl = DATA.EMPTY + uriTask.result
                 updateImageAlbum(uploadedImageUrl, albumId)
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    activity,
-                    "Failed to upload image due to : " + e.message,
-                    Toast.LENGTH_SHORT
+                    activity, "Failed to upload image due to : " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -160,9 +148,9 @@ class AlbumEditActivity : AppCompatActivity() {
         dialog!!.show()
         val hashMap = HashMap<String?, Any>()
         if (imageUri != null) {
-            hashMap[DATAv.IMAGE] = DATAv.EMPTY + imageUrl
+            hashMap[DATA.IMAGE] = DATA.EMPTY + imageUrl
         }
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.ALBUMS)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.ALBUMS)
         reference.child(id!!).updateChildren(hashMap).addOnSuccessListener {
             dialog!!.dismiss()
             Toast.makeText(activity, "Image updated...", Toast.LENGTH_SHORT).show()
@@ -175,33 +163,35 @@ class AlbumEditActivity : AppCompatActivity() {
     }
 
     private fun loadInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.ALBUMS)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.ALBUMS)
         reference.child(albumId!!).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val item = snapshot.getValue(Album::class.java)!!
-                selectedCategoryId = DATAv.EMPTY + snapshot.child(DATAv.CATEGORY_ID).value
-                selectedArtistId = DATAv.EMPTY + snapshot.child(DATAv.ARTIST_ID).value
+                selectedCategoryId = DATA.EMPTY + snapshot.child(DATA.CATEGORY_ID).value
+                selectedArtistId = DATA.EMPTY + snapshot.child(DATA.ARTIST_ID).value
+
                 val name = item.name
                 val image = item.image
                 VOID.Glide(true, activity, image, binding!!.image)
                 binding!!.nameEt.setText(name)
-                val refCategory = FirebaseDatabase.getInstance().getReference(DATAv.CATEGORIES)
+
+                val refCategory = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
                 refCategory.child(selectedCategoryId!!)
                     .addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             //get category
-                            val category = DATAv.EMPTY + snapshot.child(DATAv.NAME).value
+                            val category = DATA.EMPTY + snapshot.child(DATA.NAME).value
                             binding!!.category.text = category
                         }
 
                         override fun onCancelled(error: DatabaseError) {}
                     })
-                val refArtist = FirebaseDatabase.getInstance().getReference(DATAv.ARTISTS)
+                val refArtist = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS)
                 refArtist.child(selectedArtistId!!)
                     .addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             //get artist
-                            val artist = DATAv.EMPTY + snapshot.child(DATAv.NAME).value
+                            val artist = DATA.EMPTY + snapshot.child(DATA.NAME).value
                             binding!!.artist.text = artist
                         }
 
@@ -216,14 +206,14 @@ class AlbumEditActivity : AppCompatActivity() {
     private fun loadCategories() {
         categoryList = ArrayList()
         categoryId = ArrayList()
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.CATEGORIES)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 categoryList!!.clear()
                 categoryId!!.clear()
                 for (data in snapshot.children) {
-                    val id = DATAv.EMPTY + data.child(DATAv.ID).value
-                    val name = DATAv.EMPTY + data.child(DATAv.NAME).value
+                    val id = DATA.EMPTY + data.child(DATA.ID).value
+                    val name = DATA.EMPTY + data.child(DATA.NAME).value
                     categoryList!!.add(name)
                     categoryId!!.add(id)
                 }
@@ -236,14 +226,14 @@ class AlbumEditActivity : AppCompatActivity() {
     private fun loadArtists() {
         artistList = ArrayList()
         artistId = ArrayList()
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.ARTISTS)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 artistList!!.clear()
                 artistId!!.clear()
                 for (data in snapshot.children) {
-                    val id = DATAv.EMPTY + data.child(DATAv.ID).value
-                    val name = DATAv.EMPTY + data.child(DATAv.NAME).value
+                    val id = DATA.EMPTY + data.child(DATA.ID).value
+                    val name = DATA.EMPTY + data.child(DATA.NAME).value
                     artistList!!.add(name)
                     artistId!!.add(id)
                 }

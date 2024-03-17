@@ -8,6 +8,7 @@ class Setting {
     var c: Class<*>? = null
 
     constructor()
+
     constructor(id: String?, name: String?, image: Int, number: Int, c: Class<*>?) {
         this.id = id
         this.name = name

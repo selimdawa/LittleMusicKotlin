@@ -4,13 +4,11 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityForgetPasswordBinding
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 
 class ForgetPasswordActivity : AppCompatActivity() {
@@ -34,6 +32,7 @@ class ForgetPasswordActivity : AppCompatActivity() {
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
+
         binding!!.go.setOnClickListener { validateDate() }
         binding!!.login.setOnClickListener { onBackPressed() }
     }
@@ -56,9 +55,7 @@ class ForgetPasswordActivity : AppCompatActivity() {
         auth!!.sendPasswordResetEmail(email).addOnCompleteListener {
             dialog!!.dismiss()
             Toast.makeText(
-                context,
-                "Instructions to reset password sent to $email",
-                Toast.LENGTH_SHORT
+                context, "Instructions to reset password sent to $email", Toast.LENGTH_SHORT
             ).show()
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()

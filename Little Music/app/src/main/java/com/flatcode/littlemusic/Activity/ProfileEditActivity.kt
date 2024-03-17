@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.Unitimport.THEME
 import com.flatcode.littlemusic.databinding.ActivityProfileEditBinding
 import com.google.firebase.database.DataSnapshot
@@ -22,7 +22,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.theartofdev.edmodo.cropper.CropImage
-import java.util.*
+import java.util.Objects
 
 class ProfileEditActivity : AppCompatActivity() {
 
@@ -43,20 +43,21 @@ class ProfileEditActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
         loadUserInfo()
+
         binding!!.toolbar.nameSpace.setText(R.string.edit_profile)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
         binding!!.go.setOnClickListener { validateData() }
     }
 
-    private var username = DATAv.EMPTY
+    private var username = DATA.EMPTY
     private fun validateData() {
         username = binding!!.nameEt.text.toString().trim { it <= ' ' }
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(context, "Enter name...", Toast.LENGTH_SHORT).show()
         } else {
             if (imageUri == null) {
-                updateProfile(DATAv.EMPTY)
+                updateProfile(DATA.EMPTY)
             } else {
                 uploadImage()
             }
@@ -66,21 +67,19 @@ class ProfileEditActivity : AppCompatActivity() {
     private fun uploadImage() {
         dialog!!.setMessage("Uploading Image...")
         dialog!!.show()
-        val filePathAndName = "Images/Profile/" + DATAv.FirebaseUserUid
+        val filePathAndName = "Images/Profile/" + DATA.FirebaseUserUid
         val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATAv.DOT + VOID.getFileExtension(imageUri, context))
+            .getReference(filePathAndName + DATA.DOT + VOID.getFileExtension(imageUri, context))
         reference.putFile(imageUri!!)
             .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
                 val uriTask = taskSnapshot.storage.downloadUrl
                 while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATAv.EMPTY + uriTask.result
+                val uploadedImageUrl = DATA.EMPTY + uriTask.result
                 updateProfile(uploadedImageUrl)
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    context,
-                    "Failed to upload image due to " + e.message,
-                    Toast.LENGTH_SHORT
+                    context, "Failed to upload image due to " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -89,33 +88,30 @@ class ProfileEditActivity : AppCompatActivity() {
         dialog!!.setMessage("Updating user profile...")
         dialog!!.show()
         val hashMap = HashMap<String, Any>()
-        hashMap[DATAv.USER_NAME] = DATAv.EMPTY + username
+        hashMap[DATA.USER_NAME] = DATA.EMPTY + username
         if (imageUri != null) {
-            hashMap[DATAv.PROFILE_IMAGE] = DATAv.EMPTY + imageUrl
+            hashMap[DATA.PROFILE_IMAGE] = DATA.EMPTY + imageUrl
         }
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.USERS)
-        reference.child(Objects.requireNonNull(DATAv.FirebaseUserUid)).updateChildren(hashMap)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
+        reference.child(Objects.requireNonNull(DATA.FirebaseUserUid)).updateChildren(hashMap)
             .addOnSuccessListener {
                 dialog!!.dismiss()
                 Toast.makeText(context, "Profile updated...", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    context,
-                    "Failed to update db duo to " + e.message,
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
+                    context, "Failed to update db duo to " + e.message, Toast.LENGTH_SHORT
+                ).show()
             }
     }
 
     private fun loadUserInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.USERS)
-        reference.child(Objects.requireNonNull(DATAv.FirebaseUserUid))
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
+        reference.child(Objects.requireNonNull(DATA.FirebaseUserUid))
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val username = DATAv.EMPTY + snapshot.child(DATAv.USER_NAME).value
-                    val profileImage = DATAv.EMPTY + snapshot.child(DATAv.PROFILE_IMAGE).value
+                    val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
+                    val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
                     VOID.GlideImage(true, context, profileImage, binding!!.profileImage)
                     binding!!.nameEt.setText(username)
                 }

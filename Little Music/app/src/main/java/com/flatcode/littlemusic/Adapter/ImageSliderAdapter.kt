@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.flatcode.littlemusic.R
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -26,7 +26,7 @@ class ImageSliderAdapter(var context: Context?, var setTotalCount: Int) :
     }
 
     override fun onBindViewHolder(viewHolder: SliderViewHolder, position: Int) {
-        FirebaseDatabase.getInstance().getReference(DATAv.SLIDER_SHOW)
+        FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     when (position) {

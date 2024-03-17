@@ -7,8 +7,8 @@ import android.text.TextUtils
 import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusicadmin.Unit.CLASSv
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.CLASS
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityLoginBinding
@@ -35,12 +35,8 @@ class LoginActivity : AppCompatActivity() {
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
-        binding!!.forget.setOnClickListener {
-            VOID.Intent1(
-                context,
-                CLASSv.FORGET_PASSWORD
-            )
-        }
+
+        binding!!.forget.setOnClickListener { VOID.Intent1(context, CLASS.FORGET_PASSWORD) }
         binding!!.loginBtn.setOnClickListener { validateDate() }
     }
 
@@ -70,16 +66,14 @@ class LoginActivity : AppCompatActivity() {
                 dialog!!.dismiss()
                 Toast.makeText(context, "Error!", Toast.LENGTH_SHORT).show()
             }.addOnSuccessListener {
-                VOID.IntentClear(
-                    context,
-                    CLASSv.MAIN)
+                VOID.IntentClear(context, CLASS.MAIN)
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
-                Toast.makeText(context, DATAv.EMPTY + e.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
             }.addOnCompleteListener { dialog!!.show() }
         } catch (e: Exception) {
             dialog!!.dismiss()
-            Toast.makeText(context, DATAv.EMPTY + e.message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
         }
     }
 }

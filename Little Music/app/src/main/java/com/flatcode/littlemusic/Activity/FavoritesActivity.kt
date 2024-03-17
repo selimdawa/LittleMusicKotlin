@@ -11,10 +11,14 @@ import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.Adapterimport.SongAdapter
 import com.flatcode.littlemusic.Modelimport.Song
 import com.flatcode.littlemusic.R
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.Unitimport.THEME
 import com.flatcode.littlemusic.databinding.ActivityFavoritesBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class FavoritesActivity : AppCompatActivity() {
@@ -37,14 +41,15 @@ class FavoritesActivity : AppCompatActivity() {
         setContentView(view)
 
         binding!!.toolbar.nameSpace.setText(R.string.favorites)
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        type = DATAv.TIMESTAMP
+        type = DATA.TIMESTAMP
+
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
-            DATAv.searchStatus = true
+            DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -57,24 +62,26 @@ class FavoritesActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {}
         })
+
         init()
+
         binding!!.switchBar.all.setOnClickListener {
-            type = DATAv.TIMESTAMP
+            type = DATA.TIMESTAMP
             init()
             getData(type)
         }
         binding!!.switchBar.mostViews.setOnClickListener {
-            type = DATAv.VIEWS_COUNT
+            type = DATA.VIEWS_COUNT
             init()
             getData(type)
         }
         binding!!.switchBar.mostLoves.setOnClickListener {
-            type = DATAv.LOVES_COUNT
+            type = DATA.LOVES_COUNT
             init()
             getData(type)
         }
         binding!!.switchBar.name.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             init()
             getData(type)
         }
@@ -85,6 +92,7 @@ class FavoritesActivity : AppCompatActivity() {
         list = ArrayList()
         jcAudios = ArrayList()
         binding!!.recyclerView.adapter = adapter
+
         adapter = SongAdapter(activity, list!!) { songs: Song?, position: Int ->
             changeSelectedSong(position)
             binding!!.player.jcPlayer.playAudio(jcAudios!![position])
@@ -94,8 +102,8 @@ class FavoritesActivity : AppCompatActivity() {
 
     private fun getData(orderBy: String?) {
         item = ArrayList()
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.FAVORITES)
-            .child(DATAv.FirebaseUserUid)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
+            .child(DATA.FirebaseUserUid)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 (item as ArrayList<String?>).clear()
@@ -110,7 +118,7 @@ class FavoritesActivity : AppCompatActivity() {
 
     private fun getItems(orderBy: String?) {
         changeSelectedSong(-1)
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 list!!.clear()
@@ -124,12 +132,7 @@ class FavoritesActivity : AppCompatActivity() {
                             song.key = (snapshot.key)
                             currentSong = -1
                             isPlaying = true
-                            jcAudios!!.add(
-                                JcAudio.createFromURL(
-                                    song.name!!,
-                                    song.songLink!!
-                                )
-                            )
+                            jcAudios!!.add(JcAudio.createFromURL(song.name!!, song.songLink!!))
                             i++
                             binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
                             binding!!.recyclerView.adapter = adapter
@@ -165,11 +168,11 @@ class FavoritesActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (DATAv.searchStatus) {
+        if (DATA.searchStatus) {
             binding!!.toolbar.toolbar.visibility = View.VISIBLE
             binding!!.toolbar.toolbarSearch.visibility = View.GONE
-            DATAv.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATAv.EMPTY)
+            DATA.searchStatus = false
+            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
         } else super.onBackPressed()
     }
 

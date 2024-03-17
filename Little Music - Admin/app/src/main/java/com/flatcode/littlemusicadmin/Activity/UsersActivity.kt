@@ -9,10 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Adapter.UserAdapter
 import com.flatcode.littlemusicadmin.Model.User
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.databinding.ActivityUsersBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class UsersActivity : AppCompatActivity() {
@@ -32,13 +36,14 @@ class UsersActivity : AppCompatActivity() {
 
         binding!!.toolbar.nameSpace.setText(R.string.users)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        type = DATAv.TIMESTAMP
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+        type = DATA.TIMESTAMP
+
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
-            DATAv.searchStatus = true
+            DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
 
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -57,26 +62,27 @@ class UsersActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = UserAdapter(context, list!!)
         binding!!.recyclerView.adapter = adapter
+
         binding!!.switchBar.all.setOnClickListener {
-            type = DATAv.TIMESTAMP
+            type = DATA.TIMESTAMP
             getData(type)
         }
         binding!!.switchBar.name.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             getData(type)
         }
         getData(type)
     }
 
     private fun getData(type: String?) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATAv.USERS)
+        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.USERS)
         ref.orderByChild(type!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 list!!.clear()
                 var i = 0
                 for (data in dataSnapshot.children) {
                     val item = data.getValue(User::class.java)!!
-                    if (item.id != DATAv.FirebaseUserUid) {
+                    if (item.id != DATA.FirebaseUserUid) {
                         list!!.add(item)
                         i++
                     }
@@ -99,11 +105,11 @@ class UsersActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (DATAv.searchStatus) {
+        if (DATA.searchStatus) {
             binding!!.toolbar.toolbar.visibility = View.VISIBLE
             binding!!.toolbar.toolbarSearch.visibility = View.GONE
-            DATAv.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATAv.EMPTY)
+            DATA.searchStatus = false
+            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
         } else super.onBackPressed()
     }
 

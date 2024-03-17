@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusicadmin.Unit.CLASSv
+import com.flatcode.littlemusicadmin.Unit.CLASS
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivitySplashBinding
@@ -27,6 +27,7 @@ class SplashActivity : AppCompatActivity() {
 
         VOID.Logo(baseContext, binding!!.logo)
         VOID.Intro(baseContext, binding!!.background, binding!!.backWhite, binding!!.backBlack)
+
         auth = FirebaseAuth.getInstance()
         Handler().postDelayed({ checkUser() }, time_final.toLong())
     }
@@ -35,9 +36,9 @@ class SplashActivity : AppCompatActivity() {
         //get current user, if logged in
         val firebaseUser = auth!!.currentUser
         if (firebaseUser == null) {
-            VOID.Intent1(context, CLASSv.LOGIN)
+            VOID.Intent1(context, CLASS.LOGIN)
         } else {
-            VOID.Intent1(context, CLASSv.MAIN)
+            VOID.Intent1(context, CLASS.MAIN)
         }
         finish()
     }

@@ -8,21 +8,15 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.Modelimport.Category
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.CLASSv
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.CLASS
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.databinding.ItemCategoryHomeBinding
 
 class CategoryHomeAdapter(private val context: Context?, var list: ArrayList<Category?>) :
     RecyclerView.Adapter<CategoryHomeAdapter.ViewHolder>() {
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ViewHolder {
-        binding = ItemCategoryHomeBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), parent, false
-        )
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        binding = ItemCategoryHomeBinding.inflate(LayoutInflater.from(context), parent, false)
         return ViewHolder(binding!!.root)
     }
 
@@ -31,10 +25,12 @@ class CategoryHomeAdapter(private val context: Context?, var list: ArrayList<Cat
         val id = item!!.id
         val name = item.name
         val image = item.image
+
         VOID.GlideImage(false, context, image, binding!!.image)
+
         holder.image.setOnClickListener {
             VOID.IntentExtra2(
-                context, CLASSv.CATEGORY_SONGS, DATAv.CATEGORY_ID, id, DATAv.CATEGORY_NAME, name
+                context, CLASS.CATEGORY_SONGS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }

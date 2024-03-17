@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Model.Category
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityCategoryAddBinding
@@ -38,7 +38,7 @@ class CategoryEditActivity : AppCompatActivity() {
         val view = binding!!.root
         setContentView(view)
 
-        categoryId = intent.getStringExtra(DATAv.CATEGORY_ID)
+        categoryId = intent.getStringExtra(DATA.CATEGORY_ID)
         dialog = ProgressDialog(activity)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
@@ -50,14 +50,14 @@ class CategoryEditActivity : AppCompatActivity() {
         binding!!.toolbar.ok.setOnClickListener { validateData() }
     }
 
-    private var name = DATAv.EMPTY
+    private var name = DATA.EMPTY
     private fun validateData() {
         name = binding!!.nameEt.text.toString().trim { it <= ' ' }
         if (TextUtils.isEmpty(name)) {
             Toast.makeText(activity, "Enter name...", Toast.LENGTH_SHORT).show()
         } else {
             if (imageUri == null) {
-                updateCategory(DATAv.EMPTY)
+                updateCategory(DATA.EMPTY)
             } else {
                 uploadImage()
             }
@@ -69,21 +69,18 @@ class CategoryEditActivity : AppCompatActivity() {
         dialog!!.show()
         val filePathAndName = "Images/Category/$categoryId"
         val reference = FirebaseStorage.getInstance().getReference(
-            filePathAndName
-                    + DATAv.DOT + VOID.getFileExtension(imageUri, activity)
+            filePathAndName + DATA.DOT + VOID.getFileExtension(imageUri, activity)
         )
         reference.putFile(imageUri!!)
             .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
                 val uriTask = taskSnapshot.storage.downloadUrl
                 while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATAv.EMPTY + uriTask.result
+                val uploadedImageUrl = DATA.EMPTY + uriTask.result
                 updateCategory(uploadedImageUrl)
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    activity,
-                    "Failed to upload image due to : " + e.message,
-                    Toast.LENGTH_SHORT
+                    activity, "Failed to upload image due to : " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -92,11 +89,11 @@ class CategoryEditActivity : AppCompatActivity() {
         dialog!!.setMessage("Updating category image...")
         dialog!!.show()
         val hashMap = HashMap<String?, Any>()
-        hashMap[DATAv.NAME] = DATAv.EMPTY + name
+        hashMap[DATA.NAME] = DATA.EMPTY + name
         if (imageUri != null) {
-            hashMap[DATAv.IMAGE] = DATAv.EMPTY + imageUrl
+            hashMap[DATA.IMAGE] = DATA.EMPTY + imageUrl
         }
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.CATEGORIES)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         reference.child(categoryId!!).updateChildren(hashMap)
             .addOnSuccessListener {
                 dialog!!.dismiss()
@@ -104,22 +101,19 @@ class CategoryEditActivity : AppCompatActivity() {
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    activity,
-                    "Failed to update db duo to : " + e.message,
-                    Toast.LENGTH_SHORT
+                    activity, "Failed to update db duo to : " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
 
     private fun loadCategoryInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.CATEGORIES)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         reference.child(categoryId!!).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val item = snapshot.getValue(
-                    Category::class.java
-                )!!
+                val item = snapshot.getValue(Category::class.java)!!
                 val name = item.name
                 val image = item.image
+
                 VOID.Glide(true, activity, image, binding!!.image)
                 binding!!.nameEt.setText(name)
             }

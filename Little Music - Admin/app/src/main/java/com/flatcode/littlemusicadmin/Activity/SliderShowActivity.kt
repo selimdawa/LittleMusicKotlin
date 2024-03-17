@@ -11,7 +11,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivitySliderShowBinding
@@ -43,9 +43,11 @@ class SliderShowActivity : AppCompatActivity() {
 
         binding!!.toolbar.nameSpace.setText(R.string.slider_show)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+
         dialog = ProgressDialog(context)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
+
         binding!!.addOne.setOnClickListener {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 1
@@ -126,13 +128,14 @@ class SliderShowActivity : AppCompatActivity() {
             VOID.CropImageSlider(activity)
             IMAGE_NUMBER = 20
         }
+
         nrSliderShow
         sliderShow()
     }
 
     private val nrSliderShow: Unit
         get() {
-            val reference = FirebaseDatabase.getInstance().getReference(DATAv.SLIDER_SHOW)
+            val reference = FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
             reference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     item = dataSnapshot.childrenCount.toInt()
@@ -246,29 +249,30 @@ class SliderShowActivity : AppCompatActivity() {
         }
 
     private fun sliderShow() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.SLIDER_SHOW)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val one = DATAv.EMPTY + dataSnapshot.child("1").value
-                val two = DATAv.EMPTY + dataSnapshot.child("2").value
-                val three = DATAv.EMPTY + dataSnapshot.child("3").value
-                val four = DATAv.EMPTY + dataSnapshot.child("4").value
-                val five = DATAv.EMPTY + dataSnapshot.child("5").value
-                val six = DATAv.EMPTY + dataSnapshot.child("6").value
-                val seven = DATAv.EMPTY + dataSnapshot.child("7").value
-                val eight = DATAv.EMPTY + dataSnapshot.child("8").value
-                val nine = DATAv.EMPTY + dataSnapshot.child("9").value
-                val teen = DATAv.EMPTY + dataSnapshot.child("10").value
-                val eleven = DATAv.EMPTY + dataSnapshot.child("11").value
-                val twelfth = DATAv.EMPTY + dataSnapshot.child("12").value
-                val thirteen = DATAv.EMPTY + dataSnapshot.child("13").value
-                val fourteenth = DATAv.EMPTY + dataSnapshot.child("14").value
-                val fifteenth = DATAv.EMPTY + dataSnapshot.child("15").value
-                val sixteen = DATAv.EMPTY + dataSnapshot.child("16").value
-                val seventeen = DATAv.EMPTY + dataSnapshot.child("17").value
-                val eighteen = DATAv.EMPTY + dataSnapshot.child("18").value
-                val nineteen = DATAv.EMPTY + dataSnapshot.child("19").value
-                val twenty = DATAv.EMPTY + dataSnapshot.child("20").value
+                val one = DATA.EMPTY + dataSnapshot.child("1").value
+                val two = DATA.EMPTY + dataSnapshot.child("2").value
+                val three = DATA.EMPTY + dataSnapshot.child("3").value
+                val four = DATA.EMPTY + dataSnapshot.child("4").value
+                val five = DATA.EMPTY + dataSnapshot.child("5").value
+                val six = DATA.EMPTY + dataSnapshot.child("6").value
+                val seven = DATA.EMPTY + dataSnapshot.child("7").value
+                val eight = DATA.EMPTY + dataSnapshot.child("8").value
+                val nine = DATA.EMPTY + dataSnapshot.child("9").value
+                val teen = DATA.EMPTY + dataSnapshot.child("10").value
+                val eleven = DATA.EMPTY + dataSnapshot.child("11").value
+                val twelfth = DATA.EMPTY + dataSnapshot.child("12").value
+                val thirteen = DATA.EMPTY + dataSnapshot.child("13").value
+                val fourteenth = DATA.EMPTY + dataSnapshot.child("14").value
+                val fifteenth = DATA.EMPTY + dataSnapshot.child("15").value
+                val sixteen = DATA.EMPTY + dataSnapshot.child("16").value
+                val seventeen = DATA.EMPTY + dataSnapshot.child("17").value
+                val eighteen = DATA.EMPTY + dataSnapshot.child("18").value
+                val nineteen = DATA.EMPTY + dataSnapshot.child("19").value
+                val twenty = DATA.EMPTY + dataSnapshot.child("20").value
+
                 VOID.Glide(false, context, one, binding!!.imageOne)
                 VOID.Glide(false, context, two, binding!!.imageTwo)
                 VOID.Glide(false, context, three, binding!!.imageThree)
@@ -298,15 +302,15 @@ class SliderShowActivity : AppCompatActivity() {
     private fun uploadImage(name: String) {
         dialog!!.setMessage("Posting photo...")
         dialog!!.show()
-        val filePathAndName = "Images/SliderShow/" + (DATAv.EMPTY + name)
+        val filePathAndName = "Images/SliderShow/" + (DATA.EMPTY + name)
         val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATAv.DOT + VOID.getFileExtension(imageUri, context))
+            .getReference(filePathAndName + DATA.DOT + VOID.getFileExtension(imageUri, context))
         reference.putFile(imageUri!!)
             .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
                 val uriTask = taskSnapshot.storage.downloadUrl
                 while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATAv.EMPTY + uriTask.result
-                updateImage(uploadedImageUrl, DATAv.EMPTY + name)
+                val uploadedImageUrl = DATA.EMPTY + uriTask.result
+                updateImage(uploadedImageUrl, DATA.EMPTY + name)
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(context, "Error! " + e.message, Toast.LENGTH_SHORT).show()
@@ -318,9 +322,9 @@ class SliderShowActivity : AppCompatActivity() {
         dialog!!.show()
         val hashMap = HashMap<String, Any>()
         if (imageUri != null) {
-            hashMap[DATAv.EMPTY + name] = DATAv.EMPTY + imageUrl
+            hashMap[DATA.EMPTY + name] = DATA.EMPTY + imageUrl
         }
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.SLIDER_SHOW)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
         reference.updateChildren(hashMap).addOnSuccessListener {
             dialog!!.dismiss()
             Toast.makeText(context, "The photo has been posted", Toast.LENGTH_SHORT).show()
@@ -345,7 +349,7 @@ class SliderShowActivity : AppCompatActivity() {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
                 imageUri = result.uri
-                uploadImage(DATAv.EMPTY + IMAGE_NUMBER)
+                uploadImage(DATA.EMPTY + IMAGE_NUMBER)
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val error = result.error
                 Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()

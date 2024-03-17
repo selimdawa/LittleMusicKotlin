@@ -12,11 +12,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivitySongAddBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
@@ -50,6 +54,7 @@ class SongAddActivity : AppCompatActivity() {
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
+
         loadCategories()
         loadAlbums()
         loadArtists()
@@ -64,7 +69,7 @@ class SongAddActivity : AppCompatActivity() {
         metadataRetriever = MediaMetadataRetriever()
     }
 
-    private var name = DATAv.EMPTY
+    private var name = DATA.EMPTY
     private fun validateData() {
         //get data
         name = binding!!.nameEt.text.toString().trim { it <= ' ' }
@@ -140,7 +145,7 @@ class SongAddActivity : AppCompatActivity() {
         Toast.makeText(this, "Uploads please wait!", Toast.LENGTH_SHORT).show()
         dialog!!.setMessage("Uploads Song...")
         dialog!!.show()
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         val id = ref.push().key
         val filePathAndName = "Songs/$selectedArtistTitle/$id"
         val reference = FirebaseStorage.getInstance().getReference(filePathAndName)
@@ -167,34 +172,34 @@ class SongAddActivity : AppCompatActivity() {
 
         //setup data to upload
         val hashMap = HashMap<String?, Any?>()
-        hashMap[DATAv.PUBLISHER] = DATAv.EMPTY + DATAv.FirebaseUserUid
-        hashMap[DATAv.TIMESTAMP] = System.currentTimeMillis()
-        hashMap[DATAv.ID] = id
-        hashMap[DATAv.NAME] = DATAv.EMPTY + name
-        hashMap[DATAv.CATEGORY_ID] = DATAv.EMPTY + selectedCategoryId
-        hashMap[DATAv.ARTIST_ID] = DATAv.EMPTY + selectedArtistId
-        hashMap[DATAv.ALBUM_ID] = DATAv.EMPTY + selectedAlbumId
-        hashMap[DATAv.DURATION] = DATAv.EMPTY + durations
-        hashMap[DATAv.SONG_LINK] = DATAv.EMPTY + uploadedSongUrl
-        hashMap[DATAv.EDITORS_CHOICE] = DATAv.ZERO
-        hashMap[DATAv.LOVES_COUNT] = DATAv.ZERO
-        hashMap[DATAv.VIEWS_COUNT] = DATAv.ZERO
+        hashMap[DATA.PUBLISHER] = DATA.EMPTY + DATA.FirebaseUserUid
+        hashMap[DATA.TIMESTAMP] = System.currentTimeMillis()
+        hashMap[DATA.ID] = id
+        hashMap[DATA.NAME] = DATA.EMPTY + name
+        hashMap[DATA.CATEGORY_ID] = DATA.EMPTY + selectedCategoryId
+        hashMap[DATA.ARTIST_ID] = DATA.EMPTY + selectedArtistId
+        hashMap[DATA.ALBUM_ID] = DATA.EMPTY + selectedAlbumId
+        hashMap[DATA.DURATION] = DATA.EMPTY + durations
+        hashMap[DATA.SONG_LINK] = DATA.EMPTY + uploadedSongUrl
+        hashMap[DATA.EDITORS_CHOICE] = DATA.ZERO
+        hashMap[DATA.LOVES_COUNT] = DATA.ZERO
+        hashMap[DATA.VIEWS_COUNT] = DATA.ZERO
         assert(id != null)
         ref.child(id!!).setValue(hashMap).addOnSuccessListener {
             if (selectedArtistId != null) VOID.incrementItemCount(
-                DATAv.ARTISTS,
+                DATA.ARTISTS,
                 selectedArtistId,
-                DATAv.SONGS_COUNT
+                DATA.SONGS_COUNT
             )
             if (selectedCategoryId != null) VOID.incrementItemCount(
-                DATAv.CATEGORIES,
+                DATA.CATEGORIES,
                 selectedCategoryId,
-                DATAv.SONGS_COUNT
+                DATA.SONGS_COUNT
             )
             if (selectedAlbumId != null) VOID.incrementItemCount(
-                DATAv.ALBUMS,
+                DATA.ALBUMS,
                 selectedAlbumId,
-                DATAv.SONGS_COUNT
+                DATA.SONGS_COUNT
             )
             dialog!!.dismiss()
             Toast.makeText(activity, "Successfully uploaded...", Toast.LENGTH_SHORT).show()
@@ -211,14 +216,14 @@ class SongAddActivity : AppCompatActivity() {
     private fun loadCategories() {
         categoryList = ArrayList()
         categoryId = ArrayList()
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.CATEGORIES)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 categoryList!!.clear()
                 categoryId!!.clear()
                 for (data in snapshot.children) {
-                    val id = DATAv.EMPTY + data.child(DATAv.ID).value
-                    val name = DATAv.EMPTY + data.child(DATAv.NAME).value
+                    val id = DATA.EMPTY + data.child(DATA.ID).value
+                    val name = DATA.EMPTY + data.child(DATA.NAME).value
                     categoryList!!.add(name)
                     categoryId!!.add(id)
                 }
@@ -231,14 +236,14 @@ class SongAddActivity : AppCompatActivity() {
     private fun loadAlbums() {
         albumList = ArrayList()
         albumId = ArrayList()
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.ALBUMS)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.ALBUMS)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 albumList!!.clear()
                 albumId!!.clear()
                 for (data in snapshot.children) {
-                    val id = DATAv.EMPTY + data.child(DATAv.ID).value
-                    val name = DATAv.EMPTY + data.child(DATAv.NAME).value
+                    val id = DATA.EMPTY + data.child(DATA.ID).value
+                    val name = DATA.EMPTY + data.child(DATA.NAME).value
                     albumList!!.add(name)
                     albumId!!.add(id)
                 }
@@ -251,14 +256,14 @@ class SongAddActivity : AppCompatActivity() {
     private fun loadArtists() {
         artistList = ArrayList()
         artistId = ArrayList()
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.ARTISTS)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 artistList!!.clear()
                 artistId!!.clear()
                 for (data in snapshot.children) {
-                    val id = DATAv.EMPTY + data.child(DATAv.ID).value
-                    val name = DATAv.EMPTY + data.child(DATAv.NAME).value
+                    val id = DATA.EMPTY + data.child(DATA.ID).value
+                    val name = DATA.EMPTY + data.child(DATA.NAME).value
                     artistList!!.add(name)
                     artistId!!.add(id)
                 }

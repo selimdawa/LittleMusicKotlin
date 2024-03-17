@@ -4,13 +4,17 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Filter
+import android.widget.Filterable
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.Filter.CategoryFilter
 import com.flatcode.littlemusic.Modelimport.Category
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.CLASSv
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.CLASS
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.databinding.ItemCategoryBinding
 import java.text.MessageFormat
 
@@ -22,51 +26,46 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
     private var filter: CategoryFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemCategoryBinding.inflate(
-            LayoutInflater.from(
-                activity
-            ), parent, false
-        )
+        binding = ItemCategoryBinding.inflate(LayoutInflater.from(activity), parent, false)
         return ViewHolder(binding!!.root)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
-        val id = DATAv.EMPTY + item!!.id
-        val name = DATAv.EMPTY + item.name
-        val image = DATAv.EMPTY + item.image
-        val interestedCount = DATAv.EMPTY + item.interestedCount
-        val albumCount = DATAv.EMPTY + item.albumsCount
-        val songsCount = DATAv.EMPTY + item.songsCount
+        val id = DATA.EMPTY + item!!.id
+        val name = DATA.EMPTY + item.name
+        val image = DATA.EMPTY + item.image
+        val interestedCount = DATA.EMPTY + item.interestedCount
+        val albumCount = DATA.EMPTY + item.albumsCount
+        val songsCount = DATA.EMPTY + item.songsCount
+
         VOID.GlideImage(false, activity, image, holder.image)
-        if (item.name == DATAv.EMPTY) {
+
+        if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
         } else {
             holder.name.visibility = View.VISIBLE
             holder.name.text = name
         }
-        if (interestedCount == DATAv.EMPTY) holder.numberInterested.text = MessageFormat.format(
-            "{0}{1}",
-            DATAv.EMPTY,
-            DATAv.ZERO
+
+        if (interestedCount == DATA.EMPTY) holder.numberInterested.text = MessageFormat.format(
+            "{0}{1}", DATA.EMPTY, DATA.ZERO
         ) else holder.numberInterested.text = interestedCount
-        if (songsCount == DATAv.EMPTY) holder.numberSongs.text =
-            MessageFormat.format("{0}{1}", DATAv.EMPTY, DATAv.ZERO) else holder.numberSongs.text =
+
+        if (songsCount == DATA.EMPTY) holder.numberSongs.text =
+            MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.numberSongs.text =
             songsCount
-        if (albumCount == DATAv.EMPTY) holder.numberAlbums.text =
-            MessageFormat.format("{0}{1}", DATAv.EMPTY, DATAv.ZERO) else holder.numberAlbums.text =
+
+        if (albumCount == DATA.EMPTY) holder.numberAlbums.text =
+            MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.numberAlbums.text =
             albumCount
-        VOID.isInterested(holder.add, id, DATAv.CATEGORIES)
-        holder.add.setOnClickListener {
-            VOID.checkInterested(
-                holder.add,
-                DATAv.CATEGORIES,
-                id
-            )
-        }
+
+        VOID.isInterested(holder.add, id, DATA.CATEGORIES)
+        holder.add.setOnClickListener { VOID.checkInterested(holder.add, DATA.CATEGORIES, id) }
+
         holder.item.setOnClickListener {
             VOID.IntentExtra2(
-                activity, CLASSv.CATEGORY_SONGS, DATAv.CATEGORY_ID, id, DATAv.CATEGORY_NAME, name
+                activity, CLASS.CATEGORY_SONGS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }
@@ -82,9 +81,7 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var image: ImageView
         var add: ImageView
         var name: TextView

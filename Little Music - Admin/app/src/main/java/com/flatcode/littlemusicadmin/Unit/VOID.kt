@@ -53,12 +53,8 @@ object VOID {
     }
 
     fun IntentExtra2(
-        context: Context,
-        c: Class<*>?,
-        key: String?,
-        value: String?,
-        key2: String?,
-        value2: String?,
+        context: Context, c: Class<*>?, key: String?, value: String?,
+        key2: String?, value2: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -67,14 +63,8 @@ object VOID {
     }
 
     fun IntentExtra3(
-        context: Context,
-        c: Class<*>?,
-        key: String?,
-        value: String?,
-        key2: String?,
-        value2: String?,
-        key3: String?,
-        value3: String?,
+        context: Context, c: Class<*>?, key: String?, value: String?,
+        key2: String?, value2: String?, key3: String?, value3: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -84,16 +74,8 @@ object VOID {
     }
 
     fun IntentExtra4(
-        context: Context,
-        c: Class<*>?,
-        key: String?,
-        value: String?,
-        key2: String?,
-        value2: String?,
-        key3: String?,
-        value3: String?,
-        key4: String?,
-        value4: String?,
+        context: Context, c: Class<*>?, key: String?, value: String?, key2: String?,
+        value2: String?, key3: String?, value3: String?, key4: String?, value4: String?,
     ) {
         val intent = Intent(context, c)
         intent.putExtra(key, value)
@@ -105,7 +87,7 @@ object VOID {
 
     fun Glide(isUser: Boolean, context: Context?, Url: String?, Image: ImageView) {
         try {
-            if (Url == DATAv.BASIC) {
+            if (Url == DATA.BASIC) {
                 if (isUser) {
                     Image.setImageResource(R.drawable.basic_user)
                 } else {
@@ -121,7 +103,7 @@ object VOID {
 
     fun GlideBlur(isUser: Boolean, context: Context?, Url: String?, Image: ImageView, level: Int) {
         try {
-            if (Url == DATAv.BASIC) {
+            if (Url == DATA.BASIC) {
                 if (isUser) {
                     Image.setImageResource(R.drawable.basic_user)
                 } else {
@@ -137,18 +119,18 @@ object VOID {
     }
 
     fun incrementViewCount(id: String?) {
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
-                var viewsCount = DATAv.EMPTY + snapshot.child(DATAv.VIEWS_COUNT).value
-                if (viewsCount == DATAv.EMPTY || viewsCount == DATAv.NULL) {
+                var viewsCount = DATA.EMPTY + snapshot.child(DATA.VIEWS_COUNT).value
+                if (viewsCount == DATA.EMPTY || viewsCount == DATA.NULL) {
                     viewsCount = "0"
                 }
                 val newViewsCount = viewsCount.toLong() + 1
                 val hashMap = HashMap<String?, Any>()
-                hashMap[DATAv.VIEWS_COUNT] = newViewsCount
-                val reference = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+                hashMap[DATA.VIEWS_COUNT] = newViewsCount
+                val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
                 reference.child(id).updateChildren(hashMap)
             }
 
@@ -157,19 +139,19 @@ object VOID {
     }
 
     fun incrementLovesCount(id: String?) {
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
-                var lovesCount = DATAv.EMPTY + snapshot.child(DATAv.LOVES_COUNT).value
-                if (lovesCount == DATAv.EMPTY || lovesCount == DATAv.NULL) {
+                var lovesCount = DATA.EMPTY + snapshot.child(DATA.LOVES_COUNT).value
+                if (lovesCount == DATA.EMPTY || lovesCount == DATA.NULL) {
                     lovesCount = "0"
                 }
                 val newLovesCount = lovesCount.toLong() + 1
                 val hashMap = HashMap<String?, Any>()
-                hashMap[DATAv.LOVES_COUNT] = newLovesCount
-                hashMap[DATAv.LOVES_COUNT] = newLovesCount
-                val reference = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+                hashMap[DATA.LOVES_COUNT] = newLovesCount
+                hashMap[DATA.LOVES_COUNT] = newLovesCount
+                val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
                 reference.child(id).updateChildren(hashMap)
             }
 
@@ -178,18 +160,18 @@ object VOID {
     }
 
     fun incrementLovesRemoveCount(id: String?) {
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
-                var lovesCount = DATAv.EMPTY + snapshot.child("lovesCount").value
-                if (lovesCount == DATAv.EMPTY || lovesCount == DATAv.NULL) {
+                var lovesCount = DATA.EMPTY + snapshot.child(DATA.LOVES_COUNT).value
+                if (lovesCount == DATA.EMPTY || lovesCount == DATA.NULL) {
                     lovesCount = "0"
                 }
                 val removeLovesCount = lovesCount.toLong() - 1
                 val hashMap = HashMap<String, Any>()
                 hashMap["lovesCount"] = removeLovesCount
-                val reference = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+                val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
                 reference.child(id).updateChildren(hashMap)
             }
 
@@ -202,9 +184,9 @@ object VOID {
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
-                var itemsCount = DATAv.EMPTY + snapshot.child(childDB!!).value
-                if (itemsCount == DATAv.EMPTY || itemsCount == DATAv.NULL) {
-                    itemsCount = DATAv.EMPTY + DATAv.ZERO
+                var itemsCount = DATA.EMPTY + snapshot.child(childDB!!).value
+                if (itemsCount == DATA.EMPTY || itemsCount == DATA.NULL) {
+                    itemsCount = DATA.EMPTY + DATA.ZERO
                 }
                 val newItemsCount = itemsCount.toLong() + 1
                 val hashMap = HashMap<String?, Any>()
@@ -222,9 +204,9 @@ object VOID {
         ref.child(id!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //get views count
-                var lovesCount = DATAv.EMPTY + snapshot.child(childDB!!).value
-                if (lovesCount == DATAv.EMPTY || lovesCount == DATAv.NULL)
-                    lovesCount = DATAv.EMPTY + DATAv.ZERO
+                var lovesCount = DATA.EMPTY + snapshot.child(childDB!!).value
+                if (lovesCount == DATA.EMPTY || lovesCount == DATA.NULL)
+                    lovesCount = DATA.EMPTY + DATA.ZERO
 
                 val i = lovesCount.toInt()
                 if (i > 0) {
@@ -242,10 +224,8 @@ object VOID {
     }
 
     fun isFavorite(add: ImageView, Id: String?, UserId: String?) {
-        val reference = FirebaseDatabase.getInstance().reference.child(DATAv.FAVORITES).child(
-            UserId!!
-        )
-        reference.addValueEventListener(object : ValueEventListener {
+        val ref = FirebaseDatabase.getInstance().reference.child(DATA.FAVORITES).child(UserId!!)
+        ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.child(Id!!).exists()) {
                     add.setImageResource(R.drawable.ic_star_selected)
@@ -261,32 +241,30 @@ object VOID {
     }
 
     fun checkFavorite(image: ImageView, id: String?) {
-        if (image.tag == "add") FirebaseDatabase.getInstance().getReference(DATAv.FAVORITES)
-            .child(DATAv.FirebaseUserUid)
+        if (image.tag == "add") FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
+            .child(DATA.FirebaseUserUid)
             .child(id!!).setValue(true) else FirebaseDatabase.getInstance()
-            .getReference(DATAv.FAVORITES).child(DATAv.FirebaseUserUid)
+            .getReference(DATA.FAVORITES).child(DATA.FirebaseUserUid)
             .child(id!!).removeValue()
     }
 
     fun checkLove(image: ImageView, id: String?) {
         if (image.tag == "love") {
-            FirebaseDatabase.getInstance().getReference(DATAv.LOVES).child(id!!)
-                .child(DATAv.FirebaseUserUid).setValue(true)
+            FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id!!)
+                .child(DATA.FirebaseUserUid).setValue(true)
             incrementLovesCount(id)
         } else {
-            FirebaseDatabase.getInstance().getReference(DATAv.LOVES).child(id!!)
-                .child(DATAv.FirebaseUserUid).removeValue()
+            FirebaseDatabase.getInstance().getReference(DATA.LOVES).child(id!!)
+                .child(DATA.FirebaseUserUid).removeValue()
             incrementLovesRemoveCount(id)
         }
     }
 
     fun isLoves(image: ImageView, id: String?) {
-        val reference = FirebaseDatabase.getInstance().reference.child(DATAv.LOVES).child(
-            id!!
-        )
+        val reference = FirebaseDatabase.getInstance().reference.child(DATA.LOVES).child(id!!)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.child(DATAv.FirebaseUserUid).exists()) {
+                if (dataSnapshot.child(DATA.FirebaseUserUid).exists()) {
                     image.setImageResource(R.drawable.ic_heart_selected)
                     image.tag = "loved"
                 } else {
@@ -300,9 +278,7 @@ object VOID {
     }
 
     fun nrLoves(number: TextView, id: String?) {
-        val reference = FirebaseDatabase.getInstance().reference.child(DATAv.LOVES).child(
-            id!!
-        )
+        val reference = FirebaseDatabase.getInstance().reference.child(DATA.LOVES).child(id!!)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 number.text = MessageFormat.format(" {0} ", dataSnapshot.childrenCount)
@@ -314,7 +290,7 @@ object VOID {
 
     fun CropImageSquare(activity: Activity?) {
         CropImage.activity()
-            .setMinCropResultSize(DATAv.MIX_SQUARE, DATAv.MIX_SQUARE)
+            .setMinCropResultSize(DATA.MIX_SQUARE, DATA.MIX_SQUARE)
             .setAspectRatio(1, 1)
             .setCropShape(CropImageView.CropShape.OVAL)
             .start(activity!!)
@@ -324,7 +300,7 @@ object VOID {
         CropImage.activity()
             .setGuidelines(CropImageView.Guidelines.ON)
             .setMultiTouchEnabled(true)
-            .setMinCropResultSize(DATAv.MIX_SLIDER_X, DATAv.MIX_SLIDER_Y)
+            .setMinCropResultSize(DATA.MIX_SLIDER_X, DATA.MIX_SLIDER_Y)
             .setAspectRatio(16, 9)
             .setCropShape(CropImageView.CropShape.OVAL)
             .start(activity!!)
@@ -361,218 +337,109 @@ object VOID {
     }
 
     fun moreDeleteCategory(
-        activity: Activity,
-        item: Category?,
-        DB: String?,
-        idDB: String?,
-        childDB: String?,
-        DB2: String?,
-        idDB2: String?,
-        childDB2: String?,
-        DB3: String?,
-        idDB3: String?,
-        childDB3: String?,
+        activity: Activity, item: Category?, DB: String?, idDB: String?,
+        childDB: String?, DB2: String?, idDB2: String?, childDB2: String?,
+        DB3: String?, idDB3: String?, childDB3: String?,
     ) {
-        val id = DATAv.EMPTY + item!!.id
-        val name = DATAv.EMPTY + item.name
+        val id = DATA.EMPTY + item!!.id
+        val name = DATA.EMPTY + item.name
         val options = arrayOf("Edit", "Delete")
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Choose Options")
             .setItems(options) { dialog: DialogInterface?, which: Int ->
                 if (which == 0) {
-                    IntentExtra(activity, CLASSv.CATEGORY_EDIT, DATAv.CATEGORY_ID, id)
+                    IntentExtra(activity, CLASS.CATEGORY_EDIT, DATA.CATEGORY_ID, id)
                 } else if (which == 1) {
                     dialogOptionDelete(
-                        activity,
-                        id,
-                        name,
-                        DATAv.CATEGORY,
-                        DATAv.CATEGORIES,
-                        false,
-                        DB,
-                        idDB,
-                        childDB,
-                        DB2,
-                        idDB2,
-                        childDB2,
-                        DB3,
-                        idDB3,
-                        childDB3
+                        activity, id, name, DATA.CATEGORY, DATA.CATEGORIES, false,
+                        DB, idDB, childDB, DB2, idDB2, childDB2, DB3, idDB3, childDB3
                     )
                 }
             }.show()
     }
 
     fun moreDeleteAlbum(
-        activity: Activity,
-        item: Album?,
-        DB: String?,
-        idDB: String?,
-        childDB: String?,
-        DB2: String?,
-        idDB2: String?,
-        childDB2: String?,
-        DB3: String?,
-        idDB3: String?,
-        childDB3: String?,
+        activity: Activity, item: Album?, DB: String?, idDB: String?, childDB: String?,
+        DB2: String?, idDB2: String?, childDB2: String?,
+        DB3: String?, idDB3: String?, childDB3: String?,
     ) {
-        val id = DATAv.EMPTY + item!!.id
-        val category = DATAv.EMPTY + item.categoryId
-        val artist = DATAv.EMPTY + item.artistId
-        val name = DATAv.EMPTY + item.name
+        val id = DATA.EMPTY + item!!.id
+        val category = DATA.EMPTY + item.categoryId
+        val artist = DATA.EMPTY + item.artistId
+        val name = DATA.EMPTY + item.name
         val options = arrayOf("Edit", "Delete")
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Choose Options")
             .setItems(options) { dialog: DialogInterface?, which: Int ->
                 if (which == 0) {
                     IntentExtra3(
-                        activity,
-                        CLASSv.ALBUM_EDIT,
-                        DATAv.ALBUM_ID,
-                        id,
-                        DATAv.CATEGORY_ID,
-                        category,
-                        DATAv.ARTIST_ID,
-                        artist
+                        activity, CLASS.ALBUM_EDIT, DATA.ALBUM_ID, id, DATA.CATEGORY_ID,
+                        category, DATA.ARTIST_ID, artist
                     )
                 } else if (which == 1) {
                     dialogOptionDelete(
-                        activity,
-                        id,
-                        name,
-                        DATAv.ALBUM,
-                        DATAv.ALBUMS,
-                        false,
-                        DB,
-                        idDB,
-                        childDB,
-                        DB2,
-                        idDB2,
-                        childDB2,
-                        DB3,
-                        idDB3,
-                        childDB3
+                        activity, id, name, DATA.ALBUM, DATA.ALBUMS, false,
+                        DB, idDB, childDB, DB2, idDB2, childDB2, DB3, idDB3, childDB3
                     )
                 }
             }.show()
     }
 
     fun moreDeleteArtist(
-        activity: Activity,
-        item: Artist?,
-        DB: String?,
-        idDB: String?,
-        childDB: String?,
-        DB2: String?,
-        idDB2: String?,
-        childDB2: String?,
-        DB3: String?,
-        idDB3: String?,
-        childDB3: String?,
+        activity: Activity, item: Artist?, DB: String?, idDB: String?, childDB: String?,
+        DB2: String?, idDB2: String?, childDB2: String?,
+        DB3: String?, idDB3: String?, childDB3: String?,
     ) {
-        val id = DATAv.EMPTY + item!!.id
-        val name = DATAv.EMPTY + item.name
+        val id = DATA.EMPTY + item!!.id
+        val name = DATA.EMPTY + item.name
         val options = arrayOf("Edit", "Delete")
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Choose Options")
             .setItems(options) { dialog: DialogInterface?, which: Int ->
                 if (which == 0) {
-                    IntentExtra(activity, CLASSv.ARTIST_EDIT, DATAv.ARTIST_ID, id)
+                    IntentExtra(activity, CLASS.ARTIST_EDIT, DATA.ARTIST_ID, id)
                 } else if (which == 1) {
                     dialogOptionDelete(
-                        activity,
-                        id,
-                        name,
-                        DATAv.ARTIST,
-                        DATAv.ARTISTS,
-                        false,
-                        DB,
-                        idDB,
-                        childDB,
-                        DB2,
-                        idDB2,
-                        childDB2,
-                        DB3,
-                        idDB3,
-                        childDB3
+                        activity, id, name, DATA.ARTIST, DATA.ARTISTS, false,
+                        DB, idDB, childDB, DB2, idDB2, childDB2, DB3, idDB3, childDB3
                     )
                 }
             }.show()
     }
 
     fun moreDeleteSong(
-        activity: Activity,
-        item: Song?,
-        DB: String?,
-        idDB: String?,
-        childDB: String?,
-        DB2: String?,
-        idDB2: String?,
-        childDB2: String?,
-        DB3: String?,
-        idDB3: String?,
-        childDB3: String?,
+        activity: Activity, item: Song?, DB: String?, idDB: String?, childDB: String?,
+        DB2: String?, idDB2: String?, childDB2: String?,
+        DB3: String?, idDB3: String?, childDB3: String?,
     ) {
-        val id = DATAv.EMPTY + item!!.id
-        val name = DATAv.EMPTY + item.name
-        val category = DATAv.EMPTY + item.categoryId
-        val artist = DATAv.EMPTY + item.artistId
-        val album = DATAv.EMPTY + item.albumId
+        val id = DATA.EMPTY + item!!.id
+        val name = DATA.EMPTY + item.name
+        val category = DATA.EMPTY + item.categoryId
+        val artist = DATA.EMPTY + item.artistId
+        val album = DATA.EMPTY + item.albumId
         val options = arrayOf("Edit", "Delete")
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Choose Options")
             .setItems(options) { dialog: DialogInterface?, which: Int ->
                 if (which == 0) {
                     IntentExtra4(
-                        activity,
-                        CLASSv.SONG_EDIT,
-                        DATAv.SONG_ID,
-                        id,
-                        DATAv.CATEGORY_ID,
-                        category,
-                        DATAv.ARTIST_ID,
-                        artist,
-                        DATAv.ALBUM_ID,
-                        album
+                        activity, CLASS.SONG_EDIT, DATA.SONG_ID, id, DATA.CATEGORY_ID,
+                        category, DATA.ARTIST_ID, artist, DATA.ALBUM_ID, album
                     )
                 } else if (which == 1) {
                     dialogOptionDelete(
-                        activity,
-                        id,
-                        name,
-                        DATAv.SONG,
-                        DATAv.SONGS,
-                        false,
-                        DB,
-                        idDB,
-                        childDB,
-                        DB2,
-                        idDB2,
-                        childDB2,
-                        DB3,
-                        idDB3,
-                        childDB3
+                        activity, id, name, DATA.SONG, DATA.SONGS, false,
+                        DB, idDB, childDB, DB2, idDB2, childDB2, DB3, idDB3, childDB3
                     )
                 }
             }.show()
     }
 
     fun dialogOptionDelete(
-        activity: Activity,
-        id: String?,
-        name: String,
-        type: String?,
-        nameDB: String?,
-        isEditorsChoice: Boolean,
-        DB: String?,
-        idDB: String?,
-        childDB: String?,
-        DB2: String?,
-        idDB2: String?,
-        childDB2: String?,
-        DB3: String?,
-        idDB3: String?,
-        childDB3: String?,
+        activity: Activity, id: String?, name: String, type: String?, nameDB: String?,
+        isEditorsChoice: Boolean, DB: String?, idDB: String?, childDB: String?,
+        DB2: String?, idDB2: String?, childDB2: String?,
+        DB3: String?, idDB3: String?, childDB3: String?,
     ) {
         val dialog = Dialog(activity)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -585,25 +452,14 @@ object VOID {
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT
         val title = dialog.findViewById<TextView>(R.id.title)
         title.text = MessageFormat.format("Do you want to delete {0} ( {1} ) ?", name, type)
+
         dialog.findViewById<View>(R.id.yes).setOnClickListener {
             if (isEditorsChoice) {
                 dialogUpdateEditorsChoice(dialog, activity, id)
             } else {
                 deleteDB(
-                    dialog,
-                    activity,
-                    id,
-                    name,
-                    nameDB,
-                    DB,
-                    idDB,
-                    childDB,
-                    DB2,
-                    idDB2,
-                    childDB2,
-                    DB3,
-                    idDB3,
-                    childDB3
+                    dialog, activity, id, name, nameDB, DB, idDB, childDB, DB2, idDB2, childDB2,
+                    DB3, idDB3, childDB3
                 )
             }
         }
@@ -617,8 +473,8 @@ object VOID {
         dialog.setMessage("Updating Editors Choice...")
         dialog.show()
         val hashMap = HashMap<String?, Any>()
-        hashMap[DATAv.EDITORS_CHOICE] = 0
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        hashMap[DATA.EDITORS_CHOICE] = 0
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         reference.child(id!!).updateChildren(hashMap).addOnSuccessListener {
             dialog.dismiss()
             Toast.makeText(context, "Editors Choice updated...", Toast.LENGTH_SHORT).show()
@@ -632,20 +488,9 @@ object VOID {
     }
 
     fun deleteDB(
-        dialogDelete: Dialog,
-        activity: Activity,
-        id: String?,
-        name: String,
-        nameDB: String?,
-        DB: String?,
-        idDB: String?,
-        childDB: String?,
-        DB2: String?,
-        idDB2: String?,
-        childDB2: String?,
-        DB3: String?,
-        idDB3: String?,
-        childDB3: String?,
+        dialogDelete: Dialog, activity: Activity, id: String?, name: String, nameDB: String?,
+        DB: String?, idDB: String?, childDB: String?, DB2: String?, idDB2: String?,
+        childDB2: String?, DB3: String?, idDB3: String?, childDB3: String?,
     ) {
         val dialog = ProgressDialog(activity)
         dialog.setTitle("Please wait")
@@ -659,7 +504,7 @@ object VOID {
                 incrementItemRemoveCount(DB2, idDB2, childDB2)
             if ((DB3 != null) and (idDB3 != null) and (childDB3 != null))
                 incrementItemRemoveCount(DB3, idDB3, childDB3)
-            DATAv.isChange = true
+            DATA.isChange = true
             activity.onBackPressed()
             dialog.dismiss()
             Toast.makeText(activity, "$name Deleted Successfully...", Toast.LENGTH_SHORT).show()
@@ -670,16 +515,13 @@ object VOID {
         }
     }
 
-    fun addToEditorsChoice(
-        context: Context?, activity: Activity, id: String?,
-        number: Int,
-    ) {
+    fun addToEditorsChoice(context: Context?, activity: Activity, id: String?, number: Int) {
         val dialog = ProgressDialog(context)
         dialog.setMessage("Updating Editors Choice...")
         dialog.show()
         val hashMap = HashMap<String?, Any>()
-        hashMap[DATAv.EDITORS_CHOICE] = number
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        hashMap[DATA.EDITORS_CHOICE] = number
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         reference.child(id!!).updateChildren(hashMap).addOnSuccessListener {
             dialog.dismiss()
             Toast.makeText(context, "Editors Choice updated...", Toast.LENGTH_SHORT).show()
@@ -695,8 +537,8 @@ object VOID {
         val reference = FirebaseDatabase.getInstance().getReference(database!!)
         reference.child(dataId!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val Name = DATAv.EMPTY + snapshot.child(DATAv.NAME).value
-                name.text = MessageFormat.format("{0}{1}", DATAv.EMPTY, Name)
+                val Name = DATA.EMPTY + snapshot.child(DATA.NAME).value
+                name.text = MessageFormat.format("{0}{1}", DATA.EMPTY, Name)
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -716,9 +558,10 @@ object VOID {
         val image = dialog.findViewById<ImageView>(R.id.image)
         val name = dialog.findViewById<TextView>(R.id.name)
         val aboutTheArtist = dialog.findViewById<TextView>(R.id.aboutTheArtist)
+
         Glide(true, context, imageDB, image)
-        name.text = MessageFormat.format("{0}{1}", DATAv.EMPTY, nameDB)
-        aboutTheArtist.text = MessageFormat.format("{0}{1}", DATAv.EMPTY, aboutDB)
+        name.text = MessageFormat.format("{0}{1}", DATA.EMPTY, nameDB)
+        aboutTheArtist.text = MessageFormat.format("{0}{1}", DATA.EMPTY, aboutDB)
         dialog.show()
         dialog.window!!.attributes = lp
     }

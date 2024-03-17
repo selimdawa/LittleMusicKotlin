@@ -14,8 +14,8 @@ import com.flatcode.littlemusicadmin.Model.Main
 import com.flatcode.littlemusicadmin.Model.Song
 import com.flatcode.littlemusicadmin.Model.User
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.CLASSv
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.CLASS
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityMainBinding
@@ -48,18 +48,13 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         // Color Mode -------------------------------- End
         val sharedPreferences = PreferenceManager
             .getDefaultSharedPreferences(baseContext)
-        if (sharedPreferences.getString(DATAv.COLOR_OPTION, "ONE") == "ONE") {
+        if (sharedPreferences.getString(DATA.COLOR_OPTION, "ONE") == "ONE") {
             binding!!.toolbar.mode.setBackgroundResource(R.drawable.sun)
-        } else if (sharedPreferences.getString(DATAv.COLOR_OPTION, "NIGHT_ONE") == "NIGHT_ONE") {
+        } else if (sharedPreferences.getString(DATA.COLOR_OPTION, "NIGHT_ONE") == "NIGHT_ONE") {
             binding!!.toolbar.mode.setBackgroundResource(R.drawable.moon)
         }
         binding!!.toolbar.image.setOnClickListener {
-            VOID.IntentExtra(
-                context,
-                CLASSv.PROFILE,
-                DATAv.PROFILE_ID,
-                DATAv.FirebaseUserUid
-            )
+            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
 
         //binding.recyclerView.setHasFixedSize(true);
@@ -77,21 +72,19 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
     var AR = 0
     var FA = 0
     private fun nrItems() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.USERS)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 U = 0
                 for (data in dataSnapshot.children) {
-                    val item = data.getValue(
-                        User::class.java
-                    )!!
-                    if (item.id != null && item.id != DATAv.FirebaseUserUid) U++
+                    val item = data.getValue(User::class.java)!!
+                    if (item.id != null && item.id != DATA.FirebaseUserUid) U++
                 }
                 nrSongs()
             }
 
             private fun nrSongs() {
-                val reference = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+                val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
                 reference.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         SO = 0
@@ -100,7 +93,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
                             val item = data.getValue(Song::class.java)!!
                             if (item.id != null) {
                                 SO++
-                                if (item.editorsChoice != 0) if (item.publisher == DATAv.FirebaseUserUid) EC++
+                                if (item.editorsChoice != 0) if (item.publisher == DATA.FirebaseUserUid) EC++
                             }
                         }
                         nrCategories()
@@ -111,13 +104,13 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
             }
 
             private fun nrCategories() {
-                val reference = FirebaseDatabase.getInstance().getReference(DATAv.CATEGORIES)
+                val reference = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
                 reference.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         CA = 0
                         for (data in dataSnapshot.children) {
                             val item = data.getValue(Song::class.java)!!
-                            if (item.id != null) if (item.publisher == DATAv.FirebaseUserUid) CA++
+                            if (item.id != null) if (item.publisher == DATA.FirebaseUserUid) CA++
                         }
                         nrSliderShow()
                     }
@@ -127,7 +120,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
             }
 
             private fun nrSliderShow() {
-                val reference = FirebaseDatabase.getInstance().getReference(DATAv.SLIDER_SHOW)
+                val reference = FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
                 reference.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         SL = 0
@@ -140,7 +133,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
             }
 
             private fun nrAlbums() {
-                val reference = FirebaseDatabase.getInstance().getReference(DATAv.ALBUMS)
+                val reference = FirebaseDatabase.getInstance().getReference(DATA.ALBUMS)
                 reference.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         AL = 0
@@ -153,7 +146,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
             }
 
             private fun nrArtists() {
-                val reference = FirebaseDatabase.getInstance().getReference(DATAv.ARTISTS)
+                val reference = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS)
                 reference.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         AR = 0
@@ -166,8 +159,8 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
             }
 
             private fun nrFavorites() {
-                val reference = FirebaseDatabase.getInstance().getReference(DATAv.FAVORITES)
-                    .child(DATAv.FirebaseUserUid)
+                val reference = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
+                    .child(DATA.FirebaseUserUid)
                 reference.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         FA = 0
@@ -184,13 +177,11 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
     }
 
     private fun userInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.USERS)
-            .child(DATAv.FirebaseUserUid)
+        val reference =
+            FirebaseDatabase.getInstance().getReference(DATA.USERS).child(DATA.FirebaseUserUid)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val user = dataSnapshot.getValue(
-                    User::class.java
-                )!!
+                val user = dataSnapshot.getValue(User::class.java)!!
                 VOID.Glide(true, context, user.profileImage, binding!!.toolbar.image)
             }
 
@@ -203,20 +194,20 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         albums: Int, artists: Int, favorites: Int,
     ) {
         list!!.clear()
-        val item1 = Main(R.drawable.ic_person, "Users", users, CLASSv.USERS)
-        val item2 = Main(R.drawable.ic_add, "Add Song", 0, CLASSv.SONG_ADD)
-        val item3 = Main(R.drawable.ic_music, "Songs", songs, CLASSv.SONGS)
+        val item1 = Main(R.drawable.ic_person, "Users", users, CLASS.USERS)
+        val item2 = Main(R.drawable.ic_add, "Add Song", 0, CLASS.SONG_ADD)
+        val item3 = Main(R.drawable.ic_music, "Songs", songs, CLASS.SONGS)
         val item4 =
-            Main(R.drawable.ic_users, "Editors Choice", editorsChoice, CLASSv.EDITORS_CHOICE)
-        val item5 = Main(R.drawable.ic_add_category, "Add Category", 0, CLASSv.CATEGORY_ADD)
-        val item6 = Main(R.drawable.ic_category_gray, "Categories", categories, CLASSv.CATEGORIES)
-        val item7 = Main(R.drawable.ic_slider, "Slider Show", sliderShow, CLASSv.SLIDER_SHOW)
-        val item8 = Main(R.drawable.ic_adds, "Add Album", 0, CLASSv.ALBUM_ADD)
-        val item9 = Main(R.drawable.ic_album, "Albums", albums, CLASSv.ALBUMS)
-        val item10 = Main(R.drawable.ic__add, "Add Artist", 0, CLASSv.ARTIST_ADD)
-        val item11 = Main(R.drawable.ic_mic, "Artists", artists, CLASSv.ARTISTS)
-        val item12 = Main(R.drawable.ic_star_selected, "Favorites", favorites, CLASSv.FAVORITES)
-        val item13 = Main(R.drawable.ic_privacy_policy, "Privacy Policy", 0, CLASSv.PRIVACY_POLICY)
+            Main(R.drawable.ic_users, "Editors Choice", editorsChoice, CLASS.EDITORS_CHOICE)
+        val item5 = Main(R.drawable.ic_add_category, "Add Category", 0, CLASS.CATEGORY_ADD)
+        val item6 = Main(R.drawable.ic_category_gray, "Categories", categories, CLASS.CATEGORIES)
+        val item7 = Main(R.drawable.ic_slider, "Slider Show", sliderShow, CLASS.SLIDER_SHOW)
+        val item8 = Main(R.drawable.ic_adds, "Add Album", 0, CLASS.ALBUM_ADD)
+        val item9 = Main(R.drawable.ic_album, "Albums", albums, CLASS.ALBUMS)
+        val item10 = Main(R.drawable.ic__add, "Add Artist", 0, CLASS.ARTIST_ADD)
+        val item11 = Main(R.drawable.ic_mic, "Artists", artists, CLASS.ARTISTS)
+        val item12 = Main(R.drawable.ic_star_selected, "Favorites", favorites, CLASS.FAVORITES)
+        val item13 = Main(R.drawable.ic_privacy_policy, "Privacy Policy", 0, CLASS.PRIVACY_POLICY)
         list!!.add(item1)
         list!!.add(item2)
         list!!.add(item3)

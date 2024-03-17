@@ -7,7 +7,6 @@ import java.util.*
 
 class SongMainFilter(var list: ArrayList<Song?>, var adapter: SongMainAdapter) : Filter() {
     override fun performFiltering(constraint: CharSequence): FilterResults {
-
         var constraint: CharSequence? = constraint
         val results = FilterResults()
         if (constraint != null && constraint.length > 0) {

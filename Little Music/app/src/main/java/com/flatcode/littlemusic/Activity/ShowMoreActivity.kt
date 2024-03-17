@@ -11,10 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.Adapterimport.SongAdapter
 import com.flatcode.littlemusic.Modelimport.Song
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.Unitimport.THEME
 import com.flatcode.littlemusic.databinding.ActivityShowMoreBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class ShowMoreActivity : AppCompatActivity() {
@@ -39,22 +43,25 @@ class ShowMoreActivity : AppCompatActivity() {
         setContentView(view)
 
         val intent = intent
-        type = intent.getStringExtra(DATAv.SHOW_MORE_TYPE)
-        name = intent.getStringExtra(DATAv.SHOW_MORE_NAME)
-        isReverse = intent.getStringExtra(DATAv.SHOW_MORE_BOOLEAN)
+        type = intent.getStringExtra(DATA.SHOW_MORE_TYPE)
+        name = intent.getStringExtra(DATA.SHOW_MORE_NAME)
+        isReverse = intent.getStringExtra(DATA.SHOW_MORE_BOOLEAN)
 
         binding!!.toolbar.nameSpace.text = name
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+
         if (isReverse == "true") {
             recyclerView = binding!!.recyclerViewReverse
         } else if (isReverse == "false") {
             recyclerView = binding!!.recyclerView
         }
+
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
-            DATAv.searchStatus = true
+            DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
 
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -68,12 +75,12 @@ class ShowMoreActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {}
         })
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
 
         //binding.recyclerView.setHasFixedSize(true);
         list = ArrayList()
         jcAudios = ArrayList()
         recyclerView!!.adapter = adapter
+
         adapter = SongAdapter(activity, list!!) { songs: Song?, position: Int ->
             changeSelectedSong(position)
             binding!!.player.jcPlayer.playAudio(jcAudios!![position])
@@ -83,14 +90,14 @@ class ShowMoreActivity : AppCompatActivity() {
 
     private fun getData(orderBy: String?) {
         changeSelectedSong(-1)
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 list!!.clear()
                 var i = 0
                 for (data in dataSnapshot.children) {
                     val item = data.getValue(Song::class.java)!!
-                    if (orderBy == DATAv.EDITORS_CHOICE) {
+                    if (orderBy == DATA.EDITORS_CHOICE) {
                         if (item.editorsChoice > 0) list!!.add(item)
                     } else list!!.add(item)
                     item.key = (data.key)
@@ -129,11 +136,11 @@ class ShowMoreActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (DATAv.searchStatus) {
+        if (DATA.searchStatus) {
             binding!!.toolbar.toolbar.visibility = View.VISIBLE
             binding!!.toolbar.toolbarSearch.visibility = View.GONE
-            DATAv.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATAv.EMPTY)
+            DATA.searchStatus = false
+            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
         } else super.onBackPressed()
     }
 

@@ -4,19 +4,20 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Filter
+import android.widget.Filterable
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusicadmin.Filter.EditorsChoiceFilter
 import com.flatcode.littlemusicadmin.Model.Song
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ItemEditorsChoiceBinding
 
 class EditorsChoiceSongAdapter(
-    private val activity: Activity,
-    var oldId: String?,
-    var list: ArrayList<Song?>,
-    number: Int,
+    private val activity: Activity, var oldId: String?, var list: ArrayList<Song?>, number: Int,
 ) : RecyclerView.Adapter<EditorsChoiceSongAdapter.ViewHolder>(), Filterable {
 
     private var binding: ItemEditorsChoiceBinding? = null
@@ -25,35 +26,33 @@ class EditorsChoiceSongAdapter(
     var number: Int
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemEditorsChoiceBinding.inflate(
-            LayoutInflater.from(
-                activity
-            ), parent, false
-        )
+        binding = ItemEditorsChoiceBinding.inflate(LayoutInflater.from(activity), parent, false)
         return ViewHolder(binding!!.root)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
-        val id = DATAv.EMPTY + item!!.id
-        val name = DATAv.EMPTY + item.name
-        val nrViews = DATAv.EMPTY + item.viewsCount
-        val nrLoves = DATAv.EMPTY + item.lovesCount
-        val artistId = DATAv.EMPTY + item.artistId
-        val albumId = DATAv.EMPTY + item.albumId
-        val categoryId = DATAv.EMPTY + item.categoryId
+        val id = DATA.EMPTY + item!!.id
+        val name = DATA.EMPTY + item.name
+        val nrViews = DATA.EMPTY + item.viewsCount
+        val nrLoves = DATA.EMPTY + item.lovesCount
+        val artistId = DATA.EMPTY + item.artistId
+        val albumId = DATA.EMPTY + item.albumId
+        val categoryId = DATA.EMPTY + item.categoryId
 
-        if (name == DATAv.EMPTY) {
+        if (name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
         } else {
             holder.name.visibility = View.VISIBLE
             holder.name.text = name
         }
+
         holder.nrViews.text = nrViews
         holder.nrLoves.text = nrLoves
-        VOID.dataName(DATAv.ARTISTS, artistId, holder.artist)
-        VOID.dataName(DATAv.ALBUMS, albumId, holder.album)
-        VOID.dataName(DATAv.CATEGORIES, categoryId, holder.category)
+
+        VOID.dataName(DATA.ARTISTS, artistId, holder.artist)
+        VOID.dataName(DATA.ALBUMS, albumId, holder.album)
+        VOID.dataName(DATA.CATEGORIES, categoryId, holder.category)
 
         holder.add.setOnClickListener {
             if (oldId != null) {
@@ -76,9 +75,7 @@ class EditorsChoiceSongAdapter(
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var add: ImageView
         var name: TextView
         var nrViews: TextView

@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Model.Artist
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityArtistAddBinding
@@ -38,7 +38,7 @@ class ArtistEditActivity : AppCompatActivity() {
         val view = binding!!.root
         setContentView(view)
 
-        artistId = intent.getStringExtra(DATAv.ARTIST_ID)
+        artistId = intent.getStringExtra(DATA.ARTIST_ID)
 
         dialog = ProgressDialog(activity)
         dialog!!.setTitle("Please wait...")
@@ -51,8 +51,8 @@ class ArtistEditActivity : AppCompatActivity() {
         binding!!.toolbar.ok.setOnClickListener { validateData() }
     }
 
-    private var name = DATAv.EMPTY
-    private var aboutTheArtist = DATAv.EMPTY
+    private var name = DATA.EMPTY
+    private var aboutTheArtist = DATA.EMPTY
     private fun validateData() {
         name = binding!!.nameEt.text.toString().trim { it <= ' ' }
         aboutTheArtist = binding!!.aboutTheArtistEt.text.toString().trim { it <= ' ' }
@@ -62,7 +62,7 @@ class ArtistEditActivity : AppCompatActivity() {
             Toast.makeText(activity, "Enter Description...", Toast.LENGTH_SHORT).show()
         } else {
             if (imageUri == null) {
-                update(DATAv.EMPTY)
+                update(DATA.EMPTY)
             } else {
                 uploadImage()
             }
@@ -74,19 +74,17 @@ class ArtistEditActivity : AppCompatActivity() {
         dialog!!.show()
         val filePathAndName = "Images/Artists/$artistId"
         val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATAv.DOT + VOID.getFileExtension(imageUri, activity))
+            .getReference(filePathAndName + DATA.DOT + VOID.getFileExtension(imageUri, activity))
         reference.putFile(imageUri!!)
             .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
                 val uriTask = taskSnapshot.storage.downloadUrl
                 while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATAv.EMPTY + uriTask.result
+                val uploadedImageUrl = DATA.EMPTY + uriTask.result
                 update(uploadedImageUrl)
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    activity,
-                    "Failed to upload image due to " + e.message,
-                    Toast.LENGTH_SHORT
+                    activity, "Failed to upload image due to " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -95,12 +93,12 @@ class ArtistEditActivity : AppCompatActivity() {
         dialog!!.setMessage("Updating artist image...")
         dialog!!.show()
         val hashMap = HashMap<String?, Any>()
-        hashMap[DATAv.NAME] = DATAv.EMPTY + name
-        hashMap[DATAv.ABOUT_THE_ARTIST] = DATAv.EMPTY + aboutTheArtist
+        hashMap[DATA.NAME] = DATA.EMPTY + name
+        hashMap[DATA.ABOUT_THE_ARTIST] = DATA.EMPTY + aboutTheArtist
         if (imageUri != null) {
-            hashMap[DATAv.IMAGE] = DATAv.EMPTY + imageUrl
+            hashMap[DATA.IMAGE] = DATA.EMPTY + imageUrl
         }
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.ARTISTS)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS)
         reference.child(artistId!!).updateChildren(hashMap).addOnSuccessListener {
             dialog!!.dismiss()
             Toast.makeText(activity, "Artist updated...", Toast.LENGTH_SHORT).show()
@@ -112,13 +110,14 @@ class ArtistEditActivity : AppCompatActivity() {
     }
 
     private fun loadInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.ARTISTS)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS)
         reference.child(artistId!!).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val item = snapshot.getValue(Artist::class.java)!!
                 val name = item.name
                 val aboutTheArtist = item.aboutTheArtist
                 val image = item.image
+
                 VOID.Glide(true, activity, image, binding!!.image)
                 binding!!.nameEt.setText(name)
                 binding!!.aboutTheArtistEt.setText(aboutTheArtist)

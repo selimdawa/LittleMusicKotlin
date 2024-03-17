@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusicadmin.Model.Main
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.databinding.ItemMainBinding
 import java.text.MessageFormat
 
@@ -21,11 +21,7 @@ class MainAdapter(private val context: Context, var list: List<Main>) :
     private var binding: ItemMainBinding? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemMainBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), parent, false
-        )
+        binding = ItemMainBinding.inflate(LayoutInflater.from(context), parent, false)
         return ViewHolder(binding!!.root)
     }
 
@@ -36,17 +32,20 @@ class MainAdapter(private val context: Context, var list: List<Main>) :
         val name = model.title
         //String id = list.getId();
         val c = model.c
+
         if (image != 0) {
             holder.image.setImageResource(image)
         } else {
             holder.image.setImageResource(R.drawable.ic_load)
         }
+
         if (number != 0) {
             holder.number.visibility = View.VISIBLE
-            holder.number.text = MessageFormat.format("{0}{1}", DATAv.EMPTY, number)
+            holder.number.text = MessageFormat.format("{0}{1}", DATA.EMPTY, number)
         } else {
             holder.number.visibility = View.GONE
         }
+
         holder.name.text = name
         holder.itemView.setOnClickListener {
             val intent = Intent(context, c)

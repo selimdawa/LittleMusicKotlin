@@ -4,7 +4,7 @@ import com.flatcode.littlemusicadmin.Activity.*
 import com.flatcode.littlemusicadmin.Auth.ForgetPasswordActivity
 import com.flatcode.littlemusicadmin.Auth.LoginActivity
 
-object CLASSv {
+object CLASS {
     var MAIN: Class<*> = MainActivity::class.java
     var SPLASH: Class<*> = SplashActivity::class.java
     var LOGIN: Class<*> = LoginActivity::class.java

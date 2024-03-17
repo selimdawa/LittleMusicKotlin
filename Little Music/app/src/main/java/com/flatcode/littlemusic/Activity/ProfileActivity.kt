@@ -7,8 +7,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.CLASSv
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.CLASS
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.Unitimport.THEME
 import com.flatcode.littlemusic.databinding.ActivityProfileBinding
 import com.google.firebase.database.DataSnapshot
@@ -31,17 +31,12 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(view)
 
         val intent = intent
-        profileId = intent.getStringExtra(DATAv.PROFILE_ID)
+        profileId = intent.getStringExtra(DATA.PROFILE_ID)
 
-        if (profileId == DATAv.FirebaseUserUid) {
+        if (profileId == DATA.FirebaseUserUid) {
             binding!!.edit.visibility = View.VISIBLE
             binding!!.edit.setImageResource(R.drawable.ic_edit_white)
-            binding!!.edit.setOnClickListener {
-                VOID.Intent1(
-                    context,
-                    CLASSv.PROFILE_EDIT
-                )
-            }
+            binding!!.edit.setOnClickListener { VOID.Intent1(context, CLASS.PROFILE_EDIT) }
         }
         binding!!.back.setOnClickListener { onBackPressed() }
     }
@@ -49,18 +44,18 @@ class ProfileActivity : AppCompatActivity() {
     private fun start() {
         loadUserInfo()
         nrFavorites
-        nrInterested(DATAv.ALBUMS, binding!!.numberAlbums)
-        nrInterested(DATAv.ARTISTS, binding!!.numberArtists)
-        nrInterested(DATAv.CATEGORIES, binding!!.numberCategories)
+        nrInterested(DATA.ALBUMS, binding!!.numberAlbums)
+        nrInterested(DATA.ARTISTS, binding!!.numberArtists)
+        nrInterested(DATA.CATEGORIES, binding!!.numberCategories)
     }
 
     private fun loadUserInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.USERS)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
         reference.child(profileId!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //String email = DATA.EMPTY + snapshot.child(DATA.EMAIL).getValue();
-                val username = DATAv.EMPTY + snapshot.child(DATAv.USER_NAME).value
-                val profileImage = DATAv.EMPTY + snapshot.child(DATAv.PROFILE_IMAGE).value
+                val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
+                val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
                 //String timestamp = DATA.EMPTY + snapshot.child(DATA.TIMESTAMP).getValue();
                 //String id = DATA.EMPTY + snapshot.child(DATA.ID).getValue();
                 //int version = DATA.ZERO + snapshot.child(DATA.VERSION).getValue();
@@ -73,10 +68,9 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun nrInterested(database: String, text: TextView) {
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.INTERESTED).child(
-            profileId!!
-        ).child(database)
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.INTERESTED).child(profileId!!)
+            .child(database)
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 text.text = MessageFormat.format("{0}", dataSnapshot.childrenCount)
             }
@@ -87,9 +81,8 @@ class ProfileActivity : AppCompatActivity() {
 
     private val nrFavorites: Unit
         get() {
-            val reference =
-                FirebaseDatabase.getInstance().getReference(DATAv.FAVORITES).child(profileId!!)
-            reference.addListenerForSingleValueEvent(object : ValueEventListener {
+            val ref = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES).child(profileId!!)
+            ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     binding!!.numberFavorites.text =
                         MessageFormat.format("{0}", dataSnapshot.childrenCount)

@@ -9,10 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Adapter.CategoryAdapter
 import com.flatcode.littlemusicadmin.Model.Category
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.databinding.ActivityCategoriesBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class CategoriesActivity : AppCompatActivity() {
@@ -32,13 +36,14 @@ class CategoriesActivity : AppCompatActivity() {
 
         binding!!.toolbar.nameSpace.setText(R.string.categories)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        type = DATAv.TIMESTAMP
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+        type = DATA.TIMESTAMP
+
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
-            DATAv.searchStatus = true
+            DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
 
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -57,31 +62,32 @@ class CategoriesActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = CategoryAdapter(activity, list!!)
         binding!!.recyclerView.adapter = adapter
+
         binding!!.switchBar.all.setOnClickListener {
-            type = DATAv.TIMESTAMP
+            type = DATA.TIMESTAMP
             getData(type)
         }
         binding!!.switchBar.mostSongs.setOnClickListener {
-            type = DATAv.SONGS_COUNT
+            type = DATA.SONGS_COUNT
             getData(type)
         }
         binding!!.switchBar.mostAlbums.setOnClickListener {
-            type = DATAv.ALBUMS_COUNT
+            type = DATA.ALBUMS_COUNT
             getData(type)
         }
         binding!!.switchBar.mostInterested.setOnClickListener {
-            type = DATAv.INTERESTED_COUNT
+            type = DATA.INTERESTED_COUNT
             getData(type)
         }
         binding!!.switchBar.name.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             getData(type)
         }
         getData(type)
     }
 
     private fun getData(orderBy: String?) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATAv.CATEGORIES)
+        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 list!!.clear()
@@ -109,14 +115,14 @@ class CategoriesActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (DATAv.searchStatus) {
+        if (DATA.searchStatus) {
             binding!!.toolbar.toolbar.visibility = View.VISIBLE
             binding!!.toolbar.toolbarSearch.visibility = View.GONE
-            DATAv.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATAv.EMPTY)
-        } else if (DATAv.isChange) {
+            DATA.searchStatus = false
+            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
+        } else if (DATA.isChange) {
             onResume()
-            DATAv.isChange = false
+            DATA.isChange = false
         } else super.onBackPressed()
     }
 

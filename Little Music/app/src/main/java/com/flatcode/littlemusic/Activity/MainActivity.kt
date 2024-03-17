@@ -19,8 +19,8 @@ import com.flatcode.littlemusic.Fragmentimport.CategoriesFragment
 import com.flatcode.littlemusic.Fragmentimport.HomeFragment
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.CLASSv
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.CLASS
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.Unitimport.THEME
 import com.flatcode.littlemusic.databinding.ActivityMainBinding
 import com.google.firebase.database.DataSnapshot
@@ -53,9 +53,9 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         // Color Mode -------------------------------- End
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(baseContext)
-        if (sharedPreferences.getString(DATAv.COLOR_OPTION, "ONE") == "ONE") {
+        if (sharedPreferences.getString(DATA.COLOR_OPTION, "ONE") == "ONE") {
             binding!!.toolbar.mode.setBackgroundResource(R.drawable.sun)
-        } else if (sharedPreferences.getString(DATAv.COLOR_OPTION, "NIGHT_ONE") == "NIGHT_ONE") {
+        } else if (sharedPreferences.getString(DATA.COLOR_OPTION, "NIGHT_ONE") == "NIGHT_ONE") {
             binding!!.toolbar.mode.setBackgroundResource(R.drawable.moon)
         }
 
@@ -108,9 +108,8 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         }
         meowBottomNavigation!!.setOnReselectListener { item: MeowBottomNavigation.Model ->
             when (item.id) {
-                1 -> Toast.makeText(
-                    applicationContext, R.string.settings, Toast.LENGTH_SHORT
-                ).show()
+                1 -> Toast.makeText(applicationContext, R.string.settings, Toast.LENGTH_SHORT)
+                    .show()
 
                 2 -> Toast.makeText(applicationContext, R.string.home, Toast.LENGTH_SHORT).show()
                 3 -> Toast.makeText(applicationContext, R.string.my_songs, Toast.LENGTH_SHORT)
@@ -121,29 +120,22 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
             }
         }
         binding!!.toolbar.image.setOnClickListener {
-            VOID.IntentExtra(
-                context,
-                CLASSv.PROFILE,
-                DATAv.PROFILE_ID,
-                DATAv.FirebaseUserUid
-            )
+            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
         loadUserInfo()
     }
 
     private fun loadFragment(fragment: Fragment?) {
-        supportFragmentManager.beginTransaction().replace(
-            R.id.fragmentContainer,
-            fragment!!
-        ).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment!!)
+            .commit()
     }
 
     private fun loadUserInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.USERS)
-        reference.child(Objects.requireNonNull(DATAv.FirebaseUserUid))
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
+        reference.child(Objects.requireNonNull(DATA.FirebaseUserUid))
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val profileImage = DATAv.EMPTY + snapshot.child(DATAv.PROFILE_IMAGE).value
+                    val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
                     VOID.GlideImage(true, context, profileImage, binding!!.toolbar.image)
                 }
 
@@ -157,7 +149,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
 
     // Color Mode ----------------------------- Start
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == DATAv.COLOR_OPTION) {
+        if (key == DATA.COLOR_OPTION) {
             recreate()
         }
     }

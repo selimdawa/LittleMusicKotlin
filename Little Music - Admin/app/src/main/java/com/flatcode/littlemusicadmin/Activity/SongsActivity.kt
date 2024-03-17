@@ -11,10 +11,14 @@ import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusicadmin.Adapter.SongAdapter
 import com.flatcode.littlemusicadmin.Model.Song
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.databinding.ActivityPageSongSwitchBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class SongsActivity : AppCompatActivity() {
@@ -37,13 +41,14 @@ class SongsActivity : AppCompatActivity() {
 
         binding!!.toolbar.nameSpace.setText(R.string.songs)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        type = DATAv.TIMESTAMP
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+        type = DATA.TIMESTAMP
+
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
-            DATAv.searchStatus = true
+            DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
 
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -57,24 +62,25 @@ class SongsActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {}
         })
+
         init()
         binding!!.switchBar.all.setOnClickListener {
-            type = DATAv.TIMESTAMP
+            type = DATA.TIMESTAMP
             init()
             getData(type)
         }
         binding!!.switchBar.mostViews.setOnClickListener {
-            type = DATAv.VIEWS_COUNT
+            type = DATA.VIEWS_COUNT
             init()
             getData(type)
         }
         binding!!.switchBar.mostLoves.setOnClickListener {
-            type = DATAv.LOVES_COUNT
+            type = DATA.LOVES_COUNT
             init()
             getData(type)
         }
         binding!!.switchBar.name.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             init()
             getData(type)
         }
@@ -85,6 +91,7 @@ class SongsActivity : AppCompatActivity() {
         list = ArrayList()
         jcAudios = ArrayList()
         binding!!.recyclerView.adapter = adapter
+
         adapter = SongAdapter(activity, list!!) { songs: Song?, position: Int ->
             changeSelectedSong(position)
             binding!!.player.jcPlayer.playAudio(jcAudios!![position])
@@ -94,7 +101,7 @@ class SongsActivity : AppCompatActivity() {
 
     private fun getData(orderBy: String?) {
         changeSelectedSong(-1)
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 list!!.clear()
@@ -141,14 +148,14 @@ class SongsActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (DATAv.searchStatus) {
+        if (DATA.searchStatus) {
             binding!!.toolbar.toolbar.visibility = View.VISIBLE
             binding!!.toolbar.toolbarSearch.visibility = View.GONE
-            DATAv.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATAv.EMPTY)
-        } else if (DATAv.isChange) {
+            DATA.searchStatus = false
+            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
+        } else if (DATA.isChange) {
             onResume()
-            DATAv.isChange = false
+            DATA.isChange = false
         } else super.onBackPressed()
     }
 

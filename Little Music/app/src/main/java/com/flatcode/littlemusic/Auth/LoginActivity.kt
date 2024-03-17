@@ -8,8 +8,8 @@ import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.CLASSv
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.CLASS
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.Unitimport.THEME
 import com.flatcode.littlemusic.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -30,22 +30,14 @@ class LoginActivity : AppCompatActivity() {
 
         VOID.Logo(baseContext, binding!!.logo)
         VOID.Intro(baseContext, binding!!.background, binding!!.backWhite, binding!!.backBlack)
+
         auth = FirebaseAuth.getInstance()
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
-        binding!!.forget.setOnClickListener {
-            VOID.Intent1(
-                context,
-                CLASSv.FORGET_PASSWORD
-            )
-        }
-        binding!!.noAccount.setOnClickListener {
-            VOID.Intent1(
-                context,
-                CLASSv.REGISTER
-            )
-        }
+
+        binding!!.forget.setOnClickListener { VOID.Intent1(context, CLASS.FORGET_PASSWORD) }
+        binding!!.noAccount.setOnClickListener { VOID.Intent1(context, CLASS.REGISTER) }
         binding!!.loginBtn.setOnClickListener { validateDate() }
     }
 
@@ -71,15 +63,10 @@ class LoginActivity : AppCompatActivity() {
         dialog!!.setMessage("Logging In...")
         dialog!!.show()
         auth!!.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                VOID.IntentClear(
-                    context,
-                    CLASSv.MAIN
-                )
-            }
+            .addOnSuccessListener { VOID.IntentClear(context, CLASS.MAIN) }
             .addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
-                Toast.makeText(context, DATAv.EMPTY + e.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
             }
     }
 }

@@ -7,7 +7,7 @@ import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.CLASSv
+import com.flatcode.littlemusic.Unitimport.CLASS
 import com.flatcode.littlemusic.Unitimport.THEME
 import com.flatcode.littlemusic.databinding.ActivityForgetPasswordBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -34,11 +34,11 @@ class ForgetPasswordActivity : AppCompatActivity() {
         dialog!!.setCanceledOnTouchOutside(false)
 
         binding!!.noAccount.setOnClickListener {
-            VOID.Intent1(context, CLASSv.REGISTER)
+            VOID.Intent1(context, CLASS.REGISTER)
             finish()
         }
         binding!!.login.setOnClickListener {
-            VOID.Intent1(context, CLASSv.LOGIN)
+            VOID.Intent1(context, CLASS.LOGIN)
             finish()
         }
         binding!!.go.setOnClickListener { validateDate() }
@@ -62,9 +62,7 @@ class ForgetPasswordActivity : AppCompatActivity() {
         auth!!.sendPasswordResetEmail(email).addOnCompleteListener {
             dialog!!.dismiss()
             Toast.makeText(
-                context,
-                "Instructions to reset password sent to $email",
-                Toast.LENGTH_SHORT
+                context, "Instructions to reset password sent to $email", Toast.LENGTH_SHORT
             ).show()
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()

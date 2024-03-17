@@ -16,10 +16,14 @@ import com.flatcode.littlemusic.Adapterimport.ImageSliderAdapter
 import com.flatcode.littlemusic.Modelimport.Category
 import com.flatcode.littlemusic.Modelimport.Song
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.CLASSv
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.CLASS
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.databinding.FragmentHomeBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 
 class HomeFragment : Fragment() {
 
@@ -44,44 +48,38 @@ class HomeFragment : Fragment() {
     private var categoryAdapter: CategoryHomeAdapter? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentHomeBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), container, false
-        )
+        binding = FragmentHomeBinding.inflate(LayoutInflater.from(context), container, false)
 
         loadCategories()
-
         binding!!.showMore.setOnClickListener {
             VOID.IntentExtra3(
-                context, CLASSv.SHOW_MORE,
-                DATAv.SHOW_MORE_TYPE, DATAv.EDITORS_CHOICE, DATAv.SHOW_MORE_NAME,
-                binding!!.name.text.toString(), DATAv.SHOW_MORE_BOOLEAN, DATAv.EMPTY + B_one
+                context, CLASS.SHOW_MORE,
+                DATA.SHOW_MORE_TYPE, DATA.EDITORS_CHOICE, DATA.SHOW_MORE_NAME,
+                binding!!.name.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_one
             )
         }
         binding!!.showMore2.setOnClickListener {
             VOID.IntentExtra3(
-                context, CLASSv.SHOW_MORE,
-                DATAv.SHOW_MORE_TYPE, DATAv.VIEWS_COUNT, DATAv.SHOW_MORE_NAME,
-                binding!!.mostViews.text.toString(), DATAv.SHOW_MORE_BOOLEAN, DATAv.EMPTY + B_two
+                context, CLASS.SHOW_MORE,
+                DATA.SHOW_MORE_TYPE, DATA.VIEWS_COUNT, DATA.SHOW_MORE_NAME,
+                binding!!.mostViews.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_two
             )
         }
         binding!!.showMore3.setOnClickListener {
             VOID.IntentExtra3(
-                context, CLASSv.SHOW_MORE,
-                DATAv.SHOW_MORE_TYPE, DATAv.LOVES_COUNT, DATAv.SHOW_MORE_NAME,
-                binding!!.name3.text.toString(), DATAv.SHOW_MORE_BOOLEAN, DATAv.EMPTY + B_three
+                context, CLASS.SHOW_MORE,
+                DATA.SHOW_MORE_TYPE, DATA.LOVES_COUNT, DATA.SHOW_MORE_NAME,
+                binding!!.name3.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_three
             )
         }
         binding!!.showMore4.setOnClickListener {
             VOID.IntentExtra3(
-                context, CLASSv.SHOW_MORE,
-                DATAv.SHOW_MORE_TYPE, DATAv.TIMESTAMP, DATAv.SHOW_MORE_NAME,
-                binding!!.name4.text.toString(), DATAv.SHOW_MORE_BOOLEAN, DATAv.EMPTY + B_four
+                context, CLASS.SHOW_MORE,
+                DATA.SHOW_MORE_TYPE, DATA.TIMESTAMP, DATA.SHOW_MORE_NAME,
+                binding!!.name4.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + B_four
             )
         }
 
@@ -138,8 +136,8 @@ class HomeFragment : Fragment() {
             changeSelectedSong(-1, adapter3)
             binding!!.player.jcPlayer.playAudio(jcAudios[position])
         }) { songs: Song?, position: Int -> binding!!.player.jcPlayer.pause() }
-        FirebaseDatabase.getInstance().getReference(DATAv.SLIDER_SHOW)
-            .addValueEventListener(object : ValueEventListener {
+        FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val counts = snapshot.childrenCount
                     TotalCounts = counts.toInt()
@@ -153,41 +151,25 @@ class HomeFragment : Fragment() {
 
     private fun start() {
         loadPostEditorsChoice(
-            DATAv.EDITORS_CHOICE,
-            list,
-            adapter,
-            binding!!.bar,
-            binding!!.recyclerView,
-            binding!!.empty
+            DATA.EDITORS_CHOICE, list, adapter, binding!!.bar,
+            binding!!.recyclerView, binding!!.empty
         )
         loadPostBy(
-            DATAv.VIEWS_COUNT,
-            list2,
-            adapter2,
-            binding!!.bar2,
-            binding!!.recyclerView2,
-            binding!!.empty2
+            DATA.VIEWS_COUNT, list2, adapter2, binding!!.bar2,
+            binding!!.recyclerView2, binding!!.empty2
         )
         loadPostBy(
-            DATAv.LOVES_COUNT,
-            list3,
-            adapter3,
-            binding!!.bar3,
-            binding!!.recyclerView3,
-            binding!!.empty3
+            DATA.LOVES_COUNT, list3, adapter3, binding!!.bar3,
+            binding!!.recyclerView3, binding!!.empty3
         )
         loadPostBy(
-            DATAv.TIMESTAMP,
-            list4,
-            adapter4,
-            binding!!.bar4,
-            binding!!.recyclerView4,
-            binding!!.empty4
+            DATA.TIMESTAMP, list4, adapter4, binding!!.bar4,
+            binding!!.recyclerView4, binding!!.empty4
         )
     }
 
     private fun loadCategories() {
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.CATEGORIES)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 categoryList!!.clear()
@@ -207,14 +189,14 @@ class HomeFragment : Fragment() {
         bar: ProgressBar, recyclerView: RecyclerView, empty: TextView,
     ) {
         changeSelectedSong(-1, adapter)
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
-        ref.orderByChild(orderBy).limitToLast(DATAv.ORDER_MAIN)
+        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
+        ref.orderByChild(orderBy).limitToLast(DATA.ORDER_MAIN)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     list!!.clear()
                     for (data in snapshot.children) {
                         val item = data.getValue(Song::class.java)!!
-                        if (orderBy != DATAv.EDITORS_CHOICE) {
+                        if (orderBy != DATA.EDITORS_CHOICE) {
                             list.add(item)
                             item.key = (snapshot.key)
                             currentSong = -1
@@ -228,7 +210,7 @@ class HomeFragment : Fragment() {
                     if (list.isNotEmpty()) {
                         recyclerView.visibility = View.VISIBLE
                         empty.visibility = View.GONE
-                        if (orderBy != DATAv.EDITORS_CHOICE) list.reverse()
+                        if (orderBy != DATA.EDITORS_CHOICE) list.reverse()
                     } else {
                         recyclerView.visibility = View.GONE
                         empty.visibility = View.VISIBLE
@@ -249,13 +231,13 @@ class HomeFragment : Fragment() {
         bar: ProgressBar, recyclerView: RecyclerView, empty: TextView,
     ) {
         changeSelectedSong(-1, adapter)
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.orderByChild(orderBy).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 list!!.clear()
                 for (data in snapshot.children) {
                     val item = data.getValue(Song::class.java)!!
-                    if (orderBy == DATAv.EDITORS_CHOICE) {
+                    if (orderBy == DATA.EDITORS_CHOICE) {
                         if (item.editorsChoice <= 5 && item.editorsChoice > 0) {
                             list.add(item)
                             item.key = (snapshot.key)
@@ -272,7 +254,7 @@ class HomeFragment : Fragment() {
                 if (list.isNotEmpty()) {
                     recyclerView.visibility = View.VISIBLE
                     empty.visibility = View.GONE
-                    if (orderBy != DATAv.EDITORS_CHOICE) list.reverse()
+                    if (orderBy != DATA.EDITORS_CHOICE) list.reverse()
                 } else {
                     recyclerView.visibility = View.GONE
                     empty.visibility = View.VISIBLE

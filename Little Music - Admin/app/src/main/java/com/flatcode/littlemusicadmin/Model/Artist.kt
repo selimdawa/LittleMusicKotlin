@@ -12,16 +12,10 @@ class Artist {
     var timestamp: Long = 0
 
     constructor()
+
     constructor(
-        id: String?,
-        name: String?,
-        aboutTheArtist: String?,
-        image: String?,
-        publisher: String?,
-        timestamp: Long,
-        interestedCount: Int,
-        songsCount: Int,
-        albumsCount: Int,
+        id: String?, name: String?, aboutTheArtist: String?, image: String?, publisher: String?,
+        timestamp: Long, interestedCount: Int, songsCount: Int, albumsCount: Int,
     ) {
         this.id = id
         this.name = name

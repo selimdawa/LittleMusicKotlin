@@ -4,13 +4,17 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Filter
+import android.widget.Filterable
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.Filterimport.ArtistFilter
 import com.flatcode.littlemusic.Modelimport.Artist
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.CLASSv
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.CLASS
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.databinding.ItemArtistBinding
 import java.text.MessageFormat
 
@@ -22,50 +26,44 @@ class ArtistAdapter(private val activity: Activity, var list: ArrayList<Artist?>
     private var filter: ArtistFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArtistAdapter.ViewHolder {
-        binding = ItemArtistBinding.inflate(
-            LayoutInflater.from(
-                activity
-            ), parent, false
-        )
+        binding = ItemArtistBinding.inflate(LayoutInflater.from(activity), parent, false)
         return ViewHolder(binding!!.root)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
-        val id = DATAv.EMPTY + item!!.id
-        val name = DATAv.EMPTY + item.name
-        val image = DATAv.EMPTY + item.image
-        val aboutTheArtist = DATAv.EMPTY + item.aboutTheArtist
-        val interestedCount = DATAv.EMPTY + item.interestedCount
-        val albumCount = DATAv.EMPTY + item.albumsCount
-        val songsCount = DATAv.EMPTY + item.songsCount
+        val id = DATA.EMPTY + item!!.id
+        val name = DATA.EMPTY + item.name
+        val image = DATA.EMPTY + item.image
+        val aboutTheArtist = DATA.EMPTY + item.aboutTheArtist
+        val interestedCount = DATA.EMPTY + item.interestedCount
+        val albumCount = DATA.EMPTY + item.albumsCount
+        val songsCount = DATA.EMPTY + item.songsCount
 
         VOID.GlideImage(true, activity, image, holder.image)
-        if (item.name == DATAv.EMPTY) {
+
+        if (item.name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
         } else {
             holder.name.visibility = View.VISIBLE
             holder.name.text = name
         }
-        if (albumCount == DATAv.EMPTY) holder.numberAlbums.text =
-            MessageFormat.format("{0}{1}", DATAv.EMPTY, DATAv.ZERO) else holder.numberAlbums.text =
+
+        if (albumCount == DATA.EMPTY) holder.numberAlbums.text =
+            MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.numberAlbums.text =
             albumCount
-        if (songsCount == DATAv.EMPTY) holder.numberSongs.text =
-            MessageFormat.format("{0}{1}", DATAv.EMPTY, DATAv.ZERO) else holder.numberSongs.text =
+
+        if (songsCount == DATA.EMPTY) holder.numberSongs.text =
+            MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.numberSongs.text =
             songsCount
 
-        VOID.isInterested(holder.add, id, DATAv.ARTISTS)
-        holder.add.setOnClickListener {
-            VOID.checkInterested(
-                holder.add,
-                DATAv.ARTISTS,
-                id
-            )
-        }
+        VOID.isInterested(holder.add, id, DATA.ARTISTS)
+        holder.add.setOnClickListener { VOID.checkInterested(holder.add, DATA.ARTISTS, id) }
+
         holder.item.setOnClickListener {
             VOID.IntentExtra4(
-                activity, CLASSv.ARTIST_SONGS, DATAv.ARTIST_ID, id, DATAv.ARTIST_NAME,
-                name, DATAv.ARTIST_IMAGE, image, DATAv.ARTIST_ABOUT, aboutTheArtist
+                activity, CLASS.ARTIST_SONGS, DATA.ARTIST_ID, id, DATA.ARTIST_NAME,
+                name, DATA.ARTIST_IMAGE, image, DATA.ARTIST_ABOUT, aboutTheArtist
             )
         }
     }
@@ -81,9 +79,7 @@ class ArtistAdapter(private val activity: Activity, var list: ArrayList<Artist?>
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var image: ImageView
         var add: ImageView
         var name: TextView

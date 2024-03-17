@@ -13,11 +13,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumAddBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.theartofdev.edmodo.cropper.CropImage
@@ -55,7 +59,7 @@ class AlbumAddActivity : AppCompatActivity() {
         binding!!.toolbar.ok.setOnClickListener { validateData() }
     }
 
-    private var name = DATAv.EMPTY
+    private var name = DATA.EMPTY
     private fun validateData() {
         //get data
         name = binding!!.nameEt.text.toString().trim { it <= ' ' }
@@ -77,23 +81,21 @@ class AlbumAddActivity : AppCompatActivity() {
     private fun uploadToStorage() {
         dialog!!.setMessage("Uploading Album...")
         dialog!!.show()
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.ALBUMS)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.ALBUMS)
         val id = ref.push().key
         val filePathAndName = "Images/Album/$id"
         val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATAv.DOT + VOID.getFileExtension(imageUri, context))
+            .getReference(filePathAndName + DATA.DOT + VOID.getFileExtension(imageUri, context))
         reference.putFile(imageUri!!)
             .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
                 val uriTask = taskSnapshot.storage.downloadUrl
                 while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATAv.EMPTY + uriTask.result
+                val uploadedImageUrl = DATA.EMPTY + uriTask.result
                 uploadInfoToDB(uploadedImageUrl, id, ref)
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    context,
-                    "Category upload failed due to " + e.message,
-                    Toast.LENGTH_SHORT
+                    context, "Category upload failed due to " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -104,35 +106,29 @@ class AlbumAddActivity : AppCompatActivity() {
 
         //setup data to upload
         val hashMap = HashMap<String?, Any?>()
-        hashMap[DATAv.PUBLISHER] = DATAv.EMPTY + DATAv.FirebaseUserUid
-        hashMap[DATAv.TIMESTAMP] = System.currentTimeMillis()
-        hashMap[DATAv.ID] = id
-        hashMap[DATAv.NAME] = DATAv.EMPTY + name
-        hashMap[DATAv.CATEGORY_ID] = DATAv.EMPTY + selectedCategoryId
-        hashMap[DATAv.ARTIST_ID] = DATAv.EMPTY + selectedArtistId
-        hashMap[DATAv.IMAGE] = uploadedImageUrl
-        hashMap[DATAv.INTERESTED_COUNT] = DATAv.ZERO
-        hashMap[DATAv.SONGS_COUNT] = DATAv.ZERO
+        hashMap[DATA.PUBLISHER] = DATA.EMPTY + DATA.FirebaseUserUid
+        hashMap[DATA.TIMESTAMP] = System.currentTimeMillis()
+        hashMap[DATA.ID] = id
+        hashMap[DATA.NAME] = DATA.EMPTY + name
+        hashMap[DATA.CATEGORY_ID] = DATA.EMPTY + selectedCategoryId
+        hashMap[DATA.ARTIST_ID] = DATA.EMPTY + selectedArtistId
+        hashMap[DATA.IMAGE] = uploadedImageUrl
+        hashMap[DATA.INTERESTED_COUNT] = DATA.ZERO
+        hashMap[DATA.SONGS_COUNT] = DATA.ZERO
         assert(id != null)
         ref.child(id!!).setValue(hashMap).addOnSuccessListener {
             if (selectedArtistId != null) VOID.incrementItemCount(
-                DATAv.ARTISTS,
-                selectedArtistId,
-                DATAv.ALBUMS_COUNT
+                DATA.ARTISTS, selectedArtistId, DATA.ALBUMS_COUNT
             )
             if (selectedCategoryId != null) VOID.incrementItemCount(
-                DATAv.CATEGORIES,
-                selectedCategoryId,
-                DATAv.ALBUMS_COUNT
+                DATA.CATEGORIES, selectedCategoryId, DATA.ALBUMS_COUNT
             )
             dialog!!.dismiss()
             Toast.makeText(context, "Successfully uploaded...", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()
             Toast.makeText(
-                context,
-                "Failure to upload to db due to :" + e.message,
-                Toast.LENGTH_SHORT
+                context, "Failure to upload to db due to :" + e.message, Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -140,14 +136,14 @@ class AlbumAddActivity : AppCompatActivity() {
     private fun loadCategories() {
         categoryList = ArrayList()
         categoryId = ArrayList()
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.CATEGORIES)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 categoryList!!.clear()
                 categoryId!!.clear()
                 for (data in snapshot.children) {
-                    val id = DATAv.EMPTY + data.child(DATAv.ID).value
-                    val name = DATAv.EMPTY + data.child(DATAv.NAME).value
+                    val id = DATA.EMPTY + data.child(DATA.ID).value
+                    val name = DATA.EMPTY + data.child(DATA.NAME).value
                     categoryList!!.add(name)
                     categoryId!!.add(id)
                 }
@@ -160,14 +156,14 @@ class AlbumAddActivity : AppCompatActivity() {
     private fun loadArtists() {
         artistList = ArrayList()
         artistId = ArrayList()
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.ARTISTS)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 artistList!!.clear()
                 artistId!!.clear()
                 for (data in snapshot.children) {
-                    val id = DATAv.EMPTY + data.child(DATAv.ID).value
-                    val name = DATAv.EMPTY + data.child(DATAv.NAME).value
+                    val id = DATA.EMPTY + data.child(DATA.ID).value
+                    val name = DATA.EMPTY + data.child(DATA.NAME).value
                     artistList!!.add(name)
                     artistId!!.add(id)
                 }

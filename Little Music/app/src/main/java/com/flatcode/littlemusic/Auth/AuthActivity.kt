@@ -2,10 +2,9 @@ package com.flatcode.littlemusic.Auth
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.CLASSv
+import com.flatcode.littlemusic.Unitimport.CLASS
 import com.flatcode.littlemusic.Unitimport.THEME
 import com.flatcode.littlemusic.databinding.ActivityAuthBinding
 
@@ -23,7 +22,8 @@ class AuthActivity : AppCompatActivity() {
 
         VOID.Logo(baseContext, binding!!.logo)
         VOID.Intro(baseContext, binding!!.background, binding!!.backWhite, binding!!.backBlack)
-        binding!!.loginBtn.setOnClickListener { VOID.Intent1(context, CLASSv.LOGIN) }
-        binding!!.skipBtn.setOnClickListener { VOID.Intent1(context, CLASSv.REGISTER) }
+
+        binding!!.loginBtn.setOnClickListener { VOID.Intent1(context, CLASS.LOGIN) }
+        binding!!.skipBtn.setOnClickListener { VOID.Intent1(context, CLASS.REGISTER) }
     }
 }

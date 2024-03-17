@@ -12,16 +12,10 @@ class Album {
     var timestamp: Long = 0
 
     constructor()
+
     constructor(
-        id: String?,
-        name: String?,
-        artistId: String?,
-        categoryId: String?,
-        image: String?,
-        publisher: String?,
-        timestamp: Long,
-        interestedCount: Int,
-        songsCount: Int,
+        id: String?, name: String?, artistId: String?, categoryId: String?, image: String?,
+        publisher: String?, timestamp: Long, interestedCount: Int, songsCount: Int,
     ) {
         this.id = id
         this.name = name

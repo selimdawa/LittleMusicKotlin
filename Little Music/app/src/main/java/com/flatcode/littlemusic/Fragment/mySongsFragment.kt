@@ -9,9 +9,13 @@ import androidx.fragment.app.Fragment
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.Adapterimport.SongAdapter
 import com.flatcode.littlemusic.Modelimport.Song
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.databinding.FragmentMySongsBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 
 class mySongsFragment : Fragment() {
 
@@ -25,55 +29,52 @@ class mySongsFragment : Fragment() {
     private var type: String? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        binding = FragmentMySongsBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), container, false
-        )
-        type = DATAv.TIMESTAMP
-        DB = DATAv.ARTISTS
+        binding = FragmentMySongsBinding.inflate(LayoutInflater.from(context), container, false)
+
+        type = DATA.TIMESTAMP
+        DB = DATA.ARTISTS
+
         init()
         binding!!.switchBar.all.setOnClickListener {
-            type = DATAv.TIMESTAMP
+            type = DATA.TIMESTAMP
             init()
             getData(type, DB)
         }
         binding!!.switchBar.mostViews.setOnClickListener {
-            type = DATAv.VIEWS_COUNT
+            type = DATA.VIEWS_COUNT
             init()
             getData(type, DB)
         }
         binding!!.switchBar.mostLoves.setOnClickListener {
-            type = DATAv.LOVES_COUNT
+            type = DATA.LOVES_COUNT
             init()
             getData(type, DB)
         }
         binding!!.switchBar.name.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             init()
             getData(type, DB)
         }
         //Switch Type
         binding!!.switchBar.artists.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             init()
-            DB = DATAv.ARTISTS
+            DB = DATA.ARTISTS
             getData(type, DB)
         }
         binding!!.switchBar.albums.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             init()
-            DB = DATAv.ALBUMS
+            DB = DATA.ALBUMS
             getData(type, DB)
         }
         binding!!.switchBar.categories.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             init()
-            DB = DATAv.CATEGORIES
+            DB = DATA.CATEGORIES
             getData(type, DB)
         }
         return binding!!.root
@@ -93,8 +94,8 @@ class mySongsFragment : Fragment() {
 
     private fun getData(orderBy: String?, typeDB: String?) {
         check = ArrayList()
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.INTERESTED)
-            .child(DATAv.FirebaseUserUid)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.INTERESTED)
+            .child(DATA.FirebaseUserUid)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 (check as ArrayList<String?>).clear()
@@ -110,7 +111,7 @@ class mySongsFragment : Fragment() {
 
     private fun getItems(orderBy: String?, typeDB: String?) {
         changeSelectedSong(-1)
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 list!!.clear()
@@ -119,45 +120,36 @@ class mySongsFragment : Fragment() {
                     for (id in check!!) {
                         assert(song != null)
                         if (song!!.id != null) {
-                            if (typeDB == DATAv.ARTISTS) {
+                            if (typeDB == DATA.ARTISTS) {
                                 if (song.artistId == id) {
                                     list!!.add(song)
                                     song.key = (snapshot.key)
                                     currentSong = -1
                                     isPlaying = true
                                     jcAudios!!.add(
-                                        JcAudio.createFromURL(
-                                            song.name!!,
-                                            song.songLink!!
-                                        )
+                                        JcAudio.createFromURL(song.name!!, song.songLink!!)
                                     )
                                     binding!!.recyclerView.adapter = adapter
                                 }
-                            } else if (typeDB == DATAv.ALBUMS) {
+                            } else if (typeDB == DATA.ALBUMS) {
                                 if (song.albumId == id) {
                                     list!!.add(song)
                                     song.key = (snapshot.key)
                                     currentSong = -1
                                     isPlaying = true
                                     jcAudios!!.add(
-                                        JcAudio.createFromURL(
-                                            song.name!!,
-                                            song.songLink!!
-                                        )
+                                        JcAudio.createFromURL(song.name!!, song.songLink!!)
                                     )
                                     binding!!.recyclerView.adapter = adapter
                                 }
-                            } else if (typeDB == DATAv.CATEGORIES) {
+                            } else if (typeDB == DATA.CATEGORIES) {
                                 if (song.categoryId == id) {
                                     list!!.add(song)
                                     song.key = (snapshot.key)
                                     currentSong = -1
                                     isPlaying = true
                                     jcAudios!!.add(
-                                        JcAudio.createFromURL(
-                                            song.name!!,
-                                            song.songLink!!
-                                        )
+                                        JcAudio.createFromURL(song.name!!, song.songLink!!)
                                     )
                                     binding!!.recyclerView.adapter = adapter
                                 }
@@ -203,7 +195,7 @@ class mySongsFragment : Fragment() {
     }
 
     override fun onResume() {
-        getData(type, DATAv.ARTISTS)
+        getData(type, DATA.ARTISTS)
         super.onResume()
     }
 

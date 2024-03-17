@@ -13,10 +13,14 @@ import com.flatcode.littlemusic.Adapterimport.SongAdapter
 import com.flatcode.littlemusic.Modelimport.Album
 import com.flatcode.littlemusic.Modelimport.Song
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.Unitimport.THEME
 import com.flatcode.littlemusic.databinding.ActivityArtistSongsBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class ArtistSongsActivity : AppCompatActivity() {
@@ -45,38 +49,30 @@ class ArtistSongsActivity : AppCompatActivity() {
         val view = binding!!.root
         setContentView(view)
 
-        artistId = intent.getStringExtra(DATAv.ARTIST_ID)
-        artistName = intent.getStringExtra(DATAv.ARTIST_NAME)
-        artistImage = intent.getStringExtra(DATAv.ARTIST_IMAGE)
-        artistAbout = intent.getStringExtra(DATAv.ARTIST_ABOUT)
+        artistId = intent.getStringExtra(DATA.ARTIST_ID)
+        artistName = intent.getStringExtra(DATA.ARTIST_NAME)
+        artistImage = intent.getStringExtra(DATA.ARTIST_IMAGE)
+        artistAbout = intent.getStringExtra(DATA.ARTIST_ABOUT)
 
         binding!!.toolbar.nameSpace.text = artistName
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
-        type = DATAv.TIMESTAMP
+        type = DATA.TIMESTAMP
 
-        VOID.isInterested(binding!!.switchBarSongs.interest, artistId, DATAv.ARTISTS)
+        VOID.isInterested(binding!!.switchBarSongs.interest, artistId, DATA.ARTISTS)
         binding!!.switchBarSongs.add.setOnClickListener {
-            VOID.checkInterested(
-                binding!!.switchBarSongs.interest,
-                DATAv.ARTISTS,
-                artistId
-            )
+            VOID.checkInterested(binding!!.switchBarSongs.interest, DATA.ARTISTS, artistId)
         }
 
-        VOID.isInterested(binding!!.switchBarAlbums.interest, artistId, DATAv.ARTISTS)
+        VOID.isInterested(binding!!.switchBarAlbums.interest, artistId, DATA.ARTISTS)
         binding!!.switchBarAlbums.add.setOnClickListener {
-            VOID.checkInterested(
-                binding!!.switchBarAlbums.interest,
-                DATAv.ARTISTS,
-                artistId
-            )
+            VOID.checkInterested(binding!!.switchBarAlbums.interest, DATA.ARTISTS, artistId)
         }
 
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
-            DATAv.searchStatus = true
+            DATA.searchStatus = true
         }
         binding!!.toolbar.close.setOnClickListener { onBackPressed() }
 
@@ -99,7 +95,9 @@ class ArtistSongsActivity : AppCompatActivity() {
         albumList = ArrayList()
         albumAdapter = AlbumAdapter(activity, albumList!!)
         binding!!.recyclerAlbums.adapter = albumAdapter
+
         init()
+
         binding!!.switchBarAlbums.songs.setOnClickListener {
             binding!!.switchBarAlbums.scrollSwitch.visibility = View.GONE
             binding!!.switchBarSongs.scrollSwitch.visibility = View.VISIBLE
@@ -110,28 +108,26 @@ class ArtistSongsActivity : AppCompatActivity() {
             getSongs(type)
             isAlbum = false
             isSong = true
-            if (DATAv.searchStatus) onBackPressed()
+            if (DATA.searchStatus) onBackPressed()
         }
         //Albums
         binding!!.switchBarAlbums.aboutTheArtist.setOnClickListener {
-            VOID.dialogAboutArtist(
-                activity, artistImage, artistName, artistAbout
-            )
+            VOID.dialogAboutArtist(activity, artistImage, artistName, artistAbout)
         }
         binding!!.switchBarAlbums.all.setOnClickListener {
-            type = DATAv.TIMESTAMP
+            type = DATA.TIMESTAMP
             getAlbums(type)
         }
         binding!!.switchBarAlbums.mostSongs.setOnClickListener {
-            type = DATAv.SONGS_COUNT
+            type = DATA.SONGS_COUNT
             getAlbums(type)
         }
         binding!!.switchBarAlbums.mostInterested.setOnClickListener {
-            type = DATAv.INTERESTED_COUNT
+            type = DATA.INTERESTED_COUNT
             getAlbums(type)
         }
         binding!!.switchBarAlbums.name.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             getAlbums(type)
         }
         //Songs
@@ -142,30 +138,28 @@ class ArtistSongsActivity : AppCompatActivity() {
             getAlbums(type)
             isAlbum = true
             isSong = false
-            if (DATAv.searchStatus) onBackPressed()
+            if (DATA.searchStatus) onBackPressed()
         }
         binding!!.switchBarSongs.aboutTheArtist.setOnClickListener {
-            VOID.dialogAboutArtist(
-                activity, artistImage, artistName, artistAbout
-            )
+            VOID.dialogAboutArtist(activity, artistImage, artistName, artistAbout)
         }
         binding!!.switchBarSongs.all.setOnClickListener {
-            type = DATAv.TIMESTAMP
+            type = DATA.TIMESTAMP
             init()
             getSongs(type)
         }
         binding!!.switchBarSongs.mostViews.setOnClickListener {
-            type = DATAv.VIEWS_COUNT
+            type = DATA.VIEWS_COUNT
             init()
             getSongs(type)
         }
         binding!!.switchBarSongs.mostLoves.setOnClickListener {
-            type = DATAv.LOVES_COUNT
+            type = DATA.LOVES_COUNT
             init()
             getSongs(type)
         }
         binding!!.switchBarSongs.name.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             init()
             getSongs(type)
         }
@@ -176,6 +170,7 @@ class ArtistSongsActivity : AppCompatActivity() {
         songList = ArrayList()
         jcAudios = ArrayList()
         binding!!.recyclerSongs.adapter = songAdapter
+
         songAdapter = SongAdapter(activity, songList!!) { songs: Song?, position: Int ->
             changeSelectedSong(position)
             binding!!.player.jcPlayer.playAudio(jcAudios!![position])
@@ -185,7 +180,7 @@ class ArtistSongsActivity : AppCompatActivity() {
 
     private fun getAlbums(orderBy: String?) {
         binding!!.recyclerSongs.visibility = View.GONE
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATAv.ALBUMS)
+        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.ALBUMS)
         ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 albumList!!.clear()
@@ -217,7 +212,7 @@ class ArtistSongsActivity : AppCompatActivity() {
     private fun getSongs(orderBy: String?) {
         changeSelectedSong(-1)
         binding!!.recyclerAlbums.visibility = View.GONE
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 songList!!.clear()
@@ -230,12 +225,7 @@ class ArtistSongsActivity : AppCompatActivity() {
                             item.key = (data.key)
                             currentSong = -1
                             isPlaying = true
-                            jcAudios!!.add(
-                                JcAudio.createFromURL(
-                                    item.name!!,
-                                    item.songLink!!
-                                )
-                            )
+                            jcAudios!!.add(JcAudio.createFromURL(item.name!!, item.songLink!!))
                             i++
                             binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
                             binding!!.recyclerSongs.adapter = songAdapter
@@ -271,11 +261,11 @@ class ArtistSongsActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (DATAv.searchStatus) {
+        if (DATA.searchStatus) {
             binding!!.toolbar.toolbar.visibility = View.VISIBLE
             binding!!.toolbar.toolbarSearch.visibility = View.GONE
-            DATAv.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATAv.EMPTY)
+            DATA.searchStatus = false
+            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
         } else super.onBackPressed()
     }
 

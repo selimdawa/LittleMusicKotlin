@@ -9,6 +9,7 @@ class User {
     var version = 0
 
     constructor()
+
     constructor(
         id: String?, username: String?, profileImage: String?, email: String?, timestamp: Long,
         version: Int,

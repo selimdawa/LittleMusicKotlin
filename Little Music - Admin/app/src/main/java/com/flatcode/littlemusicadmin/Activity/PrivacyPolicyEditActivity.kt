@@ -3,11 +3,10 @@ package com.flatcode.littlemusicadmin.Activity
 import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityPrivacyPolicyEditBinding
@@ -24,19 +23,19 @@ class PrivacyPolicyEditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
-        binding = ActivityPrivacyPolicyEditBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityPrivacyPolicyEditBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
+
         binding!!.toolbar.nameSpace.setText(R.string.privacy_policy)
-        binding!!.toolbar.back.setOnClickListener { v: View? -> onBackPressed() }
-        binding!!.go.setOnClickListener { v: View? -> validateData() }
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.go.setOnClickListener { validateData() }
+
         VOID.Logo(context, binding!!.logo)
         privacyPolicy()
     }
 
-    private var description = DATAv.EMPTY
+    private var description = DATA.EMPTY
     private fun validateData() {
         description = binding!!.text.text.toString().trim { it <= ' ' }
         if (TextUtils.isEmpty(description)) {
@@ -48,27 +47,18 @@ class PrivacyPolicyEditActivity : AppCompatActivity() {
 
     private fun update() {
         val hashMap = HashMap<String?, Any>()
-        hashMap[DATAv.PRIVACY_POLICY] = DATAv.EMPTY + description
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.TOOLS)
+        hashMap[DATA.PRIVACY_POLICY] = DATA.EMPTY + description
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.TOOLS)
         ref.updateChildren(hashMap).addOnSuccessListener { unused: Void? ->
-            Toast.makeText(
-                context,
-                "Privacy Policy updated...",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(context, "Privacy Policy updated...", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener { e: Exception ->
+            Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
         }
-            .addOnFailureListener { e: Exception ->
-                Toast.makeText(
-                    context,
-                    DATAv.EMPTY + e.message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
     }
 
     private fun privacyPolicy() {
-        val reference = FirebaseDatabase.getInstance().reference.child(DATAv.TOOLS)
-            .child(DATAv.PRIVACY_POLICY)
+        val reference = FirebaseDatabase.getInstance().reference.child(DATA.TOOLS)
+            .child(DATA.PRIVACY_POLICY)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val name = dataSnapshot.value.toString()

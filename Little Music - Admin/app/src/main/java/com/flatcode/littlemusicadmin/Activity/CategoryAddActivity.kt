@@ -11,7 +11,7 @@ import android.text.TextUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityCategoryAddBinding
@@ -39,13 +39,14 @@ class CategoryAddActivity : AppCompatActivity() {
         dialog = ProgressDialog(context)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
+
         binding!!.toolbar.nameSpace.setText(R.string.add_new_category)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
         binding!!.toolbar.ok.setOnClickListener { validateData() }
     }
 
-    private var name = DATAv.EMPTY
+    private var name = DATA.EMPTY
     private fun validateData() {
         //get data
         name = binding!!.nameEt.text.toString().trim { it <= ' ' }
@@ -63,23 +64,21 @@ class CategoryAddActivity : AppCompatActivity() {
     private fun uploadToStorage() {
         dialog!!.setMessage("Uploading Category...")
         dialog!!.show()
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.CATEGORIES)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         val id = ref.push().key
         val filePathAndName = "Images/Category/$id"
         val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATAv.DOT + VOID.getFileExtension(imageUri, context))
+            .getReference(filePathAndName + DATA.DOT + VOID.getFileExtension(imageUri, context))
         reference.putFile(imageUri!!)
             .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
                 val uriTask = taskSnapshot.storage.downloadUrl
                 while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATAv.EMPTY + uriTask.result
+                val uploadedImageUrl = DATA.EMPTY + uriTask.result
                 uploadInfoDB(uploadedImageUrl, id, ref)
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
-                    context,
-                    "Category upload failed due to : " + e.message,
-                    Toast.LENGTH_SHORT
+                    context, "Category upload failed due to : " + e.message, Toast.LENGTH_SHORT
                 ).show()
             }
     }
@@ -90,14 +89,14 @@ class CategoryAddActivity : AppCompatActivity() {
 
         //setup data to upload
         val hashMap = HashMap<String?, Any?>()
-        hashMap[DATAv.PUBLISHER] = DATAv.EMPTY + DATAv.FirebaseUserUid
-        hashMap[DATAv.TIMESTAMP] = System.currentTimeMillis()
-        hashMap[DATAv.ID] = id
-        hashMap[DATAv.NAME] = DATAv.EMPTY + name
-        hashMap[DATAv.IMAGE] = uploadedImageUrl
-        hashMap[DATAv.INTERESTED_COUNT] = DATAv.ZERO
-        hashMap[DATAv.SONGS_COUNT] = DATAv.ZERO
-        hashMap[DATAv.ALBUMS_COUNT] = DATAv.ZERO
+        hashMap[DATA.PUBLISHER] = DATA.EMPTY + DATA.FirebaseUserUid
+        hashMap[DATA.TIMESTAMP] = System.currentTimeMillis()
+        hashMap[DATA.ID] = id
+        hashMap[DATA.NAME] = DATA.EMPTY + name
+        hashMap[DATA.IMAGE] = uploadedImageUrl
+        hashMap[DATA.INTERESTED_COUNT] = DATA.ZERO
+        hashMap[DATA.SONGS_COUNT] = DATA.ZERO
+        hashMap[DATA.ALBUMS_COUNT] = DATA.ZERO
         assert(id != null)
         ref.child(id!!).setValue(hashMap).addOnSuccessListener {
             dialog!!.dismiss()
@@ -105,9 +104,7 @@ class CategoryAddActivity : AppCompatActivity() {
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()
             Toast.makeText(
-                context,
-                "Failure to upload to db due to : " + e.message,
-                Toast.LENGTH_SHORT
+                context, "Failure to upload to db due to : " + e.message, Toast.LENGTH_SHORT
             ).show()
         }
     }

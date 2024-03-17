@@ -10,11 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusicadmin.Adapter.SongAdapter
 import com.flatcode.littlemusicadmin.Model.Song
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumSongsBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class AlbumSongsActivity : AppCompatActivity() {
@@ -38,20 +42,23 @@ class AlbumSongsActivity : AppCompatActivity() {
         val view = binding!!.root
         setContentView(view)
 
-        albumId = intent.getStringExtra(DATAv.ALBUM_ID)
-        albumName = intent.getStringExtra(DATAv.ALBUM_NAME)
-        albumImage = intent.getStringExtra(DATAv.ALBUM_IMAGE)
+        albumId = intent.getStringExtra(DATA.ALBUM_ID)
+        albumName = intent.getStringExtra(DATA.ALBUM_NAME)
+        albumImage = intent.getStringExtra(DATA.ALBUM_IMAGE)
 
-        type = DATAv.TIMESTAMP
+        binding!!.toolbar.nameSpace.text = albumName
+        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+        type = DATA.TIMESTAMP
+
         VOID.Glide(false, activity, albumImage, binding!!.image)
         VOID.GlideBlur(false, activity, albumImage, binding!!.imageBlur, 50)
-        binding!!.toolbar.nameSpace.text = albumName
+
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
-            DATAv.searchStatus = true
+            DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
 
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -65,25 +72,25 @@ class AlbumSongsActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {}
         })
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+
         init()
         binding!!.switchBar.all.setOnClickListener {
-            type = DATAv.TIMESTAMP
+            type = DATA.TIMESTAMP
             init()
             getData(type)
         }
         binding!!.switchBar.mostViews.setOnClickListener {
-            type = DATAv.VIEWS_COUNT
+            type = DATA.VIEWS_COUNT
             init()
             getData(type)
         }
         binding!!.switchBar.mostLoves.setOnClickListener {
-            type = DATAv.LOVES_COUNT
+            type = DATA.LOVES_COUNT
             init()
             getData(type)
         }
         binding!!.switchBar.name.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             init()
             getData(type)
         }
@@ -94,6 +101,7 @@ class AlbumSongsActivity : AppCompatActivity() {
         list = ArrayList()
         jcAudios = ArrayList()
         binding!!.recyclerView.adapter = adapter
+
         adapter = SongAdapter(activity, list!!) { songs: Song?, position: Int ->
             changeSelectedSong(position)
             binding!!.player.jcPlayer.playAudio(jcAudios!![position])
@@ -103,7 +111,7 @@ class AlbumSongsActivity : AppCompatActivity() {
 
     private fun getData(orderBy: String?) {
         changeSelectedSong(-1)
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 list!!.clear()
@@ -116,12 +124,7 @@ class AlbumSongsActivity : AppCompatActivity() {
                             item.key = (data.key)
                             currentSong = -1
                             isPlaying = true
-                            jcAudios!!.add(
-                                JcAudio.createFromURL(
-                                    item.name!!,
-                                    item.songLink!!
-                                )
-                            )
+                            jcAudios!!.add(JcAudio.createFromURL(item.name!!, item.songLink!!))
                             i++
                             binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
                             binding!!.recyclerView.adapter = adapter
@@ -157,14 +160,14 @@ class AlbumSongsActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (DATAv.searchStatus) {
+        if (DATA.searchStatus) {
             binding!!.toolbar.toolbar.visibility = View.VISIBLE
             binding!!.toolbar.toolbarSearch.visibility = View.GONE
-            DATAv.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATAv.EMPTY)
-        } else if (DATAv.isChange) {
+            DATA.searchStatus = false
+            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
+        } else if (DATA.isChange) {
             onResume()
-            DATAv.isChange = false
+            DATA.isChange = false
         } else super.onBackPressed()
     }
 

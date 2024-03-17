@@ -10,8 +10,8 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.Modelimport.Category
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.CLASSv
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.CLASS
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.databinding.ItemCategoryMainBinding
 
 class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Category?>) :
@@ -20,27 +20,22 @@ class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Cat
     private var binding: ItemCategoryMainBinding? = null
 
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+        parent: ViewGroup, viewType: Int
     ): CategoryMainAdapter.ViewHolder {
-        binding = ItemCategoryMainBinding.inflate(
-            LayoutInflater.from(
-                context
-            ), parent, false
-        )
+        binding = ItemCategoryMainBinding.inflate(LayoutInflater.from(context), parent, false)
         return ViewHolder(binding!!.root)
     }
 
     override fun onBindViewHolder(holder: CategoryMainAdapter.ViewHolder, position: Int) {
         val item = list[position]
-        val id = DATAv.EMPTY + item!!.id
-        val name = DATAv.EMPTY + item.name
-        val image = DATAv.EMPTY + item.image
+        val id = DATA.EMPTY + item!!.id
+        val name = DATA.EMPTY + item.name
+        val image = DATA.EMPTY + item.image
 
         VOID.GlideImage(false, context, image, holder.image)
         VOID.GlideBlur(false, context, image, holder.imageBlur, 50)
 
-        if (name == DATAv.EMPTY) {
+        if (name == DATA.EMPTY) {
             holder.name.visibility = View.GONE
         } else {
             holder.name.visibility = View.VISIBLE
@@ -49,7 +44,7 @@ class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Cat
 
         holder.card.setOnClickListener {
             VOID.IntentExtra2(
-                context, CLASSv.CATEGORY_SONGS, DATAv.CATEGORY_ID, id, DATAv.CATEGORY_NAME, name
+                context, CLASS.CATEGORY_SONGS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }
@@ -58,9 +53,7 @@ class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Cat
         return list.size
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var image: ImageView
         var imageBlur: ImageView
         var name: TextView

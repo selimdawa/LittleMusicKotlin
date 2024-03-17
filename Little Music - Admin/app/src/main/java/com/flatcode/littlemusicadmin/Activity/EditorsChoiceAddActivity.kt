@@ -9,10 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Adapter.EditorsChoiceSongAdapter
 import com.flatcode.littlemusicadmin.Model.Song
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.databinding.ActivityEditorsChoiceAddBinding
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
 
 class EditorsChoiceAddActivity : AppCompatActivity() {
@@ -34,18 +38,20 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
         setContentView(view)
 
         val intent = intent
-        editorsChoiceId = intent.getStringExtra(DATAv.EDITORS_CHOICE_ID)
-        oldId = intent.getStringExtra(DATAv.OLD_ID)
+        editorsChoiceId = intent.getStringExtra(DATA.EDITORS_CHOICE_ID)
+        oldId = intent.getStringExtra(DATA.OLD_ID)
         val id = editorsChoiceId!!.toInt()
+
         binding!!.toolbar.nameSpace.setText(R.string.editors_choice)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        type = DATAv.TIMESTAMP
+        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+        type = DATA.TIMESTAMP
+
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
             binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
-            DATAv.searchStatus = true
+            DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
 
         binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -59,28 +65,30 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {}
         })
-        binding!!.recyclerView.setHasFixedSize(true)
+
+        //binding!!.recyclerView.setHasFixedSize(true)
         list = ArrayList()
         adapter = EditorsChoiceSongAdapter(activity, oldId, list!!, id)
         binding!!.recyclerView.adapter = adapter
+
         binding!!.all.setOnClickListener {
-            type = DATAv.TIMESTAMP
+            type = DATA.TIMESTAMP
             getData(type)
         }
         binding!!.name.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             getData(type)
         }
         binding!!.mostViews.setOnClickListener {
-            type = DATAv.VIEWS_COUNT
+            type = DATA.VIEWS_COUNT
             getData(type)
         }
         binding!!.mostLoves.setOnClickListener {
-            type = DATAv.LOVES_COUNT
+            type = DATA.LOVES_COUNT
             getData(type)
         }
         binding!!.favorites.setOnClickListener {
-            type = DATAv.NAME
+            type = DATA.NAME
             getFavorites(type)
         }
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
@@ -88,7 +96,7 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
     }
 
     private fun getData(orderBy: String?) {
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 list!!.clear()
@@ -118,8 +126,8 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
 
     private fun getFavorites(orderBy: String?) {
         item = ArrayList()
-        val reference = FirebaseDatabase.getInstance().getReference(DATAv.FAVORITES)
-            .child(DATAv.FirebaseUserUid)
+        val reference = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
+            .child(DATA.FirebaseUserUid)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 (item as ArrayList<String?>).clear()
@@ -134,7 +142,7 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
     }
 
     private fun getItems(orderBy: String?) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 list!!.clear()
@@ -163,11 +171,11 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (DATAv.searchStatus) {
+        if (DATA.searchStatus) {
             binding!!.toolbar.toolbar.visibility = View.VISIBLE
             binding!!.toolbar.toolbarSearch.visibility = View.GONE
-            DATAv.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATAv.EMPTY)
+            DATA.searchStatus = false
+            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
         } else super.onBackPressed()
     }
 }

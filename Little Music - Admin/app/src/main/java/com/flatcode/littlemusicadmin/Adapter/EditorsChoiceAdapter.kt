@@ -11,8 +11,8 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusicadmin.Model.EditorsChoice
 import com.flatcode.littlemusicadmin.Model.Song
-import com.flatcode.littlemusicadmin.Unit.CLASSv
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.CLASS
+import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ItemSongEditorsChoiceBinding
 import com.google.firebase.database.DataSnapshot
@@ -27,40 +27,25 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
     private var binding: ItemSongEditorsChoiceBinding? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemSongEditorsChoiceBinding.inflate(
-            LayoutInflater.from(
-                activity
-            ), parent, false
-        )
+        binding = ItemSongEditorsChoiceBinding.inflate(LayoutInflater.from(activity), parent, false)
         return ViewHolder(binding!!.root)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val id = position + 1
-        val editorsChoiceId = DATAv.EMPTY + id
+        val editorsChoiceId = DATA.EMPTY + id
+
         loadMusicDetails(
-            id,
-            editorsChoiceId,
-            holder.name,
-            holder.nrViews,
-            holder.nrLoves,
-            holder.artist,
-            holder.album,
-            holder.category,
-            holder.remove,
-            holder.change,
-            holder.addCard,
-            holder.detailsCard
+            id, editorsChoiceId, holder.name, holder.nrViews, holder.nrLoves, holder.artist,
+            holder.album, holder.category, holder.remove, holder.change,
+            holder.addCard, holder.detailsCard
         )
-        holder.numberEditorsChoice.text = MessageFormat.format("{0}{1}", DATAv.EMPTY, id)
+
+        holder.numberEditorsChoice.text = MessageFormat.format("{0}{1}", DATA.EMPTY, id)
         holder.add.setOnClickListener {
             VOID.IntentExtra2(
-                activity,
-                CLASSv.EDITORS_CHOICE_ADD,
-                DATAv.EDITORS_CHOICE_ID,
-                editorsChoiceId,
-                DATAv.OLD_ID,
-                null
+                activity, CLASS.EDITORS_CHOICE_ADD, DATA.EDITORS_CHOICE_ID, editorsChoiceId,
+                DATA.OLD_ID, null
             )
         }
     }
@@ -69,9 +54,7 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
         return list.size
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(
-        view!!
-    ) {
+    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         var add: ImageView
         var remove: ImageView
         var change: ImageView
@@ -106,27 +89,18 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
     }
 
     private fun loadMusicDetails(
-        i: Int,
-        position: String,
-        title: TextView,
-        viewsCount: TextView,
-        lovesCount: TextView,
-        artist: TextView,
-        album: TextView,
-        category: TextView,
-        remove: ImageView,
-        change: ImageView,
-        addCard: CardView,
-        detailsCard: CardView,
+        i: Int, position: String, title: TextView, viewsCount: TextView, lovesCount: TextView,
+        artist: TextView, album: TextView, category: TextView, remove: ImageView,
+        change: ImageView, addCard: CardView, detailsCard: CardView,
     ) {
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (snapshot in dataSnapshot.children) {
                     val item = snapshot.getValue(Song::class.java)!!
                     if (item.editorsChoice == i) {
-                        val id = DATAv.EMPTY + item.id
-                        val name = DATAv.EMPTY + item.name
+                        val id = DATA.EMPTY + item.id
+                        val name = DATA.EMPTY + item.name
                         loadData(id)
                         addCard.visibility = View.GONE
                         detailsCard.visibility = View.VISIBLE
@@ -134,27 +108,15 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
                         change.visibility = View.VISIBLE
                         remove.setOnClickListener {
                             VOID.dialogOptionDelete(
-                                activity,
-                                id,
-                                name,
-                                DATAv.EDITORS_CHOICE,
-                                DATAv.EDITORS_CHOICE,
-                                true,
-                                DATAv.NULL,
-                                DATAv.NULL,
-                                DATAv.NULL,
-                                DATAv.NULL,
-                                DATAv.NULL,
-                                DATAv.NULL,
-                                DATAv.NULL,
-                                DATAv.NULL,
-                                DATAv.NULL
+                                activity, id, name, DATA.EDITORS_CHOICE, DATA.EDITORS_CHOICE,
+                                true, DATA.NULL, DATA.NULL, DATA.NULL, DATA.NULL,
+                                DATA.NULL, DATA.NULL, DATA.NULL, DATA.NULL, DATA.NULL
                             )
                         }
                         change.setOnClickListener {
                             VOID.IntentExtra2(
-                                activity, CLASSv.EDITORS_CHOICE_ADD,
-                                DATAv.EDITORS_CHOICE_ID, position, DATAv.OLD_ID, id
+                                activity, CLASS.EDITORS_CHOICE_ADD,
+                                DATA.EDITORS_CHOICE_ID, position, DATA.OLD_ID, id
                             )
                         }
                     } else {
@@ -167,17 +129,18 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
             }
 
             private fun loadData(id: String) {
-                val ref = FirebaseDatabase.getInstance().getReference(DATAv.SONGS)
+                val ref = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
                 ref.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         //get data
                         val item = dataSnapshot.getValue(Song::class.java)!!
-                        val name = DATAv.EMPTY + item.name
-                        val ViewsCount = DATAv.EMPTY + item.viewsCount
-                        val LovesCount = DATAv.EMPTY + item.lovesCount
-                        val artistId = DATAv.EMPTY + item.artistId
-                        val albumId = DATAv.EMPTY + item.albumId
-                        val categoryId = DATAv.EMPTY + item.categoryId
+                        val name = DATA.EMPTY + item.name
+                        val ViewsCount = DATA.EMPTY + item.viewsCount
+                        val LovesCount = DATA.EMPTY + item.lovesCount
+                        val artistId = DATA.EMPTY + item.artistId
+                        val albumId = DATA.EMPTY + item.albumId
+                        val categoryId = DATA.EMPTY + item.categoryId
+
                         title.text = name
                         viewsCount.text = ViewsCount
                         lovesCount.text = LovesCount
@@ -185,9 +148,9 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
                         detailsCard.visibility = View.VISIBLE
                         remove.visibility = View.VISIBLE
                         change.visibility = View.VISIBLE
-                        VOID.dataName(DATAv.ARTISTS, artistId, artist)
-                        VOID.dataName(DATAv.ALBUMS, albumId, album)
-                        VOID.dataName(DATAv.CATEGORIES, categoryId, category)
+                        VOID.dataName(DATA.ARTISTS, artistId, artist)
+                        VOID.dataName(DATA.ALBUMS, albumId, album)
+                        VOID.dataName(DATA.CATEGORIES, categoryId, category)
                     }
 
                     override fun onCancelled(error: DatabaseError) {}

@@ -1,6 +1,6 @@
 package com.flatcode.littlemusicadmin.Model
 
-import com.flatcode.littlemusicadmin.Unit.DATAv
+import com.flatcode.littlemusicadmin.Unit.DATA
 
 class Song {
     var id: String? = null
@@ -17,22 +17,15 @@ class Song {
     var editorsChoice = 0
     var timestamp: Long = 0
 
+    constructor()
+
     constructor(
-        id: String?,
-        publisher: String?,
-        timestamp: Long,
-        categoryId: String?,
-        name: String,
-        albumId: String?,
-        artistId: String?,
-        duration: String?,
-        songLink: String?,
-        viewsCount: Int,
-        lovesCount: Int,
-        editorsChoice: Int,
+        id: String?, publisher: String?, timestamp: Long, categoryId: String?, name: String,
+        albumId: String?, artistId: String?, duration: String?, songLink: String?,
+        viewsCount: Int, lovesCount: Int, editorsChoice: Int,
     ) {
         var name = name
-        if (name.trim { it <= ' ' } == DATAv.EMPTY) {
+        if (name.trim { it <= ' ' } == DATA.EMPTY) {
             name = "No Name"
         }
         this.id = id
@@ -48,6 +41,4 @@ class Song {
         this.lovesCount = lovesCount
         this.editorsChoice = editorsChoice
     }
-
-    constructor()
 }

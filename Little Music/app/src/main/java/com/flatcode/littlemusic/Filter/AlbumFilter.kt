@@ -7,7 +7,6 @@ import java.util.*
 
 class AlbumFilter(var list: ArrayList<Album?>, var adapter: AlbumAdapter) : Filter() {
     override fun performFiltering(constraint: CharSequence): FilterResults {
-
         var constraint: CharSequence? = constraint
         val results = FilterResults()
         if (constraint != null && constraint.length > 0) {

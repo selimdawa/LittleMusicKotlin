@@ -5,12 +5,11 @@ import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Patterns
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusic.Unit.VOID
-import com.flatcode.littlemusic.Unitimport.CLASSv
-import com.flatcode.littlemusic.Unitimport.DATAv
+import com.flatcode.littlemusic.Unitimport.CLASS
+import com.flatcode.littlemusic.Unitimport.DATA
 import com.flatcode.littlemusic.Unitimport.THEME
 import com.flatcode.littlemusic.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -32,18 +31,15 @@ class RegisterActivity : AppCompatActivity() {
 
         VOID.Logo(baseContext, binding!!.logo)
         VOID.Intro(baseContext, binding!!.background, binding!!.backWhite, binding!!.backBlack)
+
         auth = FirebaseAuth.getInstance()
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
-        binding!!.forget.setOnClickListener { v: View? ->
-            VOID.Intent1(
-                context,
-                CLASSv.FORGET_PASSWORD
-            )
-        }
+
+        binding!!.forget.setOnClickListener { VOID.Intent1(context, CLASS.FORGET_PASSWORD) }
         binding!!.login.setOnClickListener {
-            VOID.Intent1(context, CLASSv.LOGIN)
+            VOID.Intent1(context, CLASS.LOGIN)
             finish()
         }
         binding!!.go.setOnClickListener { validateData() }
@@ -85,7 +81,7 @@ class RegisterActivity : AppCompatActivity() {
             .addOnSuccessListener { updateUserinfo() }
             .addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
-                Toast.makeText(context, DATAv.EMPTY + e.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -96,25 +92,25 @@ class RegisterActivity : AppCompatActivity() {
 
         //setup data to add in db
         val hashMap = HashMap<String, Any>()
-        hashMap[DATAv.EMAIL] = DATAv.EMPTY + email
-        hashMap[DATAv.ID] = DATAv.EMPTY + id
-        hashMap[DATAv.PROFILE_IMAGE] = DATAv.EMPTY + DATAv.BASIC
-        hashMap[DATAv.TIMESTAMP] = System.currentTimeMillis()
-        hashMap[DATAv.USER_NAME] = DATAv.EMPTY + name
-        hashMap[DATAv.VERSION] = DATAv.CURRENT_VERSION
+        hashMap[DATA.EMAIL] = DATA.EMPTY + email
+        hashMap[DATA.ID] = DATA.EMPTY + id
+        hashMap[DATA.PROFILE_IMAGE] = DATA.EMPTY + DATA.BASIC
+        hashMap[DATA.TIMESTAMP] = System.currentTimeMillis()
+        hashMap[DATA.USER_NAME] = DATA.EMPTY + name
+        hashMap[DATA.VERSION] = DATA.CURRENT_VERSION
 
         //set data to db
-        val ref = FirebaseDatabase.getInstance().getReference(DATAv.USERS)
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.USERS)
         assert(id != null)
         ref.child(id!!).setValue(hashMap).addOnSuccessListener {
             //data added to db
             dialog!!.dismiss()
             Toast.makeText(context, "Account created...", Toast.LENGTH_SHORT).show()
-            VOID.IntentClear(context, CLASSv.MAIN)
+            VOID.IntentClear(context, CLASS.MAIN)
             finish()
         }.addOnFailureListener { e: Exception ->
             //data failed adding to db
-            Toast.makeText(context, DATAv.EMPTY + e.message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
         }
     }
 }

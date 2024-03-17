@@ -3,7 +3,7 @@ package com.flatcode.littlemusic.Unitimport
 import com.flatcode.littlemusic.Activity.*
 import com.flatcode.littlemusic.Auth.*
 
-object CLASSv {
+object CLASS {
     var MAIN: Class<*> = MainActivity::class.java
     var SPLASH: Class<*> = SplashActivity::class.java
     var AUTH: Class<*> = AuthActivity::class.java
