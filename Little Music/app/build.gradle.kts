@@ -13,8 +13,8 @@ android {
         applicationId = "com.flatcode.littlemusic"
         minSdk = 26
         targetSdk = 36
-        versionCode = 6
-        versionName = "1.31"
+        versionCode = 7
+        versionName = "1.35"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,11 +38,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
     }
     buildFeatures {
         dataBinding = true
@@ -79,7 +81,7 @@ dependencies {
     implementation("com.github.smarteist:autoimageslider:1.3.2-appcompat")//Slider Show
     implementation("jp.wasabeef:glide-transformations:4.3.0")           //Image Blur
     //Bottom Navigation
-    implementation("com.etebarian:meow-bottom-navigation-java:1.2.0")   //Meow Bottom Navigation
+    implementation ("com.github.Foysalofficial:NafisBottomNav:5.0")     //Nafis Bottom Navigation
 
     //Player
     implementation("com.github.jeancsanchez:JcPlayer:2.7.2")            //JcPlayer
