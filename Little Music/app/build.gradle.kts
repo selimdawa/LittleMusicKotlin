@@ -7,7 +7,9 @@ plugins {
 
 android {
     namespace = "com.flatcode.littlemusic"
-    compileSdk = 36
+    compileSdk {
+        version = release(36)
+    }
 
     defaultConfig {
         applicationId = "com.flatcode.littlemusic"
@@ -71,10 +73,10 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.firebase.analytics)
     //implementation(libs.firebase.crashlytics)
-    // Image
+    //Image
     implementation(libs.circleimageview)                //Circle Image
     implementation(libs.glide)                          //Glide Image
-    // noinspection KaptUsageInsteadOfKsp
+    //noinspection KaptUsageInsteadOfKsp
     kapt(libs.compiler)                                 //Glide Compiler
     implementation(libs.material.ripple)                //Ripple Effect
     api(libs.android.image.cropper)                     //Image Crop
