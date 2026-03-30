@@ -69,7 +69,6 @@
                             android:indeterminateDrawable="@drawable/progress_bar_2"
                             android:visibility="visible" />
 
-
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recyclerView"
                             android:layout_width="match_parent"
