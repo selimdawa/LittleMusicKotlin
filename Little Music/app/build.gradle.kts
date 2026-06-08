@@ -8,15 +8,13 @@ plugins {
 android {
     namespace = "com.flatcode.littlemusic"
     compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
+        version = release(37)
     }
 
     defaultConfig {
         applicationId = "com.flatcode.littlemusic"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 8
         versionName = "1.40"
 
