@@ -3,7 +3,7 @@ agp = "9.2.1"
 androidImageCropper = "2.8.0"
 cardview = "1.0.0"
 circleimageview = "3.1.0"
-compiler = "5.0.7"
+glideKsp = "5.0.7"
 firebaseBom = "34.13.0"
 glide = "5.0.7"
 glideTransformations = "4.3.0"
@@ -22,6 +22,7 @@ materialRipple = "1.0.2"
 multiwaveheader = "1.0.0-andx"
 preferenceKtx = "1.2.1"
 googleServices = "4.4.4"
+ksp = "2.3.7"
 
 [libraries]
 android-image-cropper = { module = "com.theartofdev.edmodo:android-image-cropper", version.ref = "androidImageCropper" }
@@ -29,7 +30,7 @@ androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "card
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "legacySupportV4" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
+glide-ksp = { module = "com.github.bumptech.glide:ksp", version.ref = "glideKsp" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
@@ -54,3 +55,4 @@ multiwaveheader = { module = "com.scwang.wave:MultiWaveHeader", version.ref = "m
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+google-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
