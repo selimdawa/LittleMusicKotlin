@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
     alias(libs.plugins.google.ksp)
 }
@@ -72,8 +71,6 @@ dependencies {
     //Layout
     implementation(libs.androidx.constraintlayout)
     implementation(libs.material)
-    implementation(libs.androidx.legacy.support.v4)
-    implementation(libs.androidx.cardview)
     //Firebase
     implementation(platform(libs.firebase.bom)) //Firebase BOM
     implementation(libs.firebase.auth)
@@ -89,10 +86,9 @@ dependencies {
     api(libs.android.image.cropper)                     //Image Crop
     implementation(libs.autoimageslider)                //Slider Show
     implementation(libs.glide.transformations)          //Image Blur
-    //Bottom Navigation
+    //Other's
     implementation(libs.nafisbottomnav)                 //Nafis Bottom Navigation
-
-    //Player
     implementation(libs.jcplayer)                       //JcPlayer
     implementation(libs.multiwaveheader)                //Wave
+    ksp(libs.kotlin.metadata.jvm)                       //Kotlin
 }
