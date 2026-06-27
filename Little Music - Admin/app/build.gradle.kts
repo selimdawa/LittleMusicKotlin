@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.services)
-    alias(libs.plugins.google.ksp)
 }
 
 android {
@@ -32,11 +31,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-        }
-    }
     buildFeatures {
         dataBinding = true
     }
@@ -53,22 +47,20 @@ dependencies {
     //Layout
     implementation(libs.androidx.constraintlayout)
     implementation(libs.material)
-    //Firebase
+    //Image
+    implementation(libs.circleimageview)                //Circle Image
+    implementation(libs.glide)                          //Glide Image
+    api(libs.android.image.cropper)                     //Image Crop
+    implementation(libs.glide.transformations)          //Image Blur
+    // Firebase
     implementation(platform(libs.firebase.bom)) //Firebase BOM
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.analytics)
     //implementation(libs.firebase.crashlytics)
-    // Image
-    implementation(libs.circleimageview)                //Circle Image
-    implementation(libs.glide)                          //Glide Image
-    ksp(libs.glide.ksp)                                 //Glide Compiler
-    implementation(libs.material.ripple)                //Ripple Effect
-    api(libs.android.image.cropper)                     //Image Crop
-    implementation(libs.glide.transformations)          //Image Blur
     //Other's
+    implementation(libs.material.ripple)                //Ripple Effect
     implementation(libs.jcplayer)                       //JcPlayer
     implementation(libs.multiwaveheader)                //Wave
-    ksp(libs.kotlin.metadata.jvm)                       //Kotlin
 }
