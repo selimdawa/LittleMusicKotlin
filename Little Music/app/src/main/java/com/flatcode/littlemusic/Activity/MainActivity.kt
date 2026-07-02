@@ -7,7 +7,6 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceFragmentCompat
@@ -26,7 +25,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.nafis.bottomnavigation.NafisBottomNavigation
+import io.selimdawa.bubblebottom.BubbleBottomNavigation
 import java.util.Objects
 
 class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
     private var binding: ActivityMainBinding? = null
     var activity: Activity? = null
     var context: Context = also { activity = it }
-    var bottomNavigation: NafisBottomNavigation? = null
+    var bottomNavigation: BubbleBottomNavigation? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         PreferenceManager.getDefaultSharedPreferences(baseContext)
@@ -53,11 +52,11 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         // Color Mode -------------------------------- End
 
         bottomNavigation = binding!!.bottomNavigation
-        bottomNavigation!!.add(NafisBottomNavigation.Model(1, R.drawable.ic_settings))
-        bottomNavigation!!.add(NafisBottomNavigation.Model(2, R.drawable.ic_home))
-        bottomNavigation!!.add(NafisBottomNavigation.Model(3, R.drawable.ic_books))
-        bottomNavigation!!.add(NafisBottomNavigation.Model(4, R.drawable.ic_group))
-        bottomNavigation!!.setOnShowListener { item: NafisBottomNavigation.Model ->
+        bottomNavigation!!.add(BubbleBottomNavigation.Model(1, R.drawable.ic_settings))
+        bottomNavigation!!.add(BubbleBottomNavigation.Model(2, R.drawable.ic_home))
+        bottomNavigation!!.add(BubbleBottomNavigation.Model(3, R.drawable.ic_books))
+        bottomNavigation!!.add(BubbleBottomNavigation.Model(4, R.drawable.ic_group))
+        bottomNavigation!!.setOnShowListener { item: BubbleBottomNavigation.Model ->
             var fragment: Fragment? = null
             when (item.id) {
                 1 -> {
@@ -85,33 +84,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
 
         //bottomNavigation.setCount(3, numberSongs);
         bottomNavigation!!.show(2, true)
-        bottomNavigation!!.setOnClickMenuListener { item: NafisBottomNavigation.Model ->
-            when (item.id) {
-                1 -> Toast.makeText(
-                    applicationContext, R.string.settings, Toast.LENGTH_SHORT
-                ).show()
 
-                2 -> Toast.makeText(applicationContext, R.string.home, Toast.LENGTH_SHORT).show()
-                3 -> Toast.makeText(applicationContext, R.string.my_songs, Toast.LENGTH_SHORT)
-                    .show()
-
-                4 -> Toast.makeText(applicationContext, R.string.categories, Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-        bottomNavigation!!.setOnReselectListener { item: NafisBottomNavigation.Model ->
-            when (item.id) {
-                1 -> Toast.makeText(applicationContext, R.string.settings, Toast.LENGTH_SHORT)
-                    .show()
-
-                2 -> Toast.makeText(applicationContext, R.string.home, Toast.LENGTH_SHORT).show()
-                3 -> Toast.makeText(applicationContext, R.string.my_songs, Toast.LENGTH_SHORT)
-                    .show()
-
-                4 -> Toast.makeText(applicationContext, R.string.categories, Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
         binding!!.toolbar.image.setOnClickListener {
             VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }

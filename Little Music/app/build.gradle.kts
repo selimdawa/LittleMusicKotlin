@@ -13,8 +13,8 @@ android {
         applicationId = "com.flatcode.littlemusic"
         minSdk = 26
         targetSdk = 37
-        versionCode = 8
-        versionName = "1.40"
+        versionCode = 9
+        versionName = "1.41"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -80,7 +80,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     //implementation(libs.firebase.crashlytics)
     //Other's
-    implementation(libs.nafisbottomnav)                 //Nafis Bottom Navigation
+    implementation(libs.bubblebottom)                   //Bottom Navigation
     implementation(libs.jcplayer)                       //JcPlayer
     implementation(libs.multiwaveheader)                //Wave
 }

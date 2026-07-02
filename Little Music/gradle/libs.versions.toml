@@ -18,7 +18,7 @@ activity = "1.13.0"
 constraintlayout = "2.2.1"
 materialRipple = "1.0.2"
 multiwaveheader = "1.0.0-andx"
-nafisbottomnav = "5.0"
+bubblebottom = "1.0.1"
 preferenceKtx = "1.2.1"
 googleServices = "4.5.0"
 
@@ -46,7 +46,7 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 material-ripple = { module = "com.balysv:material-ripple", version.ref = "materialRipple" }
 multiwaveheader = { module = "com.scwang.wave:MultiWaveHeader", version.ref = "multiwaveheader" }
-nafisbottomnav = { module = "com.github.Foysalofficial:NafisBottomNav", version.ref = "nafisbottomnav" }
+bubblebottom = { module = "com.github.selimdawa:BubbleBottom", version.ref = "bubblebottom" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
