@@ -13,8 +13,8 @@ android {
         applicationId = "com.flatcode.littlemusic"
         minSdk = 26
         targetSdk = 37
-        versionCode = 9
-        versionName = "1.41"
+        versionCode = 10
+        versionName = "1.42"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -51,6 +51,7 @@ android {
     }
     buildFeatures {
         dataBinding = true
+        viewBinding = true
     }
 }
 

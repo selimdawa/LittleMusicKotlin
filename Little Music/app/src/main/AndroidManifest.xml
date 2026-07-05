@@ -19,7 +19,7 @@
         tools:replace="android:supportsRtl"
         tools:targetApi="31">
         <activity
-            android:name=".Activity.SplashActivity"
+            android:name=".activity.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -29,61 +29,61 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.MainActivity"
+            android:name=".activity.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Auth.AuthActivity"
+            android:name=".auth.AuthActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Auth.ForgetPasswordActivity"
+            android:name=".auth.ForgetPasswordActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Auth.LoginActivity"
+            android:name=".auth.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Auth.RegisterActivity"
+            android:name=".auth.RegisterActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.PrivacyPolicyActivity"
+            android:name=".activity.PrivacyPolicyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.ProfileActivity"
+            android:name=".activity.ProfileActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.ProfileEditActivity"
+            android:name=".activity.ProfileEditActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.FavoritesActivity"
+            android:name=".activity.FavoritesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CategorySongsActivity"
+            android:name=".activity.CategorySongsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.AlbumsActivity"
+            android:name=".activity.AlbumsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.AlbumSongsActivity"
+            android:name=".activity.AlbumSongsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.ArtistsActivity"
+            android:name=".activity.ArtistsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.ArtistSongsActivity"
+            android:name=".activity.ArtistSongsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.ShowMoreActivity"
+            android:name=".activity.ShowMoreActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.CategoriesActivity"
+            android:name=".activity.CategoriesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.MyCategoriesActivity"
+            android:name=".activity.MyCategoriesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.MyAlbumsActivity"
+            android:name=".activity.MyAlbumsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.MyArtistsActivity"
+            android:name=".activity.MyArtistsActivity"
             android:screenOrientation="portrait" />
 
         <activity

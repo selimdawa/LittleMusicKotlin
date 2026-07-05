@@ -82,8 +82,8 @@
                                 android:id="@+id/wave"
                                 android:layout_width="50sp"
                                 android:layout_height="50sp"
-                                android:visibility="gone"
                                 android:scaleY="-1"
+                                android:visibility="gone"
                                 app:mwhShape="Oval" />
 
                         </LinearLayout>
@@ -125,8 +125,6 @@
                                 android:id="@+id/duration"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:layout_alignParentRight="true"
                                 android:layout_gravity="top"
                                 android:gravity="center"
                                 android:padding="5sp"
