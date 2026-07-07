@@ -15,7 +15,7 @@ appcompat = "1.7.1"
 material = "1.14.0"
 activity = "1.13.0"
 constraintlayout = "2.2.1"
-materialRipple = "1.0.2"
+materialRipple = "1.0.1"
 multiwaveheader = "1.0.0-andx"
 bubblebottom = "1.0.2"
 preferenceKtx = "1.2.1"
@@ -43,7 +43,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-material-ripple = { module = "com.balysv:material-ripple", version.ref = "materialRipple" }
+material-ripple = { module = "com.github.selimdawa:MaterialRippleEffect", version.ref = "materialRipple" }
 multiwaveheader = { module = "com.scwang.wave:MultiWaveHeader", version.ref = "multiwaveheader" }
 bubblebottom = { module = "com.github.selimdawa:BubbleBottom", version.ref = "bubblebottom" }
 

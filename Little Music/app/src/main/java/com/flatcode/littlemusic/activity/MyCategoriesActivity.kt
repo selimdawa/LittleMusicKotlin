@@ -53,7 +53,7 @@ class MyCategoriesActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
                     adapter!!.filter.filter(s)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     //None
                 }
             }
