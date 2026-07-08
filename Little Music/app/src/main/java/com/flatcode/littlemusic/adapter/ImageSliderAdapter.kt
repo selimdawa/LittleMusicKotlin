@@ -12,7 +12,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.selimdawa.autoimageslider.Adapter.SliderViewAdapter
+import io.selimdawa.autoimageslider.adapter.SliderViewAdapter
 
 class ImageSliderAdapter(var context: Context?, var setTotalCount: Int) :
     SliderViewAdapter<ImageSliderAdapter.SliderViewHolder>() {

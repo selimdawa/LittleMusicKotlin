@@ -1,7 +1,7 @@
 [versions]
 agp = "9.2.1"
 androidImageCropper = "2.8.0"
-autoimageslider = "1.0.0"
+autoImageSlider = "1.0.0"
 circleimageview = "3.1.0"
 firebaseBom = "34.15.0"
 glide = "5.0.7"
@@ -15,9 +15,9 @@ appcompat = "1.7.1"
 material = "1.14.0"
 activity = "1.13.0"
 constraintlayout = "2.2.1"
-materialRipple = "1.0.1"
+materialRipple = "1.0.0"
 multiwaveheader = "1.0.0-andx"
-bubblebottom = "1.0.2"
+bubbleBottom = "1.0.0"
 preferenceKtx = "1.2.1"
 googleServices = "4.5.0"
 
@@ -25,7 +25,7 @@ googleServices = "4.5.0"
 android-image-cropper = { module = "com.theartofdev.edmodo:android-image-cropper", version.ref = "androidImageCropper" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
-autoimageslider = { module = "com.github.selimdawa:AutoImageSlider", version.ref = "autoimageslider" }
+autoimageslider = { module = "io.github.selimdawa:auto-image-slider", version.ref = "autoImageSlider" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
@@ -43,9 +43,9 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-material-ripple = { module = "com.github.selimdawa:MaterialRippleEffect", version.ref = "materialRipple" }
+material-ripple = { module = "io.github.selimdawa:material-ripple-effect", version.ref = "materialRipple" }
 multiwaveheader = { module = "com.scwang.wave:MultiWaveHeader", version.ref = "multiwaveheader" }
-bubblebottom = { module = "com.github.selimdawa:BubbleBottom", version.ref = "bubblebottom" }
+bubblebottom = { module = "io.github.selimdawa:bubble-bottom", version.ref = "bubbleBottom" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
