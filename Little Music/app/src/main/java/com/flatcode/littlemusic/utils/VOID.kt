@@ -15,8 +15,7 @@ import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import coil.load
 import com.flatcode.littlemusic.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -26,7 +25,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
-import jp.wasabeef.glide.transformations.BlurTransformation
 import java.text.MessageFormat
 
 object VOID {
@@ -89,7 +87,10 @@ object VOID {
                     Image.setImageResource(R.drawable.basic_music)
                 }
             } else {
-                Glide.with(context!!).load(Url).placeholder(R.color.image_profile).into(Image)
+                Image.load(Url) {
+                    placeholder(R.color.image_profile)
+                    crossfade(true)
+                }
             }
         } catch (e: Exception) {
             Image.setImageResource(R.drawable.basic_music)
@@ -105,8 +106,10 @@ object VOID {
                     Image.setImageResource(R.drawable.basic_music)
                 }
             } else {
-                Glide.with(context!!).load(Url).placeholder(R.color.image_profile)
-                    .apply(RequestOptions.bitmapTransform(BlurTransformation(level))).into(Image)
+                Image.load(Url) {
+                    placeholder(R.color.image_profile)
+                    transformations(SimpleBlurTransformation(level.toFloat()))
+                }
             }
         } catch (e: Exception) {
             Image.setImageResource(R.drawable.basic_music)
