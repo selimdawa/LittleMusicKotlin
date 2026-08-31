@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
-import com.flatcode.littlemusic.utils.THEME
 import com.flatcode.littlemusic.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {
@@ -14,7 +13,6 @@ class AuthActivity : AppCompatActivity() {
     var context: Context = this@AuthActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         val view = binding!!.root

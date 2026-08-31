@@ -2,13 +2,9 @@ package com.flatcode.littlemusicadmin.Activity
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 import com.flatcode.littlemusicadmin.Adapter.MainAdapter
 import com.flatcode.littlemusicadmin.Model.Main
 import com.flatcode.littlemusicadmin.Model.Song
@@ -16,7 +12,6 @@ import com.flatcode.littlemusicadmin.Model.User
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.CLASS
 import com.flatcode.littlemusicadmin.Unit.DATA
-import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityMainBinding
 import com.google.firebase.database.DataSnapshot
@@ -24,7 +19,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
+class MainActivity : AppCompatActivity() {
 
     private var binding: ActivityMainBinding? = null
 
@@ -33,20 +28,10 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
     var context: Context = this@MainActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        PreferenceManager.getDefaultSharedPreferences(baseContext)
-            .registerOnSharedPreferenceChangeListener(this)
-        THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
-
-        // Color Mode ----------------------------- Start
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.settings, SettingsFragment())
-            .commit()
-        // Color Mode -------------------------------- End
 
         binding!!.toolbar.image.setOnClickListener {
             VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
@@ -174,7 +159,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
     private fun userInfo() {
         val reference =
             FirebaseDatabase.getInstance().getReference(DATA.USERS).child(DATA.FirebaseUserUid)
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+        reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val user = dataSnapshot.getValue(User::class.java)!!
                 VOID.Glide(true, context, user.profileImage, binding!!.toolbar.image)
@@ -221,19 +206,6 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         binding!!.recyclerView.visibility = View.VISIBLE
     }
 
-    // Color Mode ----------------------------- Start
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == "color_option") {
-            recreate()
-        }
-    }
-
-    class SettingsFragment : PreferenceFragmentCompat() {
-        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.root_preferences, rootKey)
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SETTINGS_CODE) {
@@ -241,7 +213,6 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         }
     }
 
-    // Color Mode -------------------------------- End
     override fun onResume() {
         userInfo()
         nrItems()

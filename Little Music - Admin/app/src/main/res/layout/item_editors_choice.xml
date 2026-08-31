@@ -14,7 +14,7 @@
             android:id="@+id/item"
             android:layout_width="match_parent"
             android:layout_height="100sp"
-            android:background="?background">
+            android:background="?mc_bg">
 
             <LinearLayout
                 android:layout_width="wrap_content"

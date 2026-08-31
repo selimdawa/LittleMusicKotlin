@@ -1,12 +1,15 @@
-package com.flatcode.littlemusicadmin
+package com.flatcode.littlemusic
 
 import android.app.Application
 import android.text.format.DateFormat
-import java.util.*
+import io.selimdawa.multicolors.MultiColorManager
+import java.util.Calendar
+import java.util.Locale
 
-class MyApplication : Application() {
+class Application : Application() {
     override fun onCreate() {
         super.onCreate()
+        MultiColorManager.init(this)
     }
 
     companion object {

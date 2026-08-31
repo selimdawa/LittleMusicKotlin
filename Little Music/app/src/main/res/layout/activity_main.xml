@@ -25,10 +25,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?colorOnBackground"
-            app:mbn_backgroundBottomColor="?trackColor"
+            app:mbn_backgroundBottomColor="?mc_track"
             app:mbn_circleColor="@color/white"
             app:mbn_defaultIconColor="@color/white"
-            app:mbn_selectedIconColor="?trackColor"
+            app:mbn_selectedIconColor="?mc_track"
             app:mbn_shadowColor="?colorOnBackground" />
 
     </LinearLayout>
