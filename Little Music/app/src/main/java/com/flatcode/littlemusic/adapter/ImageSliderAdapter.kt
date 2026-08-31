@@ -17,12 +17,12 @@ import io.selimdawa.autoimageslider.adapter.SliderViewAdapter
 class ImageSliderAdapter(var context: Context?, var setTotalCount: Int) :
     SliderViewAdapter<ImageSliderAdapter.SliderViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup): SliderViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SliderViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_slider, parent, false)
         return SliderViewHolder(view)
     }
 
-    override fun onBindViewHolder(viewHolder: SliderViewHolder, position: Int) {
+    override fun onBind(viewHolder: SliderViewHolder, position: Int) {
         val dbChildKey = (position + 1).toString()
 
         FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW).child(dbChildKey)
@@ -40,11 +40,11 @@ class ImageSliderAdapter(var context: Context?, var setTotalCount: Int) :
             })
     }
 
-    override fun getCount(): Int {
+    override fun getItemCount(): Int {
         return setTotalCount
     }
 
-    class SliderViewHolder(itemView: View) : ViewHolder(itemView) {
+    class SliderViewHolder(itemView: View) : SliderViewAdapter.ViewHolder(itemView) {
         val imageSlider: ImageView = itemView.findViewById(R.id.imageView)
     }
 }

@@ -25,7 +25,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import io.selimdawa.autoimageslider.SliderAnimations
-import io.selimdawa.autoimageslider.view.animation.type.IndicatorAnimationType
+import io.selimdawa.autoimageslider.view.model.IndicatorAnimationType
 
 class HomeFragment : Fragment() {
 
@@ -151,7 +151,7 @@ class HomeFragment : Fragment() {
 
             b.imageSlider.apply {
                 setIndicatorAnimation(IndicatorAnimationType.WORM)
-                setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION)
+                setSliderTransformAnimation(SliderAnimations.SIMPLE)
                 isAutoCycle = true
                 startAutoCycle()
 
