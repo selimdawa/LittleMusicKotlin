@@ -10,7 +10,6 @@ import com.flatcode.littlemusic.adapter.ArtistAdapter
 import com.flatcode.littlemusic.model.Artist
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.THEME
 import com.flatcode.littlemusic.databinding.ActivityArtistsBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -28,7 +27,6 @@ class ArtistsActivity : AppCompatActivity() {
     var type: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityArtistsBinding.inflate(layoutInflater)
         val view = binding!!.root

@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Adapter.EditorsChoiceAdapter
 import com.flatcode.littlemusicadmin.Model.EditorsChoice
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.databinding.ActivityEditorsChoiceBinding
 
 class EditorsChoiceActivity : AppCompatActivity() {
@@ -18,7 +17,6 @@ class EditorsChoiceActivity : AppCompatActivity() {
     var editorsChoice = EditorsChoice()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityEditorsChoiceBinding.inflate(layoutInflater)
         val view = binding!!.root

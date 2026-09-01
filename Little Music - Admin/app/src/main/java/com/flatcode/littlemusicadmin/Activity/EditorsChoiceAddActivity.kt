@@ -10,7 +10,6 @@ import com.flatcode.littlemusicadmin.Adapter.EditorsChoiceSongAdapter
 import com.flatcode.littlemusicadmin.Model.Song
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.DATA
-import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.databinding.ActivityEditorsChoiceAddBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -31,7 +30,6 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
     var oldId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityEditorsChoiceAddBinding.inflate(layoutInflater)
         val view = binding!!.root

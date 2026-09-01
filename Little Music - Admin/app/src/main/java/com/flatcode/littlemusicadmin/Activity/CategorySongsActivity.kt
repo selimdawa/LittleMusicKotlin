@@ -13,7 +13,6 @@ import com.flatcode.littlemusicadmin.Adapter.SongAdapter
 import com.flatcode.littlemusicadmin.Model.Album
 import com.flatcode.littlemusicadmin.Model.Song
 import com.flatcode.littlemusicadmin.Unit.DATA
-import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.databinding.ActivityCategorySongsBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -40,7 +39,6 @@ class CategorySongsActivity : AppCompatActivity() {
     var type: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityCategorySongsBinding.inflate(layoutInflater)
         val view = binding!!.root

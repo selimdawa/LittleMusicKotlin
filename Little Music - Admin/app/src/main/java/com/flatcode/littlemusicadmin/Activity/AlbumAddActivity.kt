@@ -14,7 +14,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.DATA
-import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumAddBinding
 import com.google.firebase.database.DataSnapshot
@@ -39,7 +38,6 @@ class AlbumAddActivity : AppCompatActivity() {
     private var artistList: ArrayList<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(context)
         super.onCreate(savedInstanceState)
         binding = ActivityAlbumAddBinding.inflate(layoutInflater)
         val view = binding!!.root

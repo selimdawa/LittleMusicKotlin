@@ -12,7 +12,6 @@ import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.adapter.SongAdapter
 import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.THEME
 import com.flatcode.littlemusic.databinding.ActivityShowMoreBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -36,7 +35,6 @@ class ShowMoreActivity : AppCompatActivity() {
     var recyclerView: RecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityShowMoreBinding.inflate(layoutInflater)
         val view = binding!!.root

@@ -10,7 +10,6 @@ import com.flatcode.littlemusicadmin.Adapter.AlbumAdapter
 import com.flatcode.littlemusicadmin.Model.Album
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.DATA
-import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumsBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -28,7 +27,6 @@ class AlbumsActivity : AppCompatActivity() {
     var type: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityAlbumsBinding.inflate(layoutInflater)
         val view = binding!!.root

@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Model.Song
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.DATA
-import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivitySongEditBinding
 import com.google.firebase.database.DataSnapshot
@@ -36,7 +35,6 @@ class SongEditActivity : AppCompatActivity() {
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivitySongEditBinding.inflate(layoutInflater)
         val view = binding!!.root

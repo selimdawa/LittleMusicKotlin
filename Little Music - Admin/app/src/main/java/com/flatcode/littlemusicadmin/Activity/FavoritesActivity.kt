@@ -12,7 +12,6 @@ import com.flatcode.littlemusicadmin.Adapter.SongAdapter
 import com.flatcode.littlemusicadmin.Model.Song
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.DATA
-import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.databinding.ActivityPageSongSwitchBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -34,7 +33,6 @@ class FavoritesActivity : AppCompatActivity() {
     var type: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityPageSongSwitchBinding.inflate(layoutInflater)
         val view = binding!!.root

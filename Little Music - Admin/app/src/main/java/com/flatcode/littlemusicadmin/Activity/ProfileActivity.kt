@@ -9,7 +9,6 @@ import com.flatcode.littlemusicadmin.Model.Category
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.CLASS
 import com.flatcode.littlemusicadmin.Unit.DATA
-import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityProfileBinding
 import com.google.firebase.database.DataSnapshot
@@ -25,8 +24,7 @@ class ProfileActivity : AppCompatActivity() {
     var profileId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(context)
-        super.onCreate(savedInstanceState)
+TargetContent not found        super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)

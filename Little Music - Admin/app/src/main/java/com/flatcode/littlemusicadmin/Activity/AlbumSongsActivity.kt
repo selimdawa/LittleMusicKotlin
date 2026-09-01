@@ -11,7 +11,6 @@ import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusicadmin.Adapter.SongAdapter
 import com.flatcode.littlemusicadmin.Model.Song
 import com.flatcode.littlemusicadmin.Unit.DATA
-import com.flatcode.littlemusicadmin.Unit.THEME
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumSongsBinding
 import com.google.firebase.database.DataSnapshot
@@ -36,7 +35,6 @@ class AlbumSongsActivity : AppCompatActivity() {
     var type: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        THEME.setThemeOfApp(activity)
         super.onCreate(savedInstanceState)
         binding = ActivityAlbumSongsBinding.inflate(layoutInflater)
         val view = binding!!.root
