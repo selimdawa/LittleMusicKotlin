@@ -7,126 +7,97 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.databinding.ActivityProfileEditBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
+import com.flatcode.littlemusic.viewmodel.ProfileEditViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import com.theartofdev.edmodo.cropper.CropImage
-import java.util.Objects
 
+@AndroidEntryPoint
 class ProfileEditActivity : AppCompatActivity() {
 
     private var binding: ActivityProfileEditBinding? = null
-    var activity: Activity? = null
-    var context: Context = also { activity = it }
+    private val viewModel: ProfileEditViewModel by viewModels()
     private var imageUri: Uri? = null
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileEditBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
+        Timber.i("ProfileEditActivity Created")
 
-        dialog = ProgressDialog(context)
+        dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
-        loadUserInfo()
 
         binding!!.toolbar.nameSpace.setText(R.string.edit_profile)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        binding!!.image.setOnClickListener { VOID.CropImageSquare(activity) }
-        binding!!.go.setOnClickListener { validateData() }
-    }
-
-    private var username = DATA.EMPTY
-    private fun validateData() {
-        username = binding!!.nameEt.text.toString().trim { it <= ' ' }
-        if (TextUtils.isEmpty(username)) {
-            Toast.makeText(context, "Enter name...", Toast.LENGTH_SHORT).show()
-        } else {
-            if (imageUri == null) {
-                updateProfile(DATA.EMPTY)
-            } else {
-                uploadImage()
-            }
+        binding!!.image.setOnClickListener { VOID.CropImageSquare(this) }
+        binding!!.go.setOnClickListener {
+            viewModel.updateProfile(binding!!.nameEt.text.toString().trim(), imageUri, this)
         }
+
+        observeViewModel()
+        viewModel.loadUserInfo()
     }
 
-    private fun uploadImage() {
-        dialog!!.setMessage("Uploading Image...")
-        dialog!!.show()
-        val filePathAndName = "Images/Profile/" + DATA.FirebaseUserUid
-        val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATA.DOT + VOID.getFileExtension(imageUri, context))
-        reference.putFile(imageUri!!)
-            .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
-                val uriTask = taskSnapshot.storage.downloadUrl
-                while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATA.EMPTY + uriTask.result
-                updateProfile(uploadedImageUrl)
-            }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(
-                    context, "Failed to upload image due to " + e.message, Toast.LENGTH_SHORT
-                ).show()
-            }
-    }
-
-    private fun updateProfile(imageUrl: String) {
-        dialog!!.setMessage("Updating user profile...")
-        dialog!!.show()
-        val hashMap = HashMap<String, Any>()
-        hashMap[DATA.USER_NAME] = DATA.EMPTY + username
-        if (imageUri != null) {
-            hashMap[DATA.PROFILE_IMAGE] = DATA.EMPTY + imageUrl
-        }
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
-        reference.child(Objects.requireNonNull(DATA.FirebaseUserUid)).updateChildren(hashMap)
-            .addOnSuccessListener {
-                dialog!!.dismiss()
-                Toast.makeText(context, "Profile updated...", Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(
-                    context, "Failed to update db duo to " + e.message, Toast.LENGTH_SHORT
-                ).show()
-            }
-    }
-
-    private fun loadUserInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
-        reference.child(Objects.requireNonNull(DATA.FirebaseUserUid))
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
-                    val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
-                    VOID.GlideImage(true, context, profileImage, binding!!.profileImage)
-                    binding!!.nameEt.setText(username)
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.username.collect { username ->
+                        binding!!.nameEt.setText(username)
+                    }
                 }
-
-                override fun onCancelled(error: DatabaseError) {}
-            })
+                launch {
+                    viewModel.profileImage.collect { profileImage ->
+                        VOID.GlideImage(true, this@ProfileEditActivity, profileImage, binding!!.profileImage)
+                    }
+                }
+                launch {
+                    viewModel.updateStatus.collect { status ->
+                        when (status) {
+                            is ProfileEditViewModel.UpdateStatus.Loading -> {
+                                dialog!!.setMessage(status.message)
+                                dialog!!.show()
+                            }
+                            is ProfileEditViewModel.UpdateStatus.Success -> {
+                                dialog!!.dismiss()
+                                Toast.makeText(this@ProfileEditActivity, status.message, Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
+                            is ProfileEditViewModel.UpdateStatus.Error -> {
+                                dialog!!.dismiss()
+                                Toast.makeText(this@ProfileEditActivity, status.message, Toast.LENGTH_SHORT).show()
+                            }
+                            ProfileEditViewModel.UpdateStatus.Idle -> {}
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
-            val uri = CropImage.getPickImageResultUri(context, data)
-            if (CropImage.isReadExternalStoragePermissionsRequired(context, uri)) {
+            val uri = CropImage.getPickImageResultUri(this, data)
+            if (CropImage.isReadExternalStoragePermissionsRequired(this, uri)) {
                 imageUri = uri
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             } else {
-                VOID.CropImageSquare(activity)
+                VOID.CropImageSquare(this)
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {

@@ -11,20 +11,23 @@ import com.flatcode.littlemusicadmin.Model.Album
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumsBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
 import java.text.MessageFormat
+import androidx.activity.viewModels
+import com.flatcode.littlemusicadmin.ViewModel.AlbumsViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
+import timber.log.Timber
 
+@AndroidEntryPoint
 class AlbumsActivity : AppCompatActivity() {
 
     private var binding: ActivityAlbumsBinding? = null
     var activity: Activity = this@AlbumsActivity
     var list: ArrayList<Album?>? = null
     var adapter: AlbumAdapter? = null
-    var type: String? = null
+    private val viewModel: AlbumsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +38,6 @@ class AlbumsActivity : AppCompatActivity() {
         binding!!.toolbar.nameSpace.setText(R.string.albums)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.toolbar.close.setOnClickListener { onBackPressed() }
-        type = DATA.TIMESTAMP
 
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
@@ -56,56 +58,50 @@ class AlbumsActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        //binding.recyclerView.setHasFixedSize(true);
         list = ArrayList()
         adapter = AlbumAdapter(activity, list!!)
         binding!!.recyclerView.adapter = adapter
 
         binding!!.switchBar.all.setOnClickListener {
-            type = DATA.TIMESTAMP
-            getData(type)
+            viewModel.setOrderBy(DATA.TIMESTAMP)
         }
         binding!!.switchBar.mostSongs.setOnClickListener {
-            type = DATA.SONGS_COUNT
-            getData(type)
+            viewModel.setOrderBy(DATA.SONGS_COUNT)
         }
         binding!!.switchBar.mostInterested.setOnClickListener {
-            type = DATA.INTERESTED_COUNT
-            getData(type)
+            viewModel.setOrderBy(DATA.INTERESTED_COUNT)
         }
         binding!!.switchBar.name.setOnClickListener {
-            type = DATA.NAME
-            getData(type)
+            viewModel.setOrderBy(DATA.NAME)
         }
-        getData(type)
+
+        observeViewModel()
     }
 
-    private fun getData(orderBy: String?) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.ALBUMS)
-        ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.albums.collectLatest { albums ->
                 list!!.clear()
-                var i = 0
-                for (data in dataSnapshot.children) {
-                    val item = data.getValue(Album::class.java)!!
-                    list!!.add(item)
-                    i++
-                }
-                list!!.reverse()
-                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
+                list!!.addAll(albums)
+                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
                 adapter!!.notifyDataSetChanged()
-                binding!!.progress.visibility = View.GONE
-                if (list!!.isNotEmpty()) {
+                
+                if (albums.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {
                     binding!!.recyclerView.visibility = View.GONE
                     binding!!.emptyText.visibility = View.VISIBLE
                 }
+                Timber.d("Albums updated: ${albums.size}")
             }
+        }
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        lifecycleScope.launch {
+            viewModel.isLoading.collectLatest { isLoading ->
+                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -121,12 +117,10 @@ class AlbumsActivity : AppCompatActivity() {
     }
 
     override fun onRestart() {
-        getData(type)
         super.onRestart()
     }
 
     override fun onResume() {
-        getData(type)
         super.onResume()
     }
 }

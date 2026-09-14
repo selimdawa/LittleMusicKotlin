@@ -3,42 +3,53 @@ package com.flatcode.littlemusic.activity
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.databinding.ActivitySplashBinding
-import com.google.firebase.auth.FirebaseAuth
+import com.flatcode.littlemusic.viewmodel.SplashViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
+@AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
 
     private var binding: ActivitySplashBinding? = null
-    var context: Context = this@SplashActivity
-    var auth: FirebaseAuth? = null
-    var time_per_second = 2
-    var time_final: Int = time_per_millis * time_per_second
+    private val viewModel: SplashViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
+        Timber.i("SplashActivity Created")
 
-        auth = FirebaseAuth.getInstance()
-        Handler().postDelayed({ checkUser() }, time_final.toLong())
+        Handler(Looper.getMainLooper()).postDelayed({
+            viewModel.checkUser()
+        }, 2000)
+
+        observeViewModel()
     }
 
-    private fun checkUser() {
-        //get current user, if logged in
-        val firebaseUser = auth!!.currentUser
-        if (firebaseUser == null) {
-            VOID.Intent1(context, CLASS.AUTH)
-        } else {
-            VOID.Intent1(context, CLASS.MAIN)
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isUserLoggedIn.collect { isLoggedIn ->
+                    isLoggedIn?.let {
+                        if (it) {
+                            VOID.Intent1(this@SplashActivity, CLASS.MAIN)
+                        } else {
+                            VOID.Intent1(this@SplashActivity, CLASS.AUTH)
+                        }
+                        finish()
+                    }
+                }
+            }
         }
-        finish()
-    }
-
-    companion object {
-        const val time_per_millis = 1000
     }
 }

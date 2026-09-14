@@ -14,7 +14,7 @@ import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.databinding.ItemSettingBinding
 import java.text.MessageFormat
 
-class SettingAdapter(private val context: Context?, private val list: ArrayList<Setting>) :
+class SettingAdapter(private val context: Context?, var list: ArrayList<Setting>) :
     RecyclerView.Adapter<SettingAdapter.ViewHolder>() {
 
     private var binding: ItemSettingBinding? = null

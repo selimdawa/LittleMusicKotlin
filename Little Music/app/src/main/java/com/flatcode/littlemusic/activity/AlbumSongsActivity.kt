@@ -1,52 +1,58 @@
 package com.flatcode.littlemusic.activity
 
-import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.adapter.SongAdapter
 import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.databinding.ActivityAlbumSongsBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import com.flatcode.littlemusic.viewmodel.AlbumSongsViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.text.MessageFormat
 
+@AndroidEntryPoint
 class AlbumSongsActivity : AppCompatActivity() {
 
     private var binding: ActivityAlbumSongsBinding? = null
-    private val activity: Activity = this
-
-    private val list = ArrayList<Song?>()
+    private val viewModel: AlbumSongsViewModel by viewModels()
     private var adapter: SongAdapter? = null
-    private var isPlaying = false
     private val jcAudios = ArrayList<JcAudio>()
-    private var currentSong = 0
     private var albumId: String? = null
     private var albumName: String? = null
     private var albumImage: String? = null
-    private var type: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAlbumSongsBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
+        Timber.i("AlbumSongsActivity Created")
 
         albumId = intent.getStringExtra(DATA.ALBUM_ID)
         albumName = intent.getStringExtra(DATA.ALBUM_NAME)
         albumImage = intent.getStringExtra(DATA.ALBUM_IMAGE)
 
-        type = DATA.TIMESTAMP
+        setupToolbar()
+        setupSwitchBar()
+        setupRecyclerView()
+        observeViewModel()
 
+        viewModel.getData(albumId)
+    }
+
+    private fun setupToolbar() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (DATA.searchStatus) {
@@ -63,8 +69,8 @@ class AlbumSongsActivity : AppCompatActivity() {
         })
 
         binding?.let { b ->
-            VOID.GlideImage(false, activity, albumImage, b.image)
-            VOID.GlideBlur(false, activity, albumImage, b.imageBlur, 50)
+            VOID.GlideImage(false, this, albumImage, b.image)
+            VOID.GlideBlur(false, this, albumImage, b.imageBlur, 50)
 
             b.toolbar.nameSpace.text = albumName
             b.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
@@ -82,41 +88,28 @@ class AlbumSongsActivity : AppCompatActivity() {
             }
 
             b.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence, start: Int, count: Int, after: Int
-                ) {
-                }
-
+                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                     try {
                         adapter?.filter?.filter(s)
-                    } catch (_: Exception) {
-                        // Suppressed
-                    }
+                    } catch (_: Exception) {}
                 }
-
                 override fun afterTextChanged(s: Editable) {}
             })
-
-            b.switchBar.all.setOnClickListener { switchType(DATA.TIMESTAMP) }
-            b.switchBar.mostViews.setOnClickListener { switchType(DATA.VIEWS_COUNT) }
-            b.switchBar.mostLoves.setOnClickListener { switchType(DATA.LOVES_COUNT) }
-            b.switchBar.name.setOnClickListener { switchType(DATA.NAME) }
         }
-        init()
     }
 
-    private fun switchType(newType: String) {
-        type = newType
-        init()
-        getData(type)
+    private fun setupSwitchBar() {
+        binding?.let { b ->
+            b.switchBar.all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP, albumId!!) }
+            b.switchBar.mostViews.setOnClickListener { viewModel.setType(DATA.VIEWS_COUNT, albumId!!) }
+            b.switchBar.mostLoves.setOnClickListener { viewModel.setType(DATA.LOVES_COUNT, albumId!!) }
+            b.switchBar.name.setOnClickListener { viewModel.setType(DATA.NAME, albumId!!) }
+        }
     }
 
-    private fun init() {
-        list.clear()
-        jcAudios.clear()
-
-        adapter = SongAdapter(activity, list) { _, position ->
+    private fun setupRecyclerView() {
+        adapter = SongAdapter(this, ArrayList()) { _, position ->
             changeSelectedSong(position)
             binding?.player?.jcPlayer?.playAudio(jcAudios[position])
             binding?.player?.jcPlayer?.visibility = View.VISIBLE
@@ -124,55 +117,45 @@ class AlbumSongsActivity : AppCompatActivity() {
         binding!!.recyclerView.adapter = adapter
     }
 
-    private fun getData(orderBy: String?) {
-        if (orderBy == null) return
-        changeSelectedSong(-1)
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.songs.collect { songs ->
+                        adapter?.list?.clear()
+                        adapter?.list?.addAll(songs)
+                        adapter?.notifyDataSetChanged()
+                        binding!!.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
+                        
+                        jcAudios.clear()
+                        songs.forEach { song ->
+                            jcAudios.add(JcAudio.createFromURL(song.name ?: "", song.songLink ?: ""))
+                        }
 
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
-        ref.orderByChild(orderBy).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                list.clear()
-                jcAudios.clear()
-                var songCount = 0
-
-                for (data in dataSnapshot.children) {
-                    val item = data.getValue(Song::class.java) ?: continue
-                    if (item.id != null && item.albumId == albumId) {
-                        list.add(item)
-                        item.key = data.key
-                        currentSong = -1
-                        isPlaying = true
-                        jcAudios.add(JcAudio.createFromURL(item.name ?: "", item.songLink ?: ""))
-                        songCount++
+                        if (songs.isNotEmpty()) {
+                            binding!!.recyclerView.visibility = View.VISIBLE
+                            binding!!.emptyText.visibility = View.GONE
+                            binding!!.player.jcPlayer.initPlaylist(jcAudios, null)
+                        } else {
+                            binding!!.recyclerView.visibility = View.GONE
+                            binding!!.emptyText.visibility = View.VISIBLE
+                            Toast.makeText(this@AlbumSongsActivity, "There are no songs!", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
-
-                binding?.let { b ->
-                    b.toolbar.number.text = MessageFormat.format("( {0} )", songCount)
-                    adapter?.notifyDataSetChanged()
-                    b.progress.visibility = View.GONE
-
-                    if (list.isNotEmpty()) {
-                        b.recyclerView.visibility = View.VISIBLE
-                        b.emptyText.visibility = View.GONE
-                        b.player.jcPlayer.initPlaylist(jcAudios, null)
-                    } else {
-                        b.recyclerView.visibility = View.GONE
-                        b.emptyText.visibility = View.VISIBLE
-                        Toast.makeText(activity, "There are no songs!", Toast.LENGTH_SHORT).show()
+                launch {
+                    viewModel.isLoading.collect { isLoading ->
+                        binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
                     }
                 }
             }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        }
     }
 
     private fun changeSelectedSong(index: Int) {
         adapter?.let {
             val previousSelected = it.selectedPosition
             it.selectedPosition = index
-            currentSong = index
             it.notifyItemChanged(previousSelected)
             it.notifyItemChanged(index)
         }
@@ -188,18 +171,8 @@ class AlbumSongsActivity : AppCompatActivity() {
         super.onStop()
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        getData(type)
-    }
-
     override fun onResume() {
         super.onResume()
-        getData(type)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        binding = null
+        viewModel.getData(albumId)
     }
 }

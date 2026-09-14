@@ -1,67 +1,70 @@
 package com.flatcode.littlemusic.auth
 
 import android.app.ProgressDialog
-import android.content.Context
 import android.os.Bundle
-import android.text.TextUtils
-import android.util.Patterns
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
-import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.databinding.ActivityLoginBinding
-import com.google.firebase.auth.FirebaseAuth
+import com.flatcode.littlemusic.viewmodel.LoginViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private var binding: ActivityLoginBinding? = null
-    var context: Context = this@LoginActivity
-    private var auth: FirebaseAuth? = null
+    private val viewModel: LoginViewModel by viewModels()
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
+        Timber.i("LoginActivity Created")
 
-        auth = FirebaseAuth.getInstance()
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding!!.forget.setOnClickListener { VOID.Intent1(context, CLASS.FORGET_PASSWORD) }
-        binding!!.noAccount.setOnClickListener { VOID.Intent1(context, CLASS.REGISTER) }
-        binding!!.loginBtn.setOnClickListener { validateDate() }
-    }
-
-    private var email = ""
-    private var password = ""
-    private fun validateDate() {
-
-        //get data
-        email = binding!!.emailEt.text.toString().trim { it <= ' ' }
-        password = binding!!.passwordEt.text.toString().trim { it <= ' ' }
-
-        //validate data
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(context, "Invalid email pattern...!", Toast.LENGTH_SHORT).show()
-        } else if (TextUtils.isEmpty(password)) {
-            Toast.makeText(context, "Enter password...!", Toast.LENGTH_SHORT).show()
-        } else {
-            loginUser()
+        binding!!.forget.setOnClickListener { VOID.Intent1(this, CLASS.FORGET_PASSWORD) }
+        binding!!.noAccount.setOnClickListener { VOID.Intent1(this, CLASS.REGISTER) }
+        binding!!.loginBtn.setOnClickListener {
+            val email = binding!!.emailEt.text.toString().trim()
+            val password = binding!!.passwordEt.text.toString().trim()
+            viewModel.login(email, password)
         }
+
+        observeViewModel()
     }
 
-    private fun loginUser() {
-        dialog!!.setMessage("Logging In...")
-        dialog!!.show()
-        auth!!.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener { VOID.IntentClear(context, CLASS.MAIN) }
-            .addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loginStatus.collect { status ->
+                    when (status) {
+                        is LoginViewModel.LoginStatus.Loading -> {
+                            dialog!!.setMessage(status.message)
+                            dialog!!.show()
+                        }
+                        is LoginViewModel.LoginStatus.Success -> {
+                            dialog!!.dismiss()
+                            VOID.IntentClear(this@LoginActivity, CLASS.MAIN)
+                        }
+                        is LoginViewModel.LoginStatus.Error -> {
+                            dialog!!.dismiss()
+                            Toast.makeText(this@LoginActivity, status.message, Toast.LENGTH_SHORT).show()
+                        }
+                        LoginViewModel.LoginStatus.Idle -> {}
+                    }
+                }
             }
+        }
     }
 }

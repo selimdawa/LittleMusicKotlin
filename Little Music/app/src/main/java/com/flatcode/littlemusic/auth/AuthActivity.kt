@@ -1,24 +1,25 @@
 package com.flatcode.littlemusic.auth
 
-import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.databinding.ActivityAuthBinding
+import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
+@AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
 
     private var binding: ActivityAuthBinding? = null
-    var context: Context = this@AuthActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
+        Timber.i("AuthActivity Created")
 
-        binding!!.loginBtn.setOnClickListener { VOID.Intent1(context, CLASS.LOGIN) }
-        binding!!.skipBtn.setOnClickListener { VOID.Intent1(context, CLASS.REGISTER) }
+        binding!!.loginBtn.setOnClickListener { VOID.Intent1(this, CLASS.LOGIN) }
+        binding!!.skipBtn.setOnClickListener { VOID.Intent1(this, CLASS.REGISTER) }
     }
 }

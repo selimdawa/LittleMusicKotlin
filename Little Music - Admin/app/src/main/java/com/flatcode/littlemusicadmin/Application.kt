@@ -6,14 +6,18 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import dagger.hilt.android.HiltAndroidApp
 import io.selimdawa.multicolors.MultiColorManager
+import timber.log.Timber
 import java.util.Calendar
 import java.util.Locale
 
+@HiltAndroidApp
 class Application : Application(), SingletonImageLoader.Factory {
     override fun onCreate() {
         super.onCreate()
         MultiColorManager.init(this)
+        Timber.plant(Timber.DebugTree())
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {

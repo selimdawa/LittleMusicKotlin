@@ -8,7 +8,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
+import com.google.android.material.card.MaterialCardView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.filter.SongMainFilter
 import com.flatcode.littlemusic.model.Song
@@ -97,7 +97,7 @@ class SongMainAdapter(
         var love: ImageView
         var play: ImageView
         var pause: ImageView
-        var card: CardView
+        var card: MaterialCardView
         fun bind(
             getSongs: Song?, listener: (Song?, Int) -> Unit, id: String?,
             listener2: (Song?, Int) -> Unit, playBtn: ImageView, pauseBtn: ImageView,
@@ -116,7 +116,7 @@ class SongMainAdapter(
         init {
             favorite = binding!!.favorite
             love = binding!!.love
-            card = binding!!.card
+            card = binding!!.card as MaterialCardView
             play = binding!!.play
             pause = binding!!.pause
             name = binding!!.name

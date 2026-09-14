@@ -5,26 +5,29 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemusicadmin.Adapter.UserAdapter
 import com.flatcode.littlemusicadmin.Model.User
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.DATA
+import com.flatcode.littlemusicadmin.ViewModel.UsersViewModel
 import com.flatcode.littlemusicadmin.databinding.ActivityUsersBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.text.MessageFormat
+import timber.log.Timber
 
+@AndroidEntryPoint
 class UsersActivity : AppCompatActivity() {
 
     private var binding: ActivityUsersBinding? = null
     private val context: Context = this@UsersActivity
     var list: ArrayList<User?>? = null
     var adapter: UserAdapter? = null
-    var type: String? = null
+    private val viewModel: UsersViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +38,6 @@ class UsersActivity : AppCompatActivity() {
         binding!!.toolbar.nameSpace.setText(R.string.users)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.toolbar.close.setOnClickListener { onBackPressed() }
-        type = DATA.TIMESTAMP
 
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
@@ -49,57 +51,51 @@ class UsersActivity : AppCompatActivity() {
                 try {
                     adapter!!.filter.filter(s)
                 } catch (e: Exception) {
-                    //None
+                    Timber.e(e, "Error filtering users")
                 }
             }
 
             override fun afterTextChanged(s: Editable) {}
         })
 
-        //binding.recyclerView.setHasFixedSize(true);
         list = ArrayList()
         adapter = UserAdapter(context, list!!)
         binding!!.recyclerView.adapter = adapter
 
         binding!!.switchBar.all.setOnClickListener {
-            type = DATA.TIMESTAMP
-            getData(type)
+            viewModel.setOrderBy(DATA.TIMESTAMP)
         }
         binding!!.switchBar.name.setOnClickListener {
-            type = DATA.NAME
-            getData(type)
+            viewModel.setOrderBy(DATA.NAME)
         }
-        getData(type)
+
+        observeViewModel()
     }
 
-    private fun getData(type: String?) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.USERS)
-        ref.orderByChild(type!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.users.collectLatest { users ->
                 list!!.clear()
-                var i = 0
-                for (data in dataSnapshot.children) {
-                    val item = data.getValue(User::class.java)!!
-                    if (item.id != DATA.FirebaseUserUid) {
-                        list!!.add(item)
-                        i++
-                    }
-                }
-                list!!.reverse()
-                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
+                list!!.addAll(users)
+                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", users.size)
                 adapter!!.notifyDataSetChanged()
-                binding!!.progress.visibility = View.GONE
-                if (list!!.isNotEmpty()) {
+
+                if (users.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {
                     binding!!.recyclerView.visibility = View.GONE
                     binding!!.emptyText.visibility = View.VISIBLE
                 }
+                Timber.d("Users updated: ${users.size}")
             }
+        }
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        lifecycleScope.launch {
+            viewModel.isLoading.collectLatest { isLoading ->
+                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -112,12 +108,10 @@ class UsersActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        getData(type)
         super.onResume()
     }
 
     override fun onRestart() {
-        getData(type)
         super.onRestart()
     }
 }

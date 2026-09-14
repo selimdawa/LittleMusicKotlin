@@ -14,15 +14,20 @@ import com.flatcode.littlemusicadmin.Unit.CLASS
 import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityMainBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import androidx.activity.viewModels
+import com.flatcode.littlemusicadmin.ViewModel.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
+import timber.log.Timber
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private var binding: ActivityMainBinding? = null
 
+    private val viewModel: MainViewModel by viewModels()
     var list: MutableList<Main>? = null
     var adapter: MainAdapter? = null
     var context: Context = this@MainActivity
@@ -37,136 +42,39 @@ class MainActivity : AppCompatActivity() {
             VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
 
-        //binding.recyclerView.setHasFixedSize(true);
         list = ArrayList()
         adapter = MainAdapter(context, list as ArrayList<Main>)
         binding!!.recyclerView.adapter = adapter
+
+        observeViewModel()
     }
 
-    var U = 0
-    var SO = 0
-    var EC = 0
-    var CA = 0
-    var SL = 0
-    var AL = 0
-    var AR = 0
-    var FA = 0
-    private fun nrItems() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                U = 0
-                for (data in dataSnapshot.children) {
-                    val item = data.getValue(User::class.java)!!
-                    if (item.id != null && item.id != DATA.FirebaseUserUid) U++
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.userInfo.collectLatest { user ->
+                user?.let {
+                    VOID.Glide(true, context, it.profileImage, binding!!.toolbar.image)
+                    Timber.d("User info updated: ${it.username}")
                 }
-                nrSongs()
             }
+        }
 
-            private fun nrSongs() {
-                val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
-                reference.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        SO = 0
-                        EC = 0
-                        for (data in dataSnapshot.children) {
-                            val item = data.getValue(Song::class.java)!!
-                            if (item.id != null) {
-                                SO++
-                                if (item.editorsChoice != 0) if (item.publisher == DATA.FirebaseUserUid) EC++
-                            }
-                        }
-                        nrCategories()
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {}
-                })
+        lifecycleScope.launch {
+            viewModel.counts.collectLatest { counts ->
+                IdeaPosts(
+                    counts.users, counts.songs, counts.editorsChoice, counts.categories,
+                    counts.sliderShow, counts.albums, counts.artists, counts.favorites
+                )
+                Timber.d("Counts updated: $counts")
             }
+        }
 
-            private fun nrCategories() {
-                val reference = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
-                reference.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        CA = 0
-                        for (data in dataSnapshot.children) {
-                            val item = data.getValue(Song::class.java)!!
-                            if (item.id != null) if (item.publisher == DATA.FirebaseUserUid) CA++
-                        }
-                        nrSliderShow()
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {}
-                })
+        lifecycleScope.launch {
+            viewModel.isLoading.collectLatest { isLoading ->
+                binding!!.bar.visibility = if (isLoading) View.VISIBLE else View.GONE
+                binding!!.recyclerView.visibility = if (isLoading) View.GONE else View.VISIBLE
             }
-
-            private fun nrSliderShow() {
-                val reference = FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
-                reference.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        SL = 0
-                        SL = dataSnapshot.childrenCount.toInt()
-                        nrAlbums()
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {}
-                })
-            }
-
-            private fun nrAlbums() {
-                val reference = FirebaseDatabase.getInstance().getReference(DATA.ALBUMS)
-                reference.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        AL = 0
-                        AL = dataSnapshot.childrenCount.toInt()
-                        nrArtists()
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {}
-                })
-            }
-
-            private fun nrArtists() {
-                val reference = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS)
-                reference.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        AR = 0
-                        AR = dataSnapshot.childrenCount.toInt()
-                        nrFavorites()
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {}
-                })
-            }
-
-            private fun nrFavorites() {
-                val reference = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
-                    .child(DATA.FirebaseUserUid)
-                reference.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        FA = 0
-                        FA = dataSnapshot.childrenCount.toInt()
-                        IdeaPosts(U, SO, EC, CA, SL, AL, AR, FA)
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {}
-                })
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
-    }
-
-    private fun userInfo() {
-        val reference =
-            FirebaseDatabase.getInstance().getReference(DATA.USERS).child(DATA.FirebaseUserUid)
-        reference.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val user = dataSnapshot.getValue(User::class.java)!!
-                VOID.Glide(true, context, user.profileImage, binding!!.toolbar.image)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        }
     }
 
     private fun IdeaPosts(
@@ -202,8 +110,6 @@ class MainActivity : AppCompatActivity() {
         list!!.add(item12)
         list!!.add(item13)
         adapter!!.notifyDataSetChanged()
-        binding!!.bar.visibility = View.GONE
-        binding!!.recyclerView.visibility = View.VISIBLE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -211,8 +117,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        userInfo()
-        nrItems()
         super.onResume()
     }
 

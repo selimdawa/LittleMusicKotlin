@@ -5,37 +5,47 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.adapter.AlbumAdapter
 import com.flatcode.littlemusic.model.Album
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.databinding.ActivityAlbumsBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import com.flatcode.littlemusic.viewmodel.AlbumsViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.text.MessageFormat
 
+@AndroidEntryPoint
 class AlbumsActivity : AppCompatActivity() {
 
     private var binding: ActivityAlbumsBinding? = null
-    var activity: Activity = this@AlbumsActivity
-    var list: ArrayList<Album?>? = null
-    var adapter: AlbumAdapter? = null
-    var type: String? = null
+    private val viewModel: AlbumsViewModel by viewModels()
+    private var adapter: AlbumAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAlbumsBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
+        Timber.i("AlbumsActivity Created")
 
+        setupToolbar()
+        setupRecyclerView()
+        setupSwitchBar()
+        observeViewModel()
+
+        viewModel.getData()
+    }
+
+    private fun setupToolbar() {
         binding!!.toolbar.nameSpace.setText(R.string.albums)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.toolbar.close.setOnClickListener { onBackPressed() }
-        type = DATA.TIMESTAMP
 
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
@@ -51,60 +61,48 @@ class AlbumsActivity : AppCompatActivity() {
                     //None
                 }
             }
-
             override fun afterTextChanged(s: Editable) {}
         })
-
-        //binding.recyclerView.setHasFixedSize(true);
-        list = ArrayList()
-        adapter = AlbumAdapter(activity, list!!)
-        binding!!.recyclerView.adapter = adapter
-
-        binding!!.switchBar.all.setOnClickListener {
-            type = DATA.TIMESTAMP
-            getData(type)
-        }
-        binding!!.switchBar.mostSongs.setOnClickListener {
-            type = DATA.SONGS_COUNT
-            getData(type)
-        }
-        binding!!.switchBar.mostInterested.setOnClickListener {
-            type = DATA.INTERESTED_COUNT
-            getData(type)
-        }
-        binding!!.switchBar.name.setOnClickListener {
-            type = DATA.NAME
-            getData(type)
-        }
-        getData(type)
     }
 
-    private fun getData(orderBy: String?) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.ALBUMS)
-        ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                list!!.clear()
-                var i = 0
-                for (data in dataSnapshot.children) {
-                    val item = data.getValue(Album::class.java)!!
-                    list!!.add(item)
-                    i++
+    private fun setupRecyclerView() {
+        adapter = AlbumAdapter(this, ArrayList())
+        binding!!.recyclerView.adapter = adapter
+    }
+
+    private fun setupSwitchBar() {
+        binding!!.switchBar.all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP) }
+        binding!!.switchBar.mostSongs.setOnClickListener { viewModel.setType(DATA.SONGS_COUNT) }
+        binding!!.switchBar.mostInterested.setOnClickListener { viewModel.setType(DATA.INTERESTED_COUNT) }
+        binding!!.switchBar.name.setOnClickListener { viewModel.setType(DATA.NAME) }
+    }
+
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.albums.collect { albums ->
+                        adapter?.list?.clear()
+                        adapter?.list?.addAll(albums)
+                        adapter?.notifyDataSetChanged()
+                        binding!!.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
+                        
+                        if (albums.isNotEmpty()) {
+                            binding!!.recyclerView.visibility = View.VISIBLE
+                            binding!!.emptyText.visibility = View.GONE
+                        } else {
+                            binding!!.recyclerView.visibility = View.GONE
+                            binding!!.emptyText.visibility = View.VISIBLE
+                        }
+                    }
                 }
-                list!!.reverse()
-                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
-                adapter!!.notifyDataSetChanged()
-                binding!!.progress.visibility = View.GONE
-                if (list!!.isNotEmpty()) {
-                    binding!!.recyclerView.visibility = View.VISIBLE
-                    binding!!.emptyText.visibility = View.GONE
-                } else {
-                    binding!!.recyclerView.visibility = View.GONE
-                    binding!!.emptyText.visibility = View.VISIBLE
+                launch {
+                    viewModel.isLoading.collect { isLoading ->
+                        binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                    }
                 }
             }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        }
     }
 
     override fun onBackPressed() {
@@ -116,13 +114,8 @@ class AlbumsActivity : AppCompatActivity() {
         } else super.onBackPressed()
     }
 
-    override fun onRestart() {
-        getData(type)
-        super.onRestart()
-    }
-
     override fun onResume() {
-        getData(type)
         super.onResume()
+        viewModel.getData()
     }
 }

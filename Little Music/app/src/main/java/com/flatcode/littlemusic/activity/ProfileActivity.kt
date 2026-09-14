@@ -3,100 +3,89 @@ package com.flatcode.littlemusic.activity
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.databinding.ActivityProfileBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.flatcode.littlemusic.viewmodel.ProfileViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.text.MessageFormat
 
+@AndroidEntryPoint
 class ProfileActivity : AppCompatActivity() {
 
     private var binding: ActivityProfileBinding? = null
-    var context: Context = this@ProfileActivity
-    var profileId: String? = null
+    private val viewModel: ProfileViewModel by viewModels()
+    private var profileId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
+        Timber.i("ProfileActivity Created")
 
-        val intent = intent
         profileId = intent.getStringExtra(DATA.PROFILE_ID)
 
         if (profileId == DATA.FirebaseUserUid) {
             binding!!.edit.visibility = View.VISIBLE
             binding!!.edit.setImageResource(R.drawable.ic_edit_white)
-            binding!!.edit.setOnClickListener { VOID.Intent1(context, CLASS.PROFILE_EDIT) }
+            binding!!.edit.setOnClickListener { VOID.Intent1(this, CLASS.PROFILE_EDIT) }
         }
         binding!!.back.setOnClickListener { onBackPressed() }
+
+        observeViewModel()
     }
 
-    private fun start() {
-        loadUserInfo()
-        nrFavorites
-        nrInterested(DATA.ALBUMS, binding!!.numberAlbums)
-        nrInterested(DATA.ARTISTS, binding!!.numberArtists)
-        nrInterested(DATA.CATEGORIES, binding!!.numberCategories)
-    }
-
-    private fun loadUserInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
-        reference.child(profileId!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                //String email = DATA.EMPTY + snapshot.child(DATA.EMAIL).getValue();
-                val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
-                val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
-                //String timestamp = DATA.EMPTY + snapshot.child(DATA.TIMESTAMP).getValue();
-                //String id = DATA.EMPTY + snapshot.child(DATA.ID).getValue();
-                //int version = DATA.ZERO + snapshot.child(DATA.VERSION).getValue();
-                binding!!.username.text = username
-                VOID.GlideImage(true, context, profileImage, binding!!.profile)
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    private fun nrInterested(database: String, text: TextView) {
-        val ref = FirebaseDatabase.getInstance().getReference(DATA.INTERESTED).child(profileId!!)
-            .child(database)
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                text.text = MessageFormat.format("{0}", dataSnapshot.childrenCount)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
-    }
-
-    private val nrFavorites: Unit
-        get() {
-            val ref = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES).child(profileId!!)
-            ref.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    binding!!.numberFavorites.text =
-                        MessageFormat.format("{0}", dataSnapshot.childrenCount)
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.username.collect { username ->
+                        binding!!.username.text = username
+                    }
                 }
-
-                override fun onCancelled(databaseError: DatabaseError) {}
-            })
+                launch {
+                    viewModel.profileImage.collect { profileImage ->
+                        VOID.GlideImage(true, this@ProfileActivity, profileImage, binding!!.profile)
+                    }
+                }
+                launch {
+                    viewModel.favoritesCount.collect { count ->
+                        binding!!.numberFavorites.text = MessageFormat.format("{0}", count)
+                    }
+                }
+                launch {
+                    viewModel.albumsCount.collect { count ->
+                        binding!!.numberAlbums.text = MessageFormat.format("{0}", count)
+                    }
+                }
+                launch {
+                    viewModel.artistsCount.collect { count ->
+                        binding!!.numberArtists.text = MessageFormat.format("{0}", count)
+                    }
+                }
+                launch {
+                    viewModel.categoriesCount.collect { count ->
+                        binding!!.numberCategories.text = MessageFormat.format("{0}", count)
+                    }
+                }
+            }
         }
-
-    override fun onRestart() {
-        start()
-        super.onRestart()
     }
 
     override fun onResume() {
-        start()
         super.onResume()
+        profileId?.let {
+            viewModel.loadUserInfo(it)
+            viewModel.loadCounts(it)
+        }
     }
 }

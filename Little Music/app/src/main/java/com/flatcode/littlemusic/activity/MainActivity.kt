@@ -6,8 +6,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.fragment.SettingsFragment
 import com.flatcode.littlemusic.fragment.mySongsFragment
 import com.flatcode.littlemusic.fragment.CategoriesFragment
@@ -17,25 +21,29 @@ import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.databinding.ActivityMainBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.flatcode.littlemusic.viewmodel.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import io.selimdawa.bubblebottom.BubbleBottomNavigation
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.Objects
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private var binding: ActivityMainBinding? = null
     var activity: Activity? = null
     var context: Context = also { activity = it }
     var bottomNavigation: BubbleBottomNavigation? = null
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
+
+        Timber.i("MainActivity Created")
 
         bottomNavigation = binding!!.bottomNavigation
         bottomNavigation!!.add(BubbleBottomNavigation.Model(1, R.drawable.ic_settings))
@@ -74,25 +82,26 @@ class MainActivity : AppCompatActivity() {
         binding!!.toolbar.image.setOnClickListener {
             VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
-        loadUserInfo()
+
+        observeViewModel()
+        viewModel.loadUserInfo()
+    }
+
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.profileImage.collect { profileImage ->
+                    profileImage?.let {
+                        VOID.GlideImage(true, context, it, binding!!.toolbar.image)
+                    }
+                }
+            }
+        }
     }
 
     private fun loadFragment(fragment: Fragment?) {
         supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment!!)
             .commit()
-    }
-
-    private fun loadUserInfo() {
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
-        reference.child(Objects.requireNonNull(DATA.FirebaseUserUid))
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
-                    VOID.GlideImage(true, context, profileImage, binding!!.toolbar.image)
-                }
-
-                override fun onCancelled(error: DatabaseError) {}
-            })
     }
 
     override fun onBackPressed() {

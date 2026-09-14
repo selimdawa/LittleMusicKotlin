@@ -1,56 +1,51 @@
 package com.flatcode.littlemusicadmin.Activity
 
-import android.app.Activity
 import android.os.Bundle
+import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.CLASS
-import com.flatcode.littlemusicadmin.Unit.DATA
-import com.flatcode.littlemusicadmin.Unit.VOID
+import com.flatcode.littlemusicadmin.ViewModel.PrivacyPolicyViewModel
 import com.flatcode.littlemusicadmin.databinding.ActivityPrivacyPolicyBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
+@AndroidEntryPoint
 class PrivacyPolicyActivity : AppCompatActivity() {
 
     private var binding: ActivityPrivacyPolicyBinding? = null
-    var activity: Activity = this@PrivacyPolicyActivity
+    private val viewModel: PrivacyPolicyViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
 
         binding!!.toolbar.nameSpace.setText(R.string.privacy_policy)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        binding!!.edit.setOnClickListener { VOID.Intent1(activity, CLASS.PRIVACY_POLICY_EDIT) }
 
-        privacyPolicy()
+        observeViewModel()
     }
 
-    private fun privacyPolicy() {
-        val reference = FirebaseDatabase.getInstance().reference.child(DATA.TOOLS)
-            .child(DATA.PRIVACY_POLICY)
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val name = dataSnapshot.value.toString()
-                binding!!.text.text = name
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.privacyPolicy.collectLatest { policy ->
+                binding!!.text.text = policy
+                Timber.d("Privacy policy updated")
             }
+        }
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
-    }
-
-    override fun onRestart() {
-        privacyPolicy()
-        super.onRestart()
+        lifecycleScope.launch {
+            viewModel.isLoading.collectLatest { isLoading ->
+                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+        }
     }
 
     override fun onResume() {
-        privacyPolicy()
         super.onResume()
     }
 }

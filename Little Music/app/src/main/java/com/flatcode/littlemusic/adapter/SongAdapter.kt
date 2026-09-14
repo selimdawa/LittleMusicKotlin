@@ -9,7 +9,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
+import com.google.android.material.card.MaterialCardView
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.filter.SongFilter
 import com.flatcode.littlemusic.model.Song
@@ -90,8 +90,8 @@ class SongAdapter(
         var nrLoves: TextView
         var favorite: ImageView = binding!!.favorite
         var love: ImageView = binding!!.love
-        var card: CardView = binding!!.card
-        var wave: MultiWaveHeader = binding!!.wave
+        var card: MaterialCardView = binding!!.card as MaterialCardView
+        var wave: MultiWaveHeader = binding!!.wave as MultiWaveHeader
 
         fun bind(getSongs: Song?, listener: (Song?, Int) -> Unit, id: String?) {
             card.setOnClickListener {

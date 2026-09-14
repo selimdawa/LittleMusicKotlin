@@ -5,26 +5,29 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemusicadmin.Adapter.CategoryAdapter
 import com.flatcode.littlemusicadmin.Model.Category
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.DATA
+import com.flatcode.littlemusicadmin.ViewModel.CategoriesViewModel
 import com.flatcode.littlemusicadmin.databinding.ActivityCategoriesBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.text.MessageFormat
+import timber.log.Timber
 
+@AndroidEntryPoint
 class CategoriesActivity : AppCompatActivity() {
 
     private var binding: ActivityCategoriesBinding? = null
     var activity: Activity = this@CategoriesActivity
     var list: ArrayList<Category?>? = null
     var adapter: CategoryAdapter? = null
-    var type: String? = null
+    private val viewModel: CategoriesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +38,6 @@ class CategoriesActivity : AppCompatActivity() {
         binding!!.toolbar.nameSpace.setText(R.string.categories)
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.toolbar.close.setOnClickListener { onBackPressed() }
-        type = DATA.TIMESTAMP
 
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
@@ -49,67 +51,60 @@ class CategoriesActivity : AppCompatActivity() {
                 try {
                     adapter!!.filter.filter(s)
                 } catch (e: Exception) {
-                    //None
+                    Timber.e(e, "Error filtering categories")
                 }
             }
 
             override fun afterTextChanged(s: Editable) {}
         })
 
-        //binding.recyclerView.setHasFixedSize(true);
         list = ArrayList()
         adapter = CategoryAdapter(activity, list!!)
         binding!!.recyclerView.adapter = adapter
 
         binding!!.switchBar.all.setOnClickListener {
-            type = DATA.TIMESTAMP
-            getData(type)
+            viewModel.setOrderBy(DATA.TIMESTAMP)
         }
         binding!!.switchBar.mostSongs.setOnClickListener {
-            type = DATA.SONGS_COUNT
-            getData(type)
+            viewModel.setOrderBy(DATA.SONGS_COUNT)
         }
         binding!!.switchBar.mostAlbums.setOnClickListener {
-            type = DATA.ALBUMS_COUNT
-            getData(type)
+            viewModel.setOrderBy(DATA.ALBUMS_COUNT)
         }
         binding!!.switchBar.mostInterested.setOnClickListener {
-            type = DATA.INTERESTED_COUNT
-            getData(type)
+            viewModel.setOrderBy(DATA.INTERESTED_COUNT)
         }
         binding!!.switchBar.name.setOnClickListener {
-            type = DATA.NAME
-            getData(type)
+            viewModel.setOrderBy(DATA.NAME)
         }
-        getData(type)
+
+        observeViewModel()
     }
 
-    private fun getData(orderBy: String?) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
-        ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.categories.collectLatest { categories ->
                 list!!.clear()
-                var i = 0
-                for (data in dataSnapshot.children) {
-                    val item = data.getValue(Category::class.java)!!
-                    list!!.add(item)
-                    i++
-                }
-                list!!.reverse()
-                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
+                list!!.addAll(categories)
+                binding!!.toolbar.number.text = MessageFormat.format("( {0} )", categories.size)
                 adapter!!.notifyDataSetChanged()
-                binding!!.progress.visibility = View.GONE
-                if (list!!.isNotEmpty()) {
+
+                if (categories.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
                 } else {
                     binding!!.recyclerView.visibility = View.GONE
                     binding!!.emptyText.visibility = View.VISIBLE
                 }
+                Timber.d("Categories updated: ${categories.size}")
             }
+        }
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        lifecycleScope.launch {
+            viewModel.isLoading.collectLatest { isLoading ->
+                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -125,12 +120,10 @@ class CategoriesActivity : AppCompatActivity() {
     }
 
     override fun onRestart() {
-        getData(type)
         super.onRestart()
     }
 
     override fun onResume() {
-        getData(type)
         super.onResume()
     }
 }

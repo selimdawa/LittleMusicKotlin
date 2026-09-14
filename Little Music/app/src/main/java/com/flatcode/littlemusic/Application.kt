@@ -5,14 +5,21 @@ import android.text.format.DateFormat
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import dagger.hilt.android.HiltAndroidApp
 import io.selimdawa.multicolors.MultiColorManager
+import timber.log.Timber
+import com.flatcode.littlemusic.BuildConfig
 import java.util.Calendar
 import java.util.Locale
 
+@HiltAndroidApp
 class Application : Application(), SingletonImageLoader.Factory {
     override fun onCreate() {
         super.onCreate()
         MultiColorManager.init(this)
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
     }
 
     override fun newImageLoader(context: coil3.PlatformContext): ImageLoader {

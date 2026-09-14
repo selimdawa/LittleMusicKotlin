@@ -1,69 +1,74 @@
 package com.flatcode.littlemusic.auth
 
 import android.app.ProgressDialog
-import android.content.Context
 import android.os.Bundle
-import android.util.Patterns
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.databinding.ActivityForgetPasswordBinding
-import com.google.firebase.auth.FirebaseAuth
+import com.flatcode.littlemusic.viewmodel.ForgetPasswordViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
+@AndroidEntryPoint
 class ForgetPasswordActivity : AppCompatActivity() {
 
     private var binding: ActivityForgetPasswordBinding? = null
-    private val context: Context = this@ForgetPasswordActivity
-    private var auth: FirebaseAuth? = null
+    private val viewModel: ForgetPasswordViewModel by viewModels()
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityForgetPasswordBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
+        Timber.i("ForgetPasswordActivity Created")
 
-        auth = FirebaseAuth.getInstance()
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
         binding!!.noAccount.setOnClickListener {
-            VOID.Intent1(context, CLASS.REGISTER)
+            VOID.Intent1(this, CLASS.REGISTER)
             finish()
         }
         binding!!.login.setOnClickListener {
-            VOID.Intent1(context, CLASS.LOGIN)
+            VOID.Intent1(this, CLASS.LOGIN)
             finish()
         }
-        binding!!.go.setOnClickListener { validateDate() }
-    }
-
-    private var email = ""
-    private fun validateDate() {
-        email = binding!!.emailEt.text.toString().trim { it <= ' ' }
-        if (email.isEmpty()) {
-            Toast.makeText(context, "Enter email...!", Toast.LENGTH_SHORT).show()
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(context, "Invalid email format...!", Toast.LENGTH_SHORT).show()
-        } else {
-            recoverPassword()
+        binding!!.go.setOnClickListener {
+            viewModel.recoverPassword(binding!!.emailEt.text.toString().trim())
         }
+
+        observeViewModel()
     }
 
-    private fun recoverPassword() {
-        dialog!!.setMessage("Sending password recovery to instructions to $email")
-        dialog!!.show()
-        auth!!.sendPasswordResetEmail(email).addOnCompleteListener {
-            dialog!!.dismiss()
-            Toast.makeText(
-                context, "Instructions to reset password sent to $email", Toast.LENGTH_SHORT
-            ).show()
-        }.addOnFailureListener { e: Exception ->
-            dialog!!.dismiss()
-            Toast.makeText(context, "Failed to send to due to " + e.message, Toast.LENGTH_SHORT)
-                .show()
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.forgetPasswordStatus.collect { status ->
+                    when (status) {
+                        is ForgetPasswordViewModel.ForgetPasswordStatus.Loading -> {
+                            dialog!!.setMessage(status.message)
+                            dialog!!.show()
+                        }
+                        is ForgetPasswordViewModel.ForgetPasswordStatus.Success -> {
+                            dialog!!.dismiss()
+                            Toast.makeText(this@ForgetPasswordActivity, status.message, Toast.LENGTH_SHORT).show()
+                        }
+                        is ForgetPasswordViewModel.ForgetPasswordStatus.Error -> {
+                            dialog!!.dismiss()
+                            Toast.makeText(this@ForgetPasswordActivity, status.message, Toast.LENGTH_SHORT).show()
+                        }
+                        ForgetPasswordViewModel.ForgetPasswordStatus.Idle -> {}
+                    }
+                }
+            }
         }
     }
 }

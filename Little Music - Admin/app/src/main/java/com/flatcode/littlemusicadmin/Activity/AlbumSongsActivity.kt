@@ -6,33 +6,36 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusicadmin.Adapter.SongAdapter
 import com.flatcode.littlemusicadmin.Model.Song
+import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.VOID
+import com.flatcode.littlemusicadmin.ViewModel.AlbumSongsViewModel
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumSongsBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.text.MessageFormat
+import timber.log.Timber
 
+@AndroidEntryPoint
 class AlbumSongsActivity : AppCompatActivity() {
 
     private var binding: ActivityAlbumSongsBinding? = null
     var activity: Activity = this@AlbumSongsActivity
     var list: ArrayList<Song?>? = null
     var adapter: SongAdapter? = null
-    var isPlaying = false
     var jcAudios: ArrayList<JcAudio>? = null
     private var currentSong = 0
     var albumId: String? = null
     var albumName: String? = null
     var albumImage: String? = null
-    var type: String? = null
+    private val viewModel: AlbumSongsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +47,11 @@ class AlbumSongsActivity : AppCompatActivity() {
         albumName = intent.getStringExtra(DATA.ALBUM_NAME)
         albumImage = intent.getStringExtra(DATA.ALBUM_IMAGE)
 
+        viewModel.init(albumId)
+
         binding!!.toolbar.nameSpace.text = albumName
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.toolbar.close.setOnClickListener { onBackPressed() }
-        type = DATA.TIMESTAMP
 
         VOID.Glide(false, activity, albumImage, binding!!.image)
         VOID.GlideBlur(false, activity, albumImage, binding!!.imageBlur, 50)
@@ -64,7 +68,7 @@ class AlbumSongsActivity : AppCompatActivity() {
                 try {
                     adapter!!.filter.filter(s)
                 } catch (e: Exception) {
-                    //None
+                    Timber.e(e, "Error filtering songs")
                 }
             }
 
@@ -73,88 +77,76 @@ class AlbumSongsActivity : AppCompatActivity() {
 
         init()
         binding!!.switchBar.all.setOnClickListener {
-            type = DATA.TIMESTAMP
-            init()
-            getData(type)
+            viewModel.setOrderBy(DATA.TIMESTAMP)
         }
         binding!!.switchBar.mostViews.setOnClickListener {
-            type = DATA.VIEWS_COUNT
-            init()
-            getData(type)
+            viewModel.setOrderBy(DATA.VIEWS_COUNT)
         }
         binding!!.switchBar.mostLoves.setOnClickListener {
-            type = DATA.LOVES_COUNT
-            init()
-            getData(type)
+            viewModel.setOrderBy(DATA.LOVES_COUNT)
         }
         binding!!.switchBar.name.setOnClickListener {
-            type = DATA.NAME
-            init()
-            getData(type)
+            viewModel.setOrderBy(DATA.NAME)
         }
+
+        observeViewModel()
     }
 
     private fun init() {
-        //binding.recyclerView.setHasFixedSize(true);
         list = ArrayList()
         jcAudios = ArrayList()
-        binding!!.recyclerView.adapter = adapter
-
-        adapter = SongAdapter(activity, list!!) { songs: Song?, position: Int ->
+        adapter = SongAdapter(activity, list!!) { _, position: Int ->
             changeSelectedSong(position)
             binding!!.player.jcPlayer.playAudio(jcAudios!![position])
             binding!!.player.jcPlayer.visibility = View.VISIBLE
         }
+        binding!!.recyclerView.adapter = adapter
     }
 
-    private fun getData(orderBy: String?) {
-        changeSelectedSong(-1)
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
-        ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.songs.collectLatest { songs ->
+                changeSelectedSong(-1)
                 list!!.clear()
+                jcAudios!!.clear()
                 var i = 0
-                for (data in dataSnapshot.children) {
-                    val item = data.getValue(Song::class.java)!!
-                    if (item.id != null) {
-                        if (item.albumId == albumId) {
-                            list!!.add(item)
-                            item.key = (data.key)
-                            currentSong = -1
-                            isPlaying = true
-                            jcAudios!!.add(JcAudio.createFromURL(item.name!!, item.songLink!!))
-                            i++
-                            binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
-                            binding!!.recyclerView.adapter = adapter
-                        }
+                for (item in songs) {
+                    list!!.add(item)
+                    if (item.name != null && item.songLink != null) {
+                        jcAudios!!.add(JcAudio.createFromURL(item.name, item.songLink))
                     }
+                    i++
                 }
                 binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
                 adapter!!.notifyDataSetChanged()
-                binding!!.progress.visibility = View.GONE
+
                 if (list!!.isNotEmpty()) {
                     binding!!.recyclerView.visibility = View.VISIBLE
                     binding!!.emptyText.visibility = View.GONE
+                    binding!!.player.jcPlayer.initPlaylist(jcAudios!!, null)
                 } else {
                     binding!!.recyclerView.visibility = View.GONE
                     binding!!.emptyText.visibility = View.VISIBLE
-                }
-                if (isPlaying) {
-                    binding!!.player.jcPlayer.initPlaylist(jcAudios!!, null)
-                } else {
                     Toast.makeText(activity, "There is no songs!", Toast.LENGTH_SHORT).show()
                 }
+                Timber.d("Songs updated: ${songs.size}")
             }
+        }
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        lifecycleScope.launch {
+            viewModel.isLoading.collectLatest { isLoading ->
+                binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+        }
     }
 
     fun changeSelectedSong(index: Int) {
-        adapter!!.notifyItemChanged(adapter!!.selectedPosition)
-        currentSong = index
-        adapter!!.selectedPosition = currentSong
-        adapter!!.notifyItemChanged(currentSong)
+        if (adapter != null) {
+            adapter!!.notifyItemChanged(adapter!!.selectedPosition)
+            currentSong = index
+            adapter!!.selectedPosition = currentSong
+            adapter!!.notifyItemChanged(currentSong)
+        }
     }
 
     override fun onBackPressed() {
@@ -180,12 +172,10 @@ class AlbumSongsActivity : AppCompatActivity() {
     }
 
     override fun onRestart() {
-        getData(type)
         super.onRestart()
     }
 
     override fun onResume() {
-        getData(type)
         super.onResume()
     }
 }

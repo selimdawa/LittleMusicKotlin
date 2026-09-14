@@ -1,111 +1,77 @@
 package com.flatcode.littlemusic.auth
 
 import android.app.ProgressDialog
-import android.content.Context
 import android.os.Bundle
-import android.text.TextUtils
-import android.util.Patterns
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
-import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.databinding.ActivityRegisterBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.flatcode.littlemusic.viewmodel.RegisterViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
+@AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
 
     private var binding: ActivityRegisterBinding? = null
-    var context: Context = this@RegisterActivity
-    private var auth: FirebaseAuth? = null
+    private val viewModel: RegisterViewModel by viewModels()
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
+        Timber.i("RegisterActivity Created")
 
-        auth = FirebaseAuth.getInstance()
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding!!.forget.setOnClickListener { VOID.Intent1(context, CLASS.FORGET_PASSWORD) }
+        binding!!.forget.setOnClickListener { VOID.Intent1(this, CLASS.FORGET_PASSWORD) }
         binding!!.login.setOnClickListener {
-            VOID.Intent1(context, CLASS.LOGIN)
+            VOID.Intent1(this, CLASS.LOGIN)
             finish()
         }
-        binding!!.go.setOnClickListener { validateData() }
-    }
-
-    private var name = ""
-    private var email = ""
-    private var password = ""
-    private fun validateData() {
-        //get data
-        name = binding!!.nameEt.text.toString().trim { it <= ' ' }
-        email = binding!!.emailEt.text.toString().trim { it <= ' ' }
-        password = binding!!.passwordEt.text.toString().trim { it <= ' ' }
-        val cPassword = binding!!.cPasswordEt.text.toString().trim { it <= ' ' }
-
-        //validate data
-        if (TextUtils.isEmpty(name)) {
-            Toast.makeText(context, "Enter you name...", Toast.LENGTH_SHORT).show()
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(context, "Invalid email pattern...!", Toast.LENGTH_SHORT).show()
-        } else if (TextUtils.isEmpty(password)) {
-            Toast.makeText(context, "Enter password...!", Toast.LENGTH_SHORT).show()
-        } else if (TextUtils.isEmpty(cPassword)) {
-            Toast.makeText(context, "Confirm Password...!", Toast.LENGTH_SHORT).show()
-        } else if (password != cPassword) {
-            Toast.makeText(context, "Password doesn't match...!", Toast.LENGTH_SHORT).show()
-        } else {
-            createUserAccount()
+        binding!!.go.setOnClickListener {
+            val name = binding!!.nameEt.text.toString().trim()
+            val email = binding!!.emailEt.text.toString().trim()
+            val password = binding!!.passwordEt.text.toString().trim()
+            val cPassword = binding!!.cPasswordEt.text.toString().trim()
+            viewModel.register(name, email, password, cPassword)
         }
+
+        observeViewModel()
     }
 
-    private fun createUserAccount() {
-        //show progress
-        dialog!!.setMessage("Creating account...")
-        dialog!!.show()
-
-        //create user in firebase auth
-        auth!!.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener { updateUserinfo() }
-            .addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.registerStatus.collect { status ->
+                    when (status) {
+                        is RegisterViewModel.RegisterStatus.Loading -> {
+                            dialog!!.setMessage(status.message)
+                            dialog!!.show()
+                        }
+                        is RegisterViewModel.RegisterStatus.Success -> {
+                            dialog!!.dismiss()
+                            Toast.makeText(this@RegisterActivity, "Account created...", Toast.LENGTH_SHORT).show()
+                            VOID.IntentClear(this@RegisterActivity, CLASS.MAIN)
+                            finish()
+                        }
+                        is RegisterViewModel.RegisterStatus.Error -> {
+                            dialog!!.dismiss()
+                            Toast.makeText(this@RegisterActivity, status.message, Toast.LENGTH_SHORT).show()
+                        }
+                        RegisterViewModel.RegisterStatus.Idle -> {}
+                    }
+                }
             }
-    }
-
-    private fun updateUserinfo() {
-        dialog!!.setMessage("Saving user info...")
-        //get current user uid, since user is registered so we can get now
-        val id = auth!!.uid
-
-        //setup data to add in db
-        val hashMap = HashMap<String, Any>()
-        hashMap[DATA.EMAIL] = DATA.EMPTY + email
-        hashMap[DATA.ID] = DATA.EMPTY + id
-        hashMap[DATA.PROFILE_IMAGE] = DATA.EMPTY + DATA.BASIC
-        hashMap[DATA.TIMESTAMP] = System.currentTimeMillis()
-        hashMap[DATA.USER_NAME] = DATA.EMPTY + name
-        hashMap[DATA.VERSION] = DATA.CURRENT_VERSION
-
-        //set data to db
-        val ref = FirebaseDatabase.getInstance().getReference(DATA.USERS)
-        assert(id != null)
-        ref.child(id!!).setValue(hashMap).addOnSuccessListener {
-            //data added to db
-            dialog!!.dismiss()
-            Toast.makeText(context, "Account created...", Toast.LENGTH_SHORT).show()
-            VOID.IntentClear(context, CLASS.MAIN)
-            finish()
-        }.addOnFailureListener { e: Exception ->
-            //data failed adding to db
-            Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
         }
     }
 }

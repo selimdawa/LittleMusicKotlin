@@ -6,54 +6,57 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.adapter.SongAdapter
 import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.databinding.ActivityShowMoreBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import com.flatcode.littlemusic.viewmodel.ShowMoreViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.text.MessageFormat
 
+@AndroidEntryPoint
 class ShowMoreActivity : AppCompatActivity() {
 
     private var binding: ActivityShowMoreBinding? = null
-    var activity: Activity = this@ShowMoreActivity
-    var list: ArrayList<Song?>? = null
-    var adapter: SongAdapter? = null
-    var isPlaying = false
-    var jcAudios: ArrayList<JcAudio>? = null
-    private var currentSong = 0
-    var type: String? = null
-    var name: String? = null
-    var isReverse: String? = null
-    var recyclerView: RecyclerView? = null
+    private val viewModel: ShowMoreViewModel by viewModels()
+    private var adapter: SongAdapter? = null
+    private val jcAudios = ArrayList<JcAudio>()
+    
+    private var type: String? = null
+    private var name: String? = null
+    private var isReverse: String? = null
+    private var recyclerView: RecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityShowMoreBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding!!.root)
+        Timber.i("ShowMoreActivity Created")
 
-        val intent = intent
         type = intent.getStringExtra(DATA.SHOW_MORE_TYPE)
         name = intent.getStringExtra(DATA.SHOW_MORE_NAME)
         isReverse = intent.getStringExtra(DATA.SHOW_MORE_BOOLEAN)
 
+        setupToolbar()
+        setupRecyclerView()
+        observeViewModel()
+
+        viewModel.getData(type)
+    }
+
+    private fun setupToolbar() {
         binding!!.toolbar.nameSpace.text = name
         binding!!.toolbar.back.setOnClickListener { onBackPressed() }
         binding!!.toolbar.close.setOnClickListener { onBackPressed() }
-
-        if (isReverse == "true") {
-            recyclerView = binding!!.recyclerViewReverse
-        } else if (isReverse == "false") {
-            recyclerView = binding!!.recyclerView
-        }
 
         binding!!.toolbar.search.setOnClickListener {
             binding!!.toolbar.toolbar.visibility = View.GONE
@@ -66,71 +69,69 @@ class ShowMoreActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
                     adapter!!.filter.filter(s)
-                } catch (_: Exception) {
-                    //None
-                }
+                } catch (e: Exception) {}
             }
-
             override fun afterTextChanged(s: Editable) {}
         })
+    }
 
-        //binding.recyclerView.setHasFixedSize(true);
-        list = ArrayList()
-        jcAudios = ArrayList()
-        recyclerView!!.adapter = adapter
-
-        adapter = SongAdapter(activity, list!!) { _: Song?, position: Int ->
+    private fun setupRecyclerView() {
+        if (isReverse == "true") {
+            recyclerView = binding!!.recyclerViewReverse
+        } else {
+            recyclerView = binding!!.recyclerView
+        }
+        
+        adapter = SongAdapter(this, ArrayList()) { _, position ->
             changeSelectedSong(position)
-            binding!!.player.jcPlayer.playAudio(jcAudios!![position])
+            binding!!.player.jcPlayer.playAudio(jcAudios[position])
             binding!!.player.jcPlayer.visibility = View.VISIBLE
+        }
+        recyclerView!!.adapter = adapter
+    }
+
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.songs.collect { songs ->
+                        adapter?.list?.clear()
+                        adapter?.list?.addAll(songs)
+                        adapter?.notifyDataSetChanged()
+                        binding!!.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
+                        
+                        jcAudios.clear()
+                        songs.forEach { song ->
+                            jcAudios.add(JcAudio.createFromURL(song.name ?: "", song.songLink ?: ""))
+                        }
+
+                        if (songs.isNotEmpty()) {
+                            recyclerView!!.visibility = View.VISIBLE
+                            binding!!.emptyText.visibility = View.GONE
+                            binding!!.player.jcPlayer.initPlaylist(jcAudios, null)
+                        } else {
+                            recyclerView!!.visibility = View.GONE
+                            binding!!.emptyText.visibility = View.VISIBLE
+                            Toast.makeText(this@ShowMoreActivity, "There are no songs!", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                launch {
+                    viewModel.isLoading.collect { isLoading ->
+                        binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                    }
+                }
+            }
         }
     }
 
-    private fun getData(orderBy: String?) {
-        changeSelectedSong(-1)
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
-        ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                list!!.clear()
-                var i = 0
-                for (data in dataSnapshot.children) {
-                    val item = data.getValue(Song::class.java)!!
-                    if (orderBy == DATA.EDITORS_CHOICE) {
-                        if (item.editorsChoice > 0) list!!.add(item)
-                    } else list!!.add(item)
-                    item.key = (data.key)
-                    currentSong = -1
-                    isPlaying = true
-                    jcAudios!!.add(JcAudio.createFromURL(item.name!!, item.songLink!!))
-                    i++
-                    binding!!.toolbar.number.text = MessageFormat.format("( {0} )", i)
-                    recyclerView!!.adapter = adapter
-                }
-                adapter!!.notifyDataSetChanged()
-                binding!!.progress.visibility = View.GONE
-                if (list!!.isNotEmpty()) {
-                    recyclerView!!.visibility = View.VISIBLE
-                    binding!!.emptyText.visibility = View.GONE
-                } else {
-                    recyclerView!!.visibility = View.GONE
-                    binding!!.emptyText.visibility = View.VISIBLE
-                }
-                if (isPlaying) {
-                    binding!!.player.jcPlayer.initPlaylist(jcAudios!!, null)
-                } else {
-                    Toast.makeText(activity, "There is no songs!", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
-    }
-
-    fun changeSelectedSong(index: Int) {
-        adapter!!.notifyItemChanged(adapter!!.selectedPosition)
-        currentSong = index
-        adapter!!.selectedPosition = currentSong
-        adapter!!.notifyItemChanged(currentSong)
+    private fun changeSelectedSong(index: Int) {
+        adapter?.let {
+            val previousSelected = it.selectedPosition
+            it.selectedPosition = index
+            it.notifyItemChanged(previousSelected)
+            it.notifyItemChanged(index)
+        }
     }
 
     override fun onBackPressed() {
@@ -152,13 +153,8 @@ class ShowMoreActivity : AppCompatActivity() {
         super.onStop()
     }
 
-    override fun onRestart() {
-        getData(type)
-        super.onRestart()
-    }
-
     override fun onResume() {
-        getData(type)
         super.onResume()
+        viewModel.getData(type)
     }
 }
