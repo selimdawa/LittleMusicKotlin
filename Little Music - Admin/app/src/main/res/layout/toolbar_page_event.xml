@@ -2,12 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/item"
         android:layout_width="match_parent"
         android:layout_height="45sp"
         android:layout_margin="10sp"
         android:visibility="visible"
+        app:strokeWidth="0dp"
         app:cardCornerRadius="6sp">
 
         <androidx.appcompat.widget.Toolbar
@@ -97,6 +98,6 @@
 
         </androidx.appcompat.widget.Toolbar>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>

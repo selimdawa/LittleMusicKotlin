@@ -2,13 +2,14 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="5sp"
         android:layout_marginBottom="10sp"
-        android:elevation="6dp"
+        app:cardElevation="6dp"
+        app:strokeWidth="0dp"
         app:cardCornerRadius="10dp">
 
         <LinearLayout
@@ -25,12 +26,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="30sp"
                     android:layout_height="30sp"
                     android:layout_alignParentStart="true"
-                    android:elevation="6dp"
+                    app:cardElevation="6dp"
                     android:padding="10sp"
+                    app:strokeWidth="0dp"
                     app:cardCornerRadius="15dp">
 
                     <ImageView
@@ -41,7 +43,7 @@
                         android:scaleType="centerCrop"
                         app:tint="@color/dark" />
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
                 <TextView
                     android:id="@+id/number"
@@ -75,6 +77,6 @@
 
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>
