@@ -3,7 +3,7 @@ agp = "9.4.0"
 androidImageCropper = "2.8.0"
 autoImageSlider = "1.0.1"
 firebaseBom = "34.18.0"
-coil = "2.7.0"
+coil = "3.1.0"
 jcplayer = "2.7.2"
 coreKtx = "1.19.0"
 junit = "4.13.2"
@@ -30,7 +30,8 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-database = { module = "com.google.firebase:firebase-database" }
 firebase-storage = { module = "com.google.firebase:firebase-storage" }
-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 jcplayer = { module = "com.github.jeancsanchez:JcPlayer", version.ref = "jcplayer" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

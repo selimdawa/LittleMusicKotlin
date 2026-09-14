@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.multicolors)
     //Image
     implementation(libs.coil)                           //Coil Image
+    implementation(libs.coil.network.okhttp)
     implementation(libs.material.ripple)                //Ripple Effect
     api(libs.android.image.cropper)                     //Image Crop
     implementation(libs.autoimageslider)                //Slider Show

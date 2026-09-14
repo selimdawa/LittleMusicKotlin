@@ -2,14 +2,26 @@ package com.flatcode.littlemusicadmin
 
 import android.app.Application
 import android.text.format.DateFormat
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import io.selimdawa.multicolors.MultiColorManager
 import java.util.Calendar
 import java.util.Locale
 
-class Application : Application() {
+class Application : Application(), SingletonImageLoader.Factory {
     override fun onCreate() {
         super.onCreate()
         MultiColorManager.init(this)
+    }
+
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
+        return ImageLoader.Builder(context)
+            .components {
+                add(OkHttpNetworkFetcherFactory())
+            }
+            .build()
     }
 
     companion object {

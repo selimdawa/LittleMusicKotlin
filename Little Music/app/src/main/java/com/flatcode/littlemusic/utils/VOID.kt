@@ -15,7 +15,7 @@ import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.TextView
-import coil.load
+import coil3.load
 import com.flatcode.littlemusic.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot

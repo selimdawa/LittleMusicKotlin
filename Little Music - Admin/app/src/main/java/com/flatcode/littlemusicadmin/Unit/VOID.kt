@@ -17,7 +17,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import coil.load
+import coil3.load
 import com.flatcode.littlemusicadmin.Model.Album
 import com.flatcode.littlemusicadmin.Model.Artist
 import com.flatcode.littlemusicadmin.Model.Category
