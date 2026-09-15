@@ -10,9 +10,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemusicadmin.Activity.ProfileActivity
 import com.flatcode.littlemusicadmin.Filter.UserFilter
 import com.flatcode.littlemusicadmin.Model.User
-import com.flatcode.littlemusicadmin.Unit.CLASS
 import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ItemUserBinding
@@ -44,7 +44,7 @@ class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
         }
 
         holder.item.setOnClickListener {
-            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, id)
+            VOID.IntentExtra(context, ProfileActivity::class.java, DATA.PROFILE_ID, id)
         }
     }
 

@@ -10,9 +10,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemusicadmin.Activity.CategorySongsActivity
 import com.flatcode.littlemusicadmin.Filter.CategoryFilter
 import com.flatcode.littlemusicadmin.Model.Category
-import com.flatcode.littlemusicadmin.Unit.CLASS
 import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ItemCategoryBinding
@@ -68,7 +68,7 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
         }
         holder.item.setOnClickListener {
             VOID.IntentExtra2(
-                activity, CLASS.CATEGORY_SONGS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+                activity, CategorySongsActivity::class.java, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }

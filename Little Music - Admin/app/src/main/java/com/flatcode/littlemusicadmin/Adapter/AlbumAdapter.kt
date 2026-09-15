@@ -11,9 +11,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemusicadmin.Activity.AlbumSongsActivity
 import com.flatcode.littlemusicadmin.Filter.AlbumFilter
 import com.flatcode.littlemusicadmin.Model.Album
-import com.flatcode.littlemusicadmin.Unit.CLASS
 import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ItemAlbumBinding
@@ -66,7 +66,7 @@ class AlbumAdapter(private val activity: Activity, var list: ArrayList<Album?>) 
         }
         holder.item.setOnClickListener {
             VOID.IntentExtra3(
-                activity, CLASS.ALBUM_SONGS,
+                activity, AlbumSongsActivity::class.java,
                 DATA.ALBUM_ID, id, DATA.ALBUM_NAME, name, DATA.ALBUM_IMAGE, image
             )
         }

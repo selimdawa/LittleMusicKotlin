@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Model.Category
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.CLASS
 import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityProfileBinding
@@ -37,7 +36,7 @@ TargetContent not found        super.onCreate(savedInstanceState)
         if (profileId == DATA.FirebaseUserUid) {
             binding!!.edit.visibility = View.VISIBLE
             binding!!.edit.setImageResource(R.drawable.ic_edit_white)
-            binding!!.edit.setOnClickListener { VOID.Intent1(context, CLASS.PROFILE_EDIT) }
+            binding!!.edit.setOnClickListener { VOID.Intent1(context, ProfileEditActivity::class.java) }
             getNrItems(DATA.ALBUMS, binding!!.numberAlbums)
             getNrItems(DATA.ARTISTS, binding!!.numberArtists)
             getNrItems(DATA.CATEGORIES, binding!!.numberCategories)

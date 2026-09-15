@@ -18,6 +18,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import coil3.load
+import com.flatcode.littlemusicadmin.Activity.AlbumEditActivity
+import com.flatcode.littlemusicadmin.Activity.ArtistEditActivity
+import com.flatcode.littlemusicadmin.Activity.CategoryEditActivity
+import com.flatcode.littlemusicadmin.Activity.SongEditActivity
 import com.flatcode.littlemusicadmin.Model.Album
 import com.flatcode.littlemusicadmin.Model.Artist
 import com.flatcode.littlemusicadmin.Model.Category
@@ -325,7 +329,7 @@ object VOID {
         builder.setTitle("Choose Options")
             .setItems(options) { dialog: DialogInterface?, which: Int ->
                 if (which == 0) {
-                    IntentExtra(activity, CLASS.CATEGORY_EDIT, DATA.CATEGORY_ID, id)
+                    IntentExtra(activity, CategoryEditActivity::class.java, DATA.CATEGORY_ID, id)
                 } else if (which == 1) {
                     dialogOptionDelete(
                         activity, id, name, DATA.CATEGORY, DATA.CATEGORIES, false,
@@ -350,7 +354,7 @@ object VOID {
             .setItems(options) { dialog: DialogInterface?, which: Int ->
                 if (which == 0) {
                     IntentExtra3(
-                        activity, CLASS.ALBUM_EDIT, DATA.ALBUM_ID, id, DATA.CATEGORY_ID,
+                        activity, AlbumEditActivity::class.java, DATA.ALBUM_ID, id, DATA.CATEGORY_ID,
                         category, DATA.ARTIST_ID, artist
                     )
                 } else if (which == 1) {
@@ -374,7 +378,7 @@ object VOID {
         builder.setTitle("Choose Options")
             .setItems(options) { dialog: DialogInterface?, which: Int ->
                 if (which == 0) {
-                    IntentExtra(activity, CLASS.ARTIST_EDIT, DATA.ARTIST_ID, id)
+                    IntentExtra(activity, ArtistEditActivity::class.java, DATA.ARTIST_ID, id)
                 } else if (which == 1) {
                     dialogOptionDelete(
                         activity, id, name, DATA.ARTIST, DATA.ARTISTS, false,
@@ -400,7 +404,7 @@ object VOID {
             .setItems(options) { dialog: DialogInterface?, which: Int ->
                 if (which == 0) {
                     IntentExtra4(
-                        activity, CLASS.SONG_EDIT, DATA.SONG_ID, id, DATA.CATEGORY_ID,
+                        activity, SongEditActivity::class.java, DATA.SONG_ID, id, DATA.CATEGORY_ID,
                         category, DATA.ARTIST_ID, artist, DATA.ALBUM_ID, album
                     )
                 } else if (which == 1) {

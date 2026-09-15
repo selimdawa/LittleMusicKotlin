@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusicadmin.Unit.CLASS
+import com.flatcode.littlemusicadmin.Auth.LoginActivity
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivitySplashBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -31,9 +31,9 @@ class SplashActivity : AppCompatActivity() {
         //get current user, if logged in
         val firebaseUser = auth!!.currentUser
         if (firebaseUser == null) {
-            VOID.Intent1(context, CLASS.LOGIN)
+            VOID.Intent1(context, LoginActivity::class.java)
         } else {
-            VOID.Intent1(context, CLASS.MAIN)
+            VOID.Intent1(context, MainActivity::class.java)
         }
         finish()
     }

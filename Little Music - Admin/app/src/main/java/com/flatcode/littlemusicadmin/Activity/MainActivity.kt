@@ -10,7 +10,6 @@ import com.flatcode.littlemusicadmin.Model.Main
 import com.flatcode.littlemusicadmin.Model.Song
 import com.flatcode.littlemusicadmin.Model.User
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.Unit.CLASS
 import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityMainBinding
@@ -39,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
 
         binding!!.toolbar.image.setOnClickListener {
-            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
+            VOID.IntentExtra(context, ProfileActivity::class.java, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
 
         list = ArrayList()
@@ -82,20 +81,20 @@ class MainActivity : AppCompatActivity() {
         albums: Int, artists: Int, favorites: Int,
     ) {
         list!!.clear()
-        val item1 = Main(R.drawable.ic_person, "Users", users, CLASS.USERS)
-        val item2 = Main(R.drawable.ic_add, "Add Song", 0, CLASS.SONG_ADD)
-        val item3 = Main(R.drawable.ic_music, "Songs", songs, CLASS.SONGS)
+        val item1 = Main(R.drawable.ic_person, "Users", users, UsersActivity::class.java)
+        val item2 = Main(R.drawable.ic_add, "Add Song", 0, SongAddActivity::class.java)
+        val item3 = Main(R.drawable.ic_music, "Songs", songs, SongsActivity::class.java)
         val item4 =
-            Main(R.drawable.ic_users, "Editors Choice", editorsChoice, CLASS.EDITORS_CHOICE)
-        val item5 = Main(R.drawable.ic_add_category, "Add Category", 0, CLASS.CATEGORY_ADD)
-        val item6 = Main(R.drawable.ic_category_gray, "Categories", categories, CLASS.CATEGORIES)
-        val item7 = Main(R.drawable.ic_slider, "Slider Show", sliderShow, CLASS.SLIDER_SHOW)
-        val item8 = Main(R.drawable.ic_adds, "Add Album", 0, CLASS.ALBUM_ADD)
-        val item9 = Main(R.drawable.ic_album, "Albums", albums, CLASS.ALBUMS)
-        val item10 = Main(R.drawable.ic__add, "Add Artist", 0, CLASS.ARTIST_ADD)
-        val item11 = Main(R.drawable.ic_mic, "Artists", artists, CLASS.ARTISTS)
-        val item12 = Main(R.drawable.ic_star_selected, "Favorites", favorites, CLASS.FAVORITES)
-        val item13 = Main(R.drawable.ic_privacy_policy, "Privacy Policy", 0, CLASS.PRIVACY_POLICY)
+            Main(R.drawable.ic_users, "Editors Choice", editorsChoice, EditorsChoiceActivity::class.java)
+        val item5 = Main(R.drawable.ic_add_category, "Add Category", 0, CategoryAddActivity::class.java)
+        val item6 = Main(R.drawable.ic_category_gray, "Categories", categories, CategoriesActivity::class.java)
+        val item7 = Main(R.drawable.ic_slider, "Slider Show", sliderShow, SliderShowActivity::class.java)
+        val item8 = Main(R.drawable.ic_adds, "Add Album", 0, AlbumAddActivity::class.java)
+        val item9 = Main(R.drawable.ic_album, "Albums", albums, AlbumsActivity::class.java)
+        val item10 = Main(R.drawable.ic__add, "Add Artist", 0, ArtistAddActivity::class.java)
+        val item11 = Main(R.drawable.ic_mic, "Artists", artists, ArtistsActivity::class.java)
+        val item12 = Main(R.drawable.ic_star_selected, "Favorites", favorites, FavoritesActivity::class.java)
+        val item13 = Main(R.drawable.ic_privacy_policy, "Privacy Policy", 0, PrivacyPolicyActivity::class.java)
         list!!.add(item1)
         list!!.add(item2)
         list!!.add(item3)

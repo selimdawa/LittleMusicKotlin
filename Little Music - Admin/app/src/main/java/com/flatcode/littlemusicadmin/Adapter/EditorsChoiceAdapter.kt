@@ -9,9 +9,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemusicadmin.Activity.EditorsChoiceAddActivity
 import com.flatcode.littlemusicadmin.Model.EditorsChoice
 import com.flatcode.littlemusicadmin.Model.Song
-import com.flatcode.littlemusicadmin.Unit.CLASS
 import com.flatcode.littlemusicadmin.Unit.DATA
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ItemSongEditorsChoiceBinding
@@ -44,7 +44,7 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
         holder.numberEditorsChoice.text = MessageFormat.format("{0}{1}", DATA.EMPTY, id)
         holder.add.setOnClickListener {
             VOID.IntentExtra2(
-                activity, CLASS.EDITORS_CHOICE_ADD, DATA.EDITORS_CHOICE_ID, editorsChoiceId,
+                activity, EditorsChoiceAddActivity::class.java, DATA.EDITORS_CHOICE_ID, editorsChoiceId,
                 DATA.OLD_ID, null
             )
         }
@@ -115,7 +115,7 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
                         }
                         change.setOnClickListener {
                             VOID.IntentExtra2(
-                                activity, CLASS.EDITORS_CHOICE_ADD,
+                                activity, EditorsChoiceAddActivity::class.java,
                                 DATA.EDITORS_CHOICE_ID, position, DATA.OLD_ID, id
                             )
                         }
