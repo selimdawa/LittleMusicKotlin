@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.flatcode.littlemusic.fragment.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.flatcode.littlemusic.fragment.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/mySongsFragment"
+        android:name="com.flatcode.littlemusic.fragment.mySongsFragment"
+        android:label="mySongsFragment"
+        tools:layout="@layout/fragment_my_songs" />
+
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.flatcode.littlemusic.fragment.CategoriesFragment"
+        android:label="CategoriesFragment"
+        tools:layout="@layout/fragment_categories" />
+</navigation>

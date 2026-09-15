@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.NavHostFragment
 import com.flatcode.littlemusic.fragment.SettingsFragment
 import com.flatcode.littlemusic.fragment.mySongsFragment
 import com.flatcode.littlemusic.fragment.CategoriesFragment
@@ -45,35 +47,32 @@ class MainActivity : AppCompatActivity() {
 
         Timber.i("MainActivity Created")
 
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+        val navController = navHostFragment.navController
+
         bottomNavigation = binding!!.bottomNavigation
         bottomNavigation!!.add(BubbleBottomNavigation.Model(1, R.drawable.ic_settings))
         bottomNavigation!!.add(BubbleBottomNavigation.Model(2, R.drawable.ic_home))
         bottomNavigation!!.add(BubbleBottomNavigation.Model(3, R.drawable.ic_books))
         bottomNavigation!!.add(BubbleBottomNavigation.Model(4, R.drawable.ic_group))
         bottomNavigation!!.setOnShowListener { item: BubbleBottomNavigation.Model ->
-            var fragment: Fragment? = null
-            when (item.id) {
-                1 -> {
-                    binding!!.toolbar.card.visibility = View.GONE
-                    fragment = SettingsFragment()
-                }
-
-                2 -> {
-                    binding!!.toolbar.card.visibility = View.VISIBLE
-                    fragment = HomeFragment()
-                }
-
-                3 -> {
-                    binding!!.toolbar.card.visibility = View.GONE
-                    fragment = mySongsFragment()
-                }
-
-                4 -> {
-                    binding!!.toolbar.card.visibility = View.GONE
-                    fragment = CategoriesFragment()
-                }
+            val destinationId = when (item.id) {
+                1 -> R.id.settingsFragment
+                2 -> R.id.homeFragment
+                3 -> R.id.mySongsFragment
+                4 -> R.id.categoriesFragment
+                else -> R.id.homeFragment
             }
-            loadFragment(fragment)
+
+            binding!!.toolbar.card.visibility = if (destinationId == R.id.homeFragment) View.VISIBLE else View.GONE
+
+            if (navController.currentDestination?.id != destinationId) {
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(navController.graph.startDestinationId, false)
+                    .setLaunchSingleTop(true)
+                    .build()
+                navController.navigate(destinationId, null, navOptions)
+            }
         }
 
         //bottomNavigation.setCount(3, numberSongs);
@@ -97,11 +96,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun loadFragment(fragment: Fragment?) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment!!)
-            .commit()
     }
 
     override fun onBackPressed() {
