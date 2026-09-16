@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="5sp"
-        android:layout_marginBottom="10sp"
+        android:layout_marginHorizontal="5dp"
+        android:layout_marginBottom="10dp"
         app:cardElevation="6dp"
         app:strokeWidth="0dp"
         app:cardCornerRadius="10dp">
@@ -18,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="?mc_bg"
-            android:padding="10sp"
+            android:padding="10dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -27,18 +28,19 @@
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="30sp"
-                    android:layout_height="30sp"
+                    android:id="@+id/card_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_alignParentStart="true"
                     app:cardElevation="6dp"
-                    android:padding="10sp"
+                    android:padding="10dp"
                     app:strokeWidth="0dp"
                     app:cardCornerRadius="15dp">
 
                     <ImageView
                         android:id="@+id/image"
-                        android:layout_width="20sp"
-                        android:layout_height="20sp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_gravity="center"
                         android:contentDescription="@null"
                         android:scaleType="centerCrop"
@@ -49,9 +51,10 @@
                 <TextView
                     android:id="@+id/number"
                     android:layout_width="wrap_content"
-                    android:layout_height="30sp"
+                    android:layout_height="30dp"
                     android:layout_alignParentEnd="true"
-                    android:text="0"
+                    android:layout_toEndOf="@id/card_image"
+                    android:text="@string/zero"
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     android:textStyle="bold"
@@ -62,7 +65,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10sp">
+                android:layout_marginTop="10dp">
 
                 <TextView
                     android:id="@+id/name"

@@ -19,7 +19,7 @@
             android:orientation="horizontal">
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/explore"
+                android:id="@+id/all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5sp"
@@ -27,50 +27,16 @@
                 app:cardCornerRadius="10sp"
                 app:strokeWidth="0dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="?mc_bg">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="20sp"
-                        android:paddingVertical="10sp"
-                        android:text="@string/explore"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5sp"
-                android:elevation="6sp"
-                app:cardCornerRadius="10sp"
-                app:strokeWidth="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?mc_bg">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="20sp"
-                        android:paddingVertical="10sp"
-                        android:text="@string/all"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
+                    android:background="?mc_bg"
+                    android:paddingHorizontal="20sp"
+                    android:paddingVertical="10sp"
+                    android:text="@string/all"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -83,22 +49,16 @@
                 app:cardCornerRadius="10sp"
                 app:strokeWidth="0dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="?mc_bg">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="20sp"
-                        android:paddingVertical="10sp"
-                        android:text="@string/name"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
+                    android:background="?mc_bg"
+                    android:paddingHorizontal="20sp"
+                    android:paddingVertical="10sp"
+                    android:text="@string/name"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -111,22 +71,38 @@
                 app:cardCornerRadius="10sp"
                 app:strokeWidth="0dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="?mc_bg">
+                    android:background="?mc_bg"
+                    android:paddingHorizontal="20sp"
+                    android:paddingVertical="10sp"
+                    android:text="@string/most_songs"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="20sp"
-                        android:paddingVertical="10sp"
-                        android:text="Most Songs"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
 
-                </LinearLayout>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mostAlbums"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5sp"
+                android:elevation="6sp"
+                app:cardCornerRadius="10sp"
+                app:strokeWidth="0dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?mc_bg"
+                    android:paddingHorizontal="20sp"
+                    android:paddingVertical="10sp"
+                    android:text="@string/most_albums"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -139,22 +115,16 @@
                 app:cardCornerRadius="10sp"
                 app:strokeWidth="0dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="?mc_bg">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="20sp"
-                        android:paddingVertical="10sp"
-                        android:text="Most Interested"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
+                    android:background="?mc_bg"
+                    android:paddingHorizontal="20sp"
+                    android:paddingVertical="10sp"
+                    android:text="@string/most_interested"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
             </com.google.android.material.card.MaterialCardView>
 

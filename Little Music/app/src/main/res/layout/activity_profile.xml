@@ -175,6 +175,7 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="0"
+                    tools:ignore="HardcodedText"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -183,43 +184,36 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginHorizontal="20sp"
-            android:layout_marginVertical="20sp"
-            android:orientation="horizontal">
+            android:layout_marginVertical="20sp">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/edit"
+                android:layout_width="50sp"
+                android:layout_height="50sp"
+                android:background="@drawable/round"
+                android:backgroundTint="@color/white"
+                android:contentDescription="@string/edit_profile"
+                android:src="@drawable/ic_books"
+                android:visibility="gone"
+                app:tint="@color/black" />
 
-                <ImageButton
-                    android:id="@+id/edit"
-                    android:layout_width="50sp"
-                    android:layout_height="50sp"
-                    android:background="@drawable/round"
-                    android:backgroundTint="@color/white"
-                    android:contentDescription="@string/edit_profile"
-                    android:src="@drawable/ic_books"
-                    android:visibility="gone"
-                    app:tint="@color/black" />
+            <Button
+                android:id="@+id/back"
+                android:layout_width="35sp"
+                android:layout_height="35sp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:background="@drawable/ic_back_white"
+                android:gravity="center"
+                android:rotation="180"
+                app:tint="@color/white" />
 
-                <Button
-                    android:id="@+id/back"
-                    android:layout_width="35sp"
-                    android:layout_height="35sp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/ic_back_white"
-                    android:gravity="center"
-                    android:rotation="180"
-                    app:tint="@color/white" />
-
-            </RelativeLayout>
-
-        </LinearLayout>
+        </RelativeLayout>
 
     </RelativeLayout>
 

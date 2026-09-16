@@ -101,86 +101,44 @@
                             android:layout_height="wrap_content"
                             android:padding="5sp">
 
-                            <LinearLayout
+                            <TextView
+                                android:id="@+id/numberSongs"
                                 android:layout_width="0dp"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_weight="1"
-                                android:gravity="center">
+                                android:drawableStart="@drawable/ic_music"
+                                android:drawablePadding="10sp"
+                                android:gravity="center"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:textStyle="normal" />
 
-                                <ImageView
-                                    android:layout_width="20sp"
-                                    android:layout_height="20sp"
-                                    android:layout_gravity="center"
-                                    android:contentDescription="@null"
-                                    android:src="@drawable/ic_music" />
-
-                                <TextView
-                                    android:id="@+id/numberSongs"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
-                                    android:paddingHorizontal="10sp"
-                                    android:textColor="@color/white"
-                                    android:textSize="14sp"
-                                    android:textStyle="normal" />
-
-                            </LinearLayout>
-
-                            <LinearLayout
+                            <TextView
+                                android:id="@+id/numberAlbums"
                                 android:layout_width="0dp"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_weight="1"
-                                android:gravity="center">
+                                android:drawableStart="@drawable/ic_album"
+                                android:drawablePadding="10sp"
+                                android:gravity="center"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:textStyle="normal" />
 
-                                <ImageView
-                                    android:layout_width="20sp"
-                                    android:layout_height="20sp"
-                                    android:layout_gravity="center"
-                                    android:contentDescription="@null"
-                                    android:src="@drawable/ic_album" />
-
-                                <TextView
-                                    android:id="@+id/numberAlbums"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
-                                    android:paddingHorizontal="10sp"
-                                    android:textColor="@color/white"
-                                    android:textSize="14sp"
-                                    android:textStyle="normal" />
-
-                            </LinearLayout>
-
-                            <LinearLayout
+                            <TextView
+                                android:id="@+id/numberInterested"
                                 android:layout_width="0dp"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_weight="1"
-                                android:gravity="center">
-
-                                <ImageView
-                                    android:layout_width="20sp"
-                                    android:layout_height="20sp"
-                                    android:layout_gravity="center"
-                                    android:contentDescription="@null"
-                                    android:src="@drawable/ic_heart_selected" />
-
-                                <TextView
-                                    android:id="@+id/numberInterested"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
-                                    android:paddingHorizontal="10sp"
-                                    android:textColor="@color/white"
-                                    android:textSize="14sp"
-                                    android:textStyle="normal" />
-
-                            </LinearLayout>
+                                android:drawableStart="@drawable/ic_heart_selected"
+                                android:drawablePadding="10sp"
+                                android:gravity="center"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:textStyle="normal" />
 
                         </LinearLayout>
 

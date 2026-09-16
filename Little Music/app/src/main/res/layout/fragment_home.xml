@@ -28,49 +28,34 @@
                 app:cardCornerRadius="6dp"
                 app:strokeWidth="0dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <io.selimdawa.autoimageslider.SliderView
+                    android:id="@+id/imageSlider"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?mc_tick">
-
-                    <io.selimdawa.autoimageslider.SliderView
-                        android:id="@+id/imageSlider"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        app:layout_constraintDimensionRatio="16:9"
-                        app:sliderAnimationDuration="600"
-                        app:sliderAutoCycleDirection="back_and_forth"
-                        app:sliderIndicatorAnimationDuration="600"
-                        app:sliderIndicatorEnabled="true"
-                        app:sliderIndicatorGravity="center_horizontal|bottom"
-                        app:sliderIndicatorOrientation="horizontal"
-                        app:sliderIndicatorPadding="8dp"
-                        app:sliderIndicatorRadius="1.5dp"
-                        app:sliderIndicatorSelectedColor="?mc_tick"
-                        app:sliderIndicatorUnselectedColor="#FFF"
-                        app:sliderScrollTimeInSec="3"
-                        tools:ignore="MissingConstraints" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="16:9"
+                    app:sliderAnimationDuration="600"
+                    app:sliderAutoCycleDirection="back_and_forth"
+                    app:sliderIndicatorAnimationDuration="600"
+                    app:sliderIndicatorEnabled="true"
+                    app:sliderIndicatorGravity="center_horizontal|bottom"
+                    app:sliderIndicatorOrientation="horizontal"
+                    app:sliderIndicatorPadding="8dp"
+                    app:sliderIndicatorRadius="1.5dp"
+                    app:sliderIndicatorSelectedColor="?mc_tick"
+                    app:sliderIndicatorUnselectedColor="#FFF"
+                    app:sliderScrollTimeInSec="3" />
 
             </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10sp"
-                android:orientation="vertical"
-                android:paddingVertical="5sp">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerCategory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_category_home" />
-
-            </LinearLayout>
+                android:orientation="horizontal"
+                android:paddingVertical="5sp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_category_home" />
 
             <LinearLayout
                 android:layout_width="match_parent"

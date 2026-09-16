@@ -17,24 +17,17 @@
             android:scrollbarSize="0sp"
             android:scrollbarThumbHorizontal="@color/white">
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="10sp"
-                    android:visibility="gone"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:reverseLayout="true"
-                    app:stackFromEnd="true"
-                    tools:listitem="@layout/item_category_main" />
-
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10sp"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:reverseLayout="true"
+                app:stackFromEnd="true"
+                tools:listitem="@layout/item_category_main" />
 
         </androidx.core.widget.NestedScrollView>
 

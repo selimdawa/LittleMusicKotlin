@@ -21,8 +21,8 @@
                 android:id="@+id/numberPage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginRight="10sp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="10sp"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -32,7 +32,7 @@
                 android:id="@+id/back"
                 android:layout_width="30sp"
                 android:layout_height="30sp"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:contentDescription="@string/back"
                 android:src="@drawable/ic_back_white" />
 
