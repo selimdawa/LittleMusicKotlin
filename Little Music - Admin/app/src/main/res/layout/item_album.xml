@@ -33,6 +33,7 @@
                         android:id="@+id/image"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:contentDescription="@null"
                         android:scaleType="centerCrop"
                         android:src="@color/image_profile"
                         app:layout_constraintDimensionRatio="1:1"
@@ -69,6 +70,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
                             android:background="@android:color/transparent"
+                            android:contentDescription="@string/desc_more"
                             android:src="@drawable/ic_more"
                             app:tint="@color/white" />
 
@@ -95,6 +97,7 @@
                                 android:layout_width="20sp"
                                 android:layout_height="20sp"
                                 android:layout_gravity="center"
+                                android:contentDescription="@null"
                                 android:src="@drawable/ic_music" />
 
                             <TextView
@@ -121,6 +124,7 @@
                                 android:layout_width="20sp"
                                 android:layout_height="20sp"
                                 android:layout_gravity="center"
+                                android:contentDescription="@null"
                                 android:src="@drawable/ic_heart_selected" />
 
                             <TextView

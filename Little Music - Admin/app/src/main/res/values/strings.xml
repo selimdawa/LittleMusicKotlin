@@ -67,4 +67,15 @@
     <string name="nineteen">19</string>
     <string name="twenty">20</string>
     <string name="edit">Edit</string>
+    // Accessibility
+    <string name="desc_back">Back</string>
+    <string name="desc_more">More options</string>
+    <string name="desc_edit_image">Edit image</string>
+    <string name="desc_love">Love</string>
+    <string name="desc_favorite">Favorite</string>
+    <string name="desc_download">Download</string>
+    <string name="desc_close">Close</string>
+    <string name="desc_remove">Remove</string>
+    <string name="desc_change">Change</string>
+    <string name="desc_add">Add</string>
 </resources>

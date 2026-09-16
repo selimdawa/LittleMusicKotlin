@@ -25,6 +25,7 @@
                     android:id="@+id/profile"
                     android:layout_width="240dp"
                     android:layout_height="240dp"
+                    android:contentDescription="@null"
                     android:scaleType="centerCrop"
                     android:src="@color/image_profile"
                     app:strokeColor="@color/white"
@@ -70,6 +71,7 @@
                     android:layout_marginHorizontal="10sp"
                     android:background="@drawable/round"
                     android:backgroundTint="@color/white"
+                    android:contentDescription="@string/artists_count"
                     android:src="@drawable/ic_mic"
                     app:tint="@color/black" />
 
@@ -100,6 +102,7 @@
                     android:layout_marginHorizontal="10sp"
                     android:background="@drawable/round"
                     android:backgroundTint="@color/white"
+                    android:contentDescription="@string/albums_count"
                     android:src="@drawable/ic_album"
                     app:tint="@color/black" />
 
@@ -130,6 +133,7 @@
                     android:layout_marginHorizontal="10sp"
                     android:background="@drawable/round"
                     android:backgroundTint="@color/white"
+                    android:contentDescription="@string/categories_count"
                     android:src="@drawable/ic_category_gray"
                     app:tint="@color/black" />
 
@@ -160,6 +164,7 @@
                     android:layout_marginHorizontal="10sp"
                     android:background="@drawable/round"
                     android:backgroundTint="@color/white"
+                    android:contentDescription="@string/favorites_count"
                     android:src="@drawable/ic_star_selected"
                     app:tint="@color/black" />
 
@@ -196,6 +201,7 @@
                     android:layout_height="50sp"
                     android:background="@drawable/round"
                     android:backgroundTint="@color/white"
+                    android:contentDescription="@string/edit_profile"
                     android:src="@drawable/ic_books"
                     android:visibility="gone"
                     app:tint="@color/black" />

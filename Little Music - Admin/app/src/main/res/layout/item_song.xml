@@ -43,6 +43,7 @@
                             android:layout_width="25sp"
                             android:layout_height="25sp"
                             android:layout_marginHorizontal="5dp"
+                            android:contentDescription="@string/desc_love"
                             android:src="@drawable/ic_heart_unselected" />
 
                         <TextView
@@ -62,6 +63,7 @@
                             android:layout_width="25sp"
                             android:layout_height="25sp"
                             android:layout_marginHorizontal="5dp"
+                            android:contentDescription="@string/desc_favorite"
                             android:src="@drawable/ic_star_unselected" />
 
                     </LinearLayout>
@@ -141,6 +143,7 @@
                                 android:layout_height="25sp"
                                 android:layout_gravity="top"
                                 android:background="@drawable/button_more"
+                                android:contentDescription="@string/desc_more"
                                 android:gravity="center"
                                 android:padding="2sp"
                                 android:src="@drawable/ic_more"

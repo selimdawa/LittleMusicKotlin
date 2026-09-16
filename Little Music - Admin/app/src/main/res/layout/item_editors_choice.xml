@@ -38,6 +38,7 @@
                         android:layout_width="25sp"
                         android:layout_height="25sp"
                         android:layout_marginHorizontal="5dp"
+                        android:contentDescription="@string/desc_love"
                         android:src="@drawable/ic_heart_selected" />
 
                     <TextView
@@ -67,6 +68,7 @@
                         android:layout_width="25sp"
                         android:layout_height="25sp"
                         android:layout_marginHorizontal="5dp"
+                        android:contentDescription="@null"
                         android:src="@drawable/ic_view" />
 
                     <TextView
@@ -138,6 +140,7 @@
                             android:layout_height="25sp"
                             android:layout_gravity="top"
                             android:background="@drawable/button_more"
+                            android:contentDescription="@string/desc_add"
                             android:gravity="center"
                             android:padding="2sp"
                             android:src="@drawable/ic_add"

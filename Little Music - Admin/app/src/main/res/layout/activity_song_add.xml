@@ -53,6 +53,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@color/white"
+                                android:contentDescription="@null"
                                 android:padding="10sp"
                                 android:scaleType="centerCrop"
                                 android:src="@drawable/ic_music"
@@ -84,6 +85,7 @@
                     <ImageView
                         android:layout_width="20sp"
                         android:layout_height="20sp"
+                        android:contentDescription="@null"
                         android:src="@drawable/ic_music_name"
                         app:tint="@color/white" />
 
@@ -129,6 +131,7 @@
                     <ImageView
                         android:layout_width="20sp"
                         android:layout_height="20sp"
+                        android:contentDescription="@null"
                         android:src="@drawable/ic_mic"
                         app:tint="@color/white" />
 
@@ -169,6 +172,7 @@
                     <ImageView
                         android:layout_width="20sp"
                         android:layout_height="20sp"
+                        android:contentDescription="@null"
                         android:src="@drawable/ic_album"
                         app:tint="@color/white" />
 
@@ -209,6 +213,7 @@
                     <ImageView
                         android:layout_width="20sp"
                         android:layout_height="20sp"
+                        android:contentDescription="@null"
                         android:src="@drawable/ic_category_gray"
                         app:tint="@color/white" />
 
@@ -250,6 +255,7 @@
                     <ImageView
                         android:layout_width="20sp"
                         android:layout_height="20sp"
+                        android:contentDescription="@null"
                         android:src="@drawable/ic_time"
                         app:tint="@color/white" />
 

@@ -43,6 +43,7 @@
                             android:layout_width="25sp"
                             android:layout_height="25sp"
                             android:layout_marginHorizontal="5dp"
+                            android:contentDescription="@string/love"
                             android:src="@drawable/ic_heart_unselected" />
 
                         <TextView
@@ -62,6 +63,7 @@
                             android:layout_width="25sp"
                             android:layout_height="25sp"
                             android:layout_marginHorizontal="5dp"
+                            android:contentDescription="@string/favorites"
                             android:src="@drawable/ic_star_unselected" />
 
                     </LinearLayout>
@@ -83,6 +85,7 @@
                                 android:id="@+id/play"
                                 android:layout_width="50sp"
                                 android:layout_height="50sp"
+                                android:contentDescription="@string/play"
                                 android:src="@drawable/ic_play"
                                 android:visibility="visible"
                                 app:tint="@color/white" />
@@ -91,6 +94,7 @@
                                 android:id="@+id/pause"
                                 android:layout_width="50sp"
                                 android:layout_height="50sp"
+                                android:contentDescription="@string/pause"
                                 android:src="@drawable/ic_pause"
                                 android:visibility="gone"
                                 app:tint="@color/white" />

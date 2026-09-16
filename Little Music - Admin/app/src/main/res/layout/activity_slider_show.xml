@@ -60,6 +60,7 @@
                                 android:id="@+id/imageOne"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -121,6 +122,7 @@
                                 android:id="@+id/imageTwo"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -182,6 +184,7 @@
                                 android:id="@+id/imageThree"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -243,6 +246,7 @@
                                 android:id="@+id/imageFour"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -304,6 +308,7 @@
                                 android:id="@+id/imageFive"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -365,6 +370,7 @@
                                 android:id="@+id/imageSix"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -426,6 +432,7 @@
                                 android:id="@+id/imageSeven"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -487,6 +494,7 @@
                                 android:id="@+id/imageEight"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -548,6 +556,7 @@
                                 android:id="@+id/imageNine"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -609,6 +618,7 @@
                                 android:id="@+id/imageTeen"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -670,6 +680,7 @@
                                 android:id="@+id/imageEleven"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -731,6 +742,7 @@
                                 android:id="@+id/imageTwelfth"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -792,6 +804,7 @@
                                 android:id="@+id/imageThirteen"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -853,6 +866,7 @@
                                 android:id="@+id/imageFourteenth"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -914,6 +928,7 @@
                                 android:id="@+id/imageFifteenth"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -975,6 +990,7 @@
                                 android:id="@+id/imageSixteen"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -1036,6 +1052,7 @@
                                 android:id="@+id/imageSeventeen"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -1097,6 +1114,7 @@
                                 android:id="@+id/imageEighteen"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -1158,6 +1176,7 @@
                                 android:id="@+id/imageNineteen"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />
@@ -1219,6 +1238,7 @@
                                 android:id="@+id/imageTwenty"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
+                                android:contentDescription="@null"
                                 android:src="@color/image_profile"
                                 app:layout_constraintDimensionRatio="16:9"
                                 tools:ignore="MissingConstraints" />

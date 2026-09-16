@@ -40,4 +40,15 @@
     <string name="explore">Explore</string>
     <string name="categories">Categories</string>
     <string name="my_categories">My Categories</string>
+    <string name="back">Back</string>
+    <string name="go">Go</string>
+    <string name="save">Save</string>
+    <string name="artists_count">Artists count</string>
+    <string name="albums_count">Albums count</string>
+    <string name="categories_count">Categories count</string>
+    <string name="favorites_count">Favorites count</string>
+    <string name="love">Love</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="close">Close</string>
 </resources>

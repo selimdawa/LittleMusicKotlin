@@ -30,6 +30,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
+                    android:contentDescription="@string/desc_remove"
                     android:gravity="center"
                     android:src="@drawable/ic_remove"
                     android:visibility="gone"
@@ -52,6 +53,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
+                    android:contentDescription="@string/desc_change"
                     android:gravity="center"
                     android:src="@drawable/ic_re"
                     android:visibility="gone"
@@ -86,6 +88,7 @@
                             android:id="@+id/add"
                             android:layout_width="80sp"
                             android:layout_height="80sp"
+                            android:contentDescription="@string/desc_add"
                             android:src="@drawable/ic_add" />
 
                     </LinearLayout>
@@ -134,6 +137,7 @@
                                         android:layout_width="25sp"
                                         android:layout_height="25sp"
                                         android:layout_marginHorizontal="5dp"
+                                        android:contentDescription="@string/desc_love"
                                         android:src="@drawable/ic_heart_selected" />
 
                                     <TextView
@@ -163,6 +167,7 @@
                                         android:layout_width="25sp"
                                         android:layout_height="25sp"
                                         android:layout_marginHorizontal="5dp"
+                                        android:contentDescription="@null"
                                         android:src="@drawable/ic_view" />
 
                                     <TextView

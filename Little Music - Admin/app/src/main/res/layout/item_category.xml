@@ -39,6 +39,7 @@
                             android:id="@+id/image"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
+                            android:contentDescription="@null"
                             android:scaleType="centerCrop"
                             android:src="@color/image_profile"
                             app:layout_constraintDimensionRatio="1:1"
@@ -82,6 +83,7 @@
                                 android:layout_height="25sp"
                                 android:layout_gravity="top"
                                 android:background="@drawable/button_more"
+                                android:contentDescription="@string/desc_more"
                                 android:gravity="center"
                                 android:padding="2sp"
                                 android:src="@drawable/ic_more"
@@ -110,6 +112,7 @@
                                     android:layout_width="20sp"
                                     android:layout_height="20sp"
                                     android:layout_gravity="center"
+                                    android:contentDescription="@null"
                                     android:src="@drawable/ic_music" />
 
                                 <TextView
@@ -136,6 +139,7 @@
                                     android:layout_width="20sp"
                                     android:layout_height="20sp"
                                     android:layout_gravity="center"
+                                    android:contentDescription="@null"
                                     android:src="@drawable/ic_album" />
 
                                 <TextView
@@ -162,6 +166,7 @@
                                     android:layout_width="20sp"
                                     android:layout_height="20sp"
                                     android:layout_gravity="center"
+                                    android:contentDescription="@null"
                                     android:src="@drawable/ic_heart_selected" />
 
                                 <TextView

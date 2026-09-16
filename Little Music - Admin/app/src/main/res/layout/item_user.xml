@@ -33,6 +33,7 @@
                         android:id="@+id/imageProfile"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:contentDescription="@null"
                         android:scaleType="centerCrop"
                         android:src="@color/image_profile"
                         app:layout_constraintDimensionRatio="1:1"
