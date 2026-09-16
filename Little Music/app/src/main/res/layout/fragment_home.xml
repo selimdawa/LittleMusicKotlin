@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="0sp"
         android:layout_weight="1"
+        android:clipToPadding="false"
         android:scrollbarSize="0sp"
         android:scrollbarThumbHorizontal="@color/white">
 

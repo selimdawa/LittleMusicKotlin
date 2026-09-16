@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.DATA
@@ -32,6 +33,7 @@ class ProfileEditActivity : AppCompatActivity() {
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityProfileEditBinding.inflate(layoutInflater)
         val view = binding!!.root

@@ -2,6 +2,7 @@ package com.flatcode.littlemusicadmin.Activity
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +21,7 @@ class PrivacyPolicyActivity : AppCompatActivity() {
     private val viewModel: PrivacyPolicyViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
         setContentView(binding!!.root)

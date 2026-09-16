@@ -2,6 +2,7 @@ package com.flatcode.littlemusicadmin.Activity
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -38,6 +39,7 @@ class AlbumSongsActivity : AppCompatActivity() {
     private val viewModel: AlbumSongsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityAlbumSongsBinding.inflate(layoutInflater)
         val view = binding!!.root
@@ -111,9 +113,11 @@ class AlbumSongsActivity : AppCompatActivity() {
                 jcAudios!!.clear()
                 var i = 0
                 for (item in songs) {
-                    list!!.add(item)
-                    if (item.name != null && item.songLink != null) {
-                        jcAudios!!.add(JcAudio.createFromURL(item.name, item.songLink))
+                    songList!!.add(item)
+                    val name = item.name
+                    val songLink = item.songLink
+                    if (name != null && songLink != null) {
+                        jcAudios!!.add(JcAudio.createFromURL(name, songLink))
                     }
                     i++
                 }

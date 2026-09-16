@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.DATA
@@ -20,6 +21,7 @@ class PrivacyPolicyEditActivity : AppCompatActivity() {
     var context: Context = this@PrivacyPolicyEditActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityPrivacyPolicyEditBinding.inflate(layoutInflater)
         val view = binding!!.root

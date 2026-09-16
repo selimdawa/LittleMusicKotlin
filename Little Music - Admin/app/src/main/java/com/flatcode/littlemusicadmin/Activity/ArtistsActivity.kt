@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +31,7 @@ class ArtistsActivity : AppCompatActivity() {
     private val viewModel: ArtistsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityArtistsBinding.inflate(layoutInflater)
         val view = binding!!.root

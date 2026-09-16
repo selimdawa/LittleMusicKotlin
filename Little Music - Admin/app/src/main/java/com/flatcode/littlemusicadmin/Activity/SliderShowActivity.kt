@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.Unit.DATA
@@ -34,6 +35,7 @@ class SliderShowActivity : AppCompatActivity() {
     private var item = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivitySliderShowBinding.inflate(layoutInflater)
         val view = binding!!.root

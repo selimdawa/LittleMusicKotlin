@@ -1,6 +1,7 @@
 package com.flatcode.littlemusic.auth
 
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
@@ -14,6 +15,7 @@ class AuthActivity : AppCompatActivity() {
     private var binding: ActivityAuthBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding!!.root)

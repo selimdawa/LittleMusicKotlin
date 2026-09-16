@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Model.Category
 import com.flatcode.littlemusicadmin.R
@@ -23,7 +24,8 @@ class ProfileActivity : AppCompatActivity() {
     var profileId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-TargetContent not found        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)

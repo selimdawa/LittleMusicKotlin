@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -44,6 +45,7 @@ class ArtistSongsActivity : AppCompatActivity() {
     private val viewModel: ArtistSongsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityArtistSongsBinding.inflate(layoutInflater)
         val view = binding!!.root
@@ -176,8 +178,10 @@ class ArtistSongsActivity : AppCompatActivity() {
                     jcAudios!!.clear()
                     for (item in songs) {
                         songList!!.add(item)
-                        if (item.name != null && item.songLink != null) {
-                            jcAudios!!.add(JcAudio.createFromURL(item.name, item.songLink))
+                        val name = item.name
+                        val songLink = item.songLink
+                        if (name != null && songLink != null) {
+                            jcAudios!!.add(JcAudio.createFromURL(name, songLink))
                         }
                     }
                     binding!!.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)

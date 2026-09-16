@@ -5,8 +5,13 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.ViewGroup
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -29,10 +34,19 @@ class ArtistsActivity : AppCompatActivity() {
     private var adapter: ArtistAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityArtistsBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
         Timber.i("ArtistsActivity Created")
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbar.root) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = insets.top
+            }
+            windowInsets
+        }
 
         setupToolbar()
         setupRecyclerView()

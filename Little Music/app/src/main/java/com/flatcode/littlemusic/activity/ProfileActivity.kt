@@ -3,8 +3,14 @@ package com.flatcode.littlemusic.activity
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -27,10 +33,25 @@ class ProfileActivity : AppCompatActivity() {
     private var profileId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
         Timber.i("ProfileActivity Created")
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.edit.parent as View) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = insets.top + 20
+            }
+            windowInsets
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.numberAlbums.parent.parent as View) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = insets.bottom + 20)
+            windowInsets
+        }
 
         profileId = intent.getStringExtra(DATA.PROFILE_ID)
 

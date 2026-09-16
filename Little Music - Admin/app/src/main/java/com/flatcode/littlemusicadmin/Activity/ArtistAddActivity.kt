@@ -2,6 +2,7 @@ package com.flatcode.littlemusicadmin.Activity
 
 import android.Manifest
 import android.app.Activity
+import androidx.activity.enableEdgeToEdge
 import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
@@ -27,6 +28,7 @@ class ArtistAddActivity : AppCompatActivity() {
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityArtistAddBinding.inflate(layoutInflater)
         val view = binding!!.root

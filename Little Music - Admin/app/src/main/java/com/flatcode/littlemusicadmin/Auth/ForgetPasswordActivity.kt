@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Unit.VOID
 import com.flatcode.littlemusicadmin.databinding.ActivityForgetPasswordBinding
@@ -18,6 +19,7 @@ class ForgetPasswordActivity : AppCompatActivity() {
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityForgetPasswordBinding.inflate(layoutInflater)
         val view = binding!!.root

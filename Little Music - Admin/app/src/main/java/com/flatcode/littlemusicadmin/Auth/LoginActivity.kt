@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Patterns
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Activity.MainActivity
 import com.flatcode.littlemusicadmin.Unit.DATA
@@ -21,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         val view = binding!!.root

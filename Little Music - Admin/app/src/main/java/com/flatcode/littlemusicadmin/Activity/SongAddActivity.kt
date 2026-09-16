@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
@@ -44,6 +45,7 @@ class SongAddActivity : AppCompatActivity() {
     private var artistList: ArrayList<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivitySongAddBinding.inflate(layoutInflater)
         val view = binding!!.root

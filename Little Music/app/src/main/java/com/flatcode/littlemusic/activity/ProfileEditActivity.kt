@@ -7,9 +7,16 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -32,10 +39,25 @@ class ProfileEditActivity : AppCompatActivity() {
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityProfileEditBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
         Timber.i("ProfileEditActivity Created")
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbar.root) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = insets.top + 10
+            }
+            windowInsets
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.go.parent as View) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = insets.bottom)
+            windowInsets
+        }
 
         dialog = ProgressDialog(this)
         dialog!!.setTitle("Please wait...")

@@ -32,19 +32,23 @@
         </activity>
         <activity
             android:name=".activity.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".auth.AuthActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".auth.ForgetPasswordActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".auth.LoginActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".auth.RegisterActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.PrivacyPolicyActivity"
             android:screenOrientation="portrait" />
@@ -53,7 +57,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ProfileEditActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.FavoritesActivity"
             android:screenOrientation="portrait" />

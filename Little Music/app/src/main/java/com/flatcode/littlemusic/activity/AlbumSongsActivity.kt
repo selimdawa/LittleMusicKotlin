@@ -4,10 +4,16 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -35,10 +41,25 @@ class AlbumSongsActivity : AppCompatActivity() {
     private var albumImage: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityAlbumSongsBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
         Timber.i("AlbumSongsActivity Created")
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbar.root) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = insets.top
+            }
+            windowInsets
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.player.root) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = insets.bottom)
+            windowInsets
+        }
 
         albumId = intent.getStringExtra(DATA.ALBUM_ID)
         albumName = intent.getStringExtra(DATA.ALBUM_NAME)

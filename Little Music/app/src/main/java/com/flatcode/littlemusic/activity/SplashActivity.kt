@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -24,6 +25,7 @@ class SplashActivity : AppCompatActivity() {
     private val viewModel: SplashViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding!!.root)

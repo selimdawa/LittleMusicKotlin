@@ -3,11 +3,18 @@ package com.flatcode.littlemusic.activity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +33,7 @@ import com.flatcode.littlemusic.databinding.ActivityMainBinding
 import com.flatcode.littlemusic.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.selimdawa.bubblebottom.BubbleBottomNavigation
+import io.selimdawa.bubblebottom.Model
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Objects
@@ -40,10 +48,28 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbar.root) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = insets.top + 10 // adding original margin
+            }
+            windowInsets
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.bottomNavigation) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = insets.bottom)
+            windowInsets
+        }
 
         Timber.i("MainActivity Created")
 
@@ -51,11 +77,11 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         bottomNavigation = binding!!.bottomNavigation
-        bottomNavigation!!.add(BubbleBottomNavigation.Model(1, R.drawable.ic_settings))
-        bottomNavigation!!.add(BubbleBottomNavigation.Model(2, R.drawable.ic_home))
-        bottomNavigation!!.add(BubbleBottomNavigation.Model(3, R.drawable.ic_books))
-        bottomNavigation!!.add(BubbleBottomNavigation.Model(4, R.drawable.ic_group))
-        bottomNavigation!!.setOnShowListener { item: BubbleBottomNavigation.Model ->
+        bottomNavigation!!.add(Model(1, R.drawable.ic_settings))
+        bottomNavigation!!.add(Model(2, R.drawable.ic_home))
+        bottomNavigation!!.add(Model(3, R.drawable.ic_books))
+        bottomNavigation!!.add(Model(4, R.drawable.ic_group))
+        bottomNavigation!!.setOnShowListener { item: Model ->
             val destinationId = when (item.id) {
                 1 -> R.id.settingsFragment
                 2 -> R.id.homeFragment

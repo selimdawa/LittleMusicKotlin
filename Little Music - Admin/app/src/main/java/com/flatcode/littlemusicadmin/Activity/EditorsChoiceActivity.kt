@@ -2,6 +2,7 @@ package com.flatcode.littlemusicadmin.Activity
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.Adapter.EditorsChoiceAdapter
 import com.flatcode.littlemusicadmin.Model.EditorsChoice
@@ -17,6 +18,7 @@ class EditorsChoiceActivity : AppCompatActivity() {
     var editorsChoice = EditorsChoice()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityEditorsChoiceBinding.inflate(layoutInflater)
         val view = binding!!.root

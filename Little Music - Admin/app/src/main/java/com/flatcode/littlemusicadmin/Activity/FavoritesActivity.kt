@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -34,6 +35,7 @@ class FavoritesActivity : AppCompatActivity() {
     private val viewModel: FavoritesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityPageSongSwitchBinding.inflate(layoutInflater)
         val view = binding!!.root
@@ -98,8 +100,10 @@ class FavoritesActivity : AppCompatActivity() {
                 var i = 0
                 for (item in songs) {
                     list!!.add(item)
-                    if (item.name != null && item.songLink != null) {
-                        jcAudios!!.add(JcAudio.createFromURL(item.name, item.songLink))
+                    val name = item.name
+                    val songLink = item.songLink
+                    if (name != null && songLink != null) {
+                        jcAudios!!.add(JcAudio.createFromURL(name, songLink))
                     }
                     i++
                 }

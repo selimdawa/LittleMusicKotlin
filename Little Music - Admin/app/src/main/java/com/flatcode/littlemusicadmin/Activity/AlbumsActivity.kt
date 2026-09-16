@@ -2,6 +2,7 @@ package com.flatcode.littlemusicadmin.Activity
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -30,6 +31,7 @@ class AlbumsActivity : AppCompatActivity() {
     private val viewModel: AlbumsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityAlbumsBinding.inflate(layoutInflater)
         val view = binding!!.root
