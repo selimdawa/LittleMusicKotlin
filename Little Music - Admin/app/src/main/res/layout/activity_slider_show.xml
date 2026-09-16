@@ -40,12 +40,13 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginBottom="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -65,7 +66,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -101,11 +102,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -125,7 +127,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -161,11 +163,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -185,7 +188,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -221,11 +224,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -245,7 +249,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -281,11 +285,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -305,7 +310,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -341,11 +346,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -365,7 +371,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -401,11 +407,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -425,7 +432,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -461,11 +468,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -485,7 +493,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -521,11 +529,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -545,7 +554,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -581,11 +590,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -605,7 +615,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -641,11 +651,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -665,7 +676,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -701,11 +712,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -725,7 +737,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -761,11 +773,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -785,7 +798,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -821,11 +834,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -845,7 +859,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -881,11 +895,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -905,7 +920,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -941,11 +956,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -965,7 +981,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -1001,11 +1017,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -1025,7 +1042,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -1061,11 +1078,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -1085,7 +1103,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -1121,11 +1139,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -1145,7 +1164,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"
@@ -1181,11 +1200,12 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:elevation="0dp"
+                        app:strokeWidth="0dp"
                         app:cardCornerRadius="6dp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp">
@@ -1205,7 +1225,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <Button
                         android:layout_width="40dp"

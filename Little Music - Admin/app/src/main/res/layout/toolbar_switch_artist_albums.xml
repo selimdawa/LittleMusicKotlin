@@ -19,12 +19,13 @@
             android:gravity="start"
             android:orientation="horizontal">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/songs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5sp"
                 android:elevation="6sp"
+                app:strokeWidth="0dp"
                 app:cardCornerRadius="10sp">
 
                 <LinearLayout
@@ -44,14 +45,15 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5sp"
                 android:elevation="6sp"
+                app:strokeWidth="0dp"
                 app:cardCornerRadius="10sp">
 
                 <LinearLayout
@@ -71,14 +73,15 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5sp"
                 android:elevation="6sp"
+                app:strokeWidth="0dp"
                 app:cardCornerRadius="10sp">
 
                 <LinearLayout
@@ -98,14 +101,15 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/mostSongs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5sp"
                 android:elevation="6sp"
+                app:strokeWidth="0dp"
                 app:cardCornerRadius="10sp">
 
                 <LinearLayout
@@ -125,14 +129,15 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/mostInterested"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5sp"
                 android:elevation="6sp"
+                app:strokeWidth="0dp"
                 app:cardCornerRadius="10sp">
 
                 <LinearLayout
@@ -152,14 +157,15 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/aboutTheArtist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5sp"
                 android:elevation="6sp"
+                app:strokeWidth="0dp"
                 app:cardCornerRadius="10sp">
 
                 <LinearLayout
@@ -179,7 +185,7 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 
