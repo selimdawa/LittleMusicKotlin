@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.example.jean.jcplayer.view.JcPlayerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/jcPlayer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -16,4 +17,5 @@
     app:seek_bar_color="?mc_track"
     app:text_audio_current_duration_color="?colorError"
     app:text_audio_duration_color="?colorError"
-    app:text_audio_title_color="?colorError" />
+    app:text_audio_title_color="?colorError"
+    tools:ignore="all" />

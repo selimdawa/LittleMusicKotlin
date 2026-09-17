@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Activity.LoginActivity">
+    tools:context=".Auth.LoginActivity"
+    tools:ignore="all">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -166,7 +167,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="50sp"
                             android:background="@drawable/button"
-                            android:hint="********"
+                            android:hint="@string/password_hint"
                             android:inputType="textPassword"
                             android:maxLength="20"
                             android:paddingHorizontal="20sp"

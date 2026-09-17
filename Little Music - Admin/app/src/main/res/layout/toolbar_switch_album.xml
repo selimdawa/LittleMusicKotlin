@@ -1,6 +1,8 @@
 <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollSwitchUser"
+    tools:ignore="all"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="5sp"
@@ -91,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="20sp"
                     android:paddingVertical="10sp"
-                    android:text="Most Songs"
+                    android:text="@string/most_songs"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -119,7 +121,7 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="20sp"
                     android:paddingVertical="10sp"
-                    android:text="Most Interested"
+                    android:text="@string/most_interested"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />

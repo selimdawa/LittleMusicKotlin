@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="?colorOnBackground"
     android:fitsSystemWindows="true"
-    tools:context=".Fragment.MainFragment">
+    tools:context=".Fragment.MainFragment"
+    tools:ignore="all">
 
         <include
             android:id="@+id/toolbar"

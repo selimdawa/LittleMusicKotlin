@@ -58,4 +58,5 @@
     <string name="most_interested">Most Interested</string>
     <string name="most_albums">Most Albums</string>
     <string name="about_the_artist">About The Artist</string>
+    <string name="zero">0</string>
 </resources>

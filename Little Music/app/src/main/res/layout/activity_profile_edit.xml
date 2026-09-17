@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="?mc_bg"
     android:orientation="vertical"
-    tools:context=".activity.BookAddActivity">
+    tools:context=".activity.BookAddActivity"
+    tools:ignore="all">
 
     <include
         android:id="@+id/toolbar"

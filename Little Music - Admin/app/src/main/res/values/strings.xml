@@ -68,6 +68,10 @@
     <string name="nineteen">19</string>
     <string name="twenty">20</string>
     <string name="edit">Edit</string>
+    <string name="password_hint">********</string>
+    <string name="most_songs">Most Songs</string>
+    <string name="most_interested">Most Interested</string>
+    <string name="most_albums">Most Albums</string>
     // Accessibility
     <string name="desc_back">Back</string>
     <string name="desc_more">More options</string>

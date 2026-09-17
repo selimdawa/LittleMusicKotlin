@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     android:background="?colorOnBackground"
     android:fitsSystemWindows="true"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".Activity.SongsActivity"
+    tools:ignore="all">
 
     <include
         android:id="@+id/toolbar"
