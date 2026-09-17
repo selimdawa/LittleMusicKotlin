@@ -62,13 +62,10 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
-    //Other's
-    implementation(libs.material.ripple)                //Ripple Effect
-    implementation(libs.jcplayer)                       //JcPlayer
-    implementation(libs.multiwaveheader)                //Wave
 
-    // MVVM, Coroutines & Lifecycle
+    // MVVM - Lifecycle
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    //Coroutines
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
 
@@ -84,7 +81,10 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-    // Timber
+    //Other
+    implementation(libs.material.ripple)                //Ripple Effect
+    implementation(libs.jcplayer)                       //JcPlayer
+    implementation(libs.multiwaveheader)                //Wave
     implementation(libs.timber)
     //Test
     testImplementation(libs.junit)

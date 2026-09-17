@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?colorOnBackground"
-        android:fitsSystemWindows="true"
-        tools:context=".Fragment.MainFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?colorOnBackground"
+    android:fitsSystemWindows="true"
+    tools:context=".Fragment.MainFragment">
 
         <include
             android:id="@+id/toolbar"
@@ -71,5 +69,3 @@
         </RelativeLayout>
 
     </RelativeLayout>
-
-</layout>

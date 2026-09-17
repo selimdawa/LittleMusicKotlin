@@ -1,14 +1,12 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <HorizontalScrollView
-        android:id="@+id/scrollSwitchUser"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="5sp"
-        android:orientation="horizontal"
-        android:scrollbarSize="0dp"
-        android:scrollbarThumbHorizontal="@color/white">
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollSwitchUser"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="5sp"
+    android:orientation="horizontal"
+    android:scrollbarSize="0dp"
+    android:scrollbarThumbHorizontal="@color/white">
 
         <LinearLayout
             android:id="@+id/linearSwitchUser"
@@ -77,5 +75,3 @@
         </LinearLayout>
 
     </HorizontalScrollView>
-
-</layout>

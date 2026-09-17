@@ -58,7 +58,6 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 
 # Lifecycle (ViewModel & StateFlow)
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 
 # Room
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }

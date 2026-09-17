@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <com.example.jean.jcplayer.view.JcPlayerView
-        android:id="@+id/jcPlayer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?colorOnBackground"
-        android:visibility="gone"
-        app:next_icon_color="?mc_track"
-        app:pause_icon_color="?mc_track"
-        app:play_icon_color="?mc_track"
-        app:previous_icon_color="?mc_track"
-        app:progress_color="?mc_track"
-        app:random_icon_color="?mc_track"
-        app:repeat_icon_color="?mc_track"
-        app:seek_bar_color="?mc_track"
-        app:text_audio_current_duration_color="?colorError"
-        app:text_audio_duration_color="?colorError"
-        app:text_audio_title_color="?colorError" />
-
-</layout>
+<com.example.jean.jcplayer.view.JcPlayerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/jcPlayer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?colorOnBackground"
+    android:visibility="gone"
+    app:next_icon_color="?mc_track"
+    app:pause_icon_color="?mc_track"
+    app:play_icon_color="?mc_track"
+    app:previous_icon_color="?mc_track"
+    app:progress_color="?mc_track"
+    app:random_icon_color="?mc_track"
+    app:repeat_icon_color="?mc_track"
+    app:seek_bar_color="?mc_track"
+    app:text_audio_current_duration_color="?colorError"
+    app:text_audio_duration_color="?colorError"
+    app:text_audio_title_color="?colorError" />

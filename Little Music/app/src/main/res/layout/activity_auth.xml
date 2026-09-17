@@ -1,42 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.AuthActivity">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".activity.AuthActivity">
+        android:layout_height="match_parent">
 
-        <FrameLayout
+        <ImageView
+            android:id="@+id/background"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/background" />
 
-            <ImageView
-                android:id="@+id/background"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@null"
-                android:scaleType="centerCrop"
-                android:src="@drawable/background" />
+        <ImageView
+            android:id="@+id/backWhite"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.5"
+            android:contentDescription="@null"
+            android:src="@color/white"
+            android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/backWhite"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:alpha="0.5"
-                android:contentDescription="@null"
-                android:src="@color/white"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/backBlack"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:alpha="0.5"
-                android:contentDescription="@null"
-                android:src="@color/black"
-                android:visibility="gone" />
+        <ImageView
+            android:id="@+id/backBlack"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.5"
+            android:contentDescription="@null"
+            android:src="@color/black"
+            android:visibility="gone" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -106,8 +104,6 @@
 
         </RelativeLayout>
 
-        </FrameLayout>
+    </FrameLayout>
 
-    </LinearLayout>
-
-</layout>
+</LinearLayout>
