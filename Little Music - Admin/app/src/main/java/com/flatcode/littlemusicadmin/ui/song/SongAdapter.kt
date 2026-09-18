@@ -97,18 +97,18 @@ class SongAdapter(
                 val Name = DATA.EMPTY + snapshot.child(DATA.NAME).value
                 val Image = DATA.EMPTY + snapshot.child(DATA.IMAGE).value
                 if (type == DATA.ARTIST) text.setOnClickListener {
-                    activity.intentExtra2(
+                    activity.openActivity(
                         ArtistSongsActivity::class.java, DATA.ARTIST_ID, dataId, DATA.ARTIST_NAME, Name
                     )
                 }
                 if (type == DATA.ALBUM) text.setOnClickListener {
-                    activity.intentExtra3(
+                    activity.openActivity(
                         AlbumSongsActivity::class.java, DATA.ALBUM_ID, dataId,
                         DATA.ALBUM_NAME, Name, DATA.ALBUM_IMAGE, Image
                     )
                 }
                 if (type == DATA.CATEGORY) text.setOnClickListener {
-                    activity.intentExtra2(
+                    activity.openActivity(
                         CategorySongsActivity::class.java, DATA.CATEGORY_ID, dataId,
                         DATA.CATEGORY_NAME, Name
                     )

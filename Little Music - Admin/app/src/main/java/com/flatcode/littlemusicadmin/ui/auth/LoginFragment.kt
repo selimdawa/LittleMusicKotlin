@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.utils.DATA
-import com.flatcode.littlemusicadmin.utils.VOID
+import com.flatcode.littlemusicadmin.utils.openActivity
 import com.flatcode.littlemusicadmin.databinding.FragmentLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -50,7 +50,7 @@ class LoginFragment : Fragment() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding.forget.setOnClickListener { VOID.Intent1(mContext, ForgetPasswordActivity::class.java) }
+        binding.forget.setOnClickListener { mContext.openActivity(ForgetPasswordActivity::class.java) }
         binding.loginBtn.setOnClickListener { validateData() }
     }
 

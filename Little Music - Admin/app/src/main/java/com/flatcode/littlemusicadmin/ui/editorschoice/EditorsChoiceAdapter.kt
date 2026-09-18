@@ -38,7 +38,7 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
 
         holder.binding.numberEditorsChoice.text = MessageFormat.format("{0}{1}", DATA.EMPTY, id)
         holder.binding.add.setOnClickListener {
-            activity.intentExtra2(
+            activity.openActivity(
                 EditorsChoiceAddActivity::class.java, DATA.EDITORS_CHOICE_ID, editorsChoiceId,
                 DATA.OLD_ID, null
             )
@@ -77,7 +77,7 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
                             )
                         }
                         change.setOnClickListener {
-                            activity.intentExtra2(
+                            activity.openActivity(
                                 EditorsChoiceAddActivity::class.java,
                                 DATA.EDITORS_CHOICE_ID, position, DATA.OLD_ID, id
                             )

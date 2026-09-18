@@ -59,7 +59,7 @@ class AlbumAdapter(private val activity: Activity, var list: ArrayList<Album?>) 
             )
         }
         holder.binding.item.setOnClickListener {
-            activity.intentExtra3(
+            activity.openActivity(
                 AlbumSongsActivity::class.java,
                 DATA.ALBUM_ID, id, DATA.ALBUM_NAME, name, DATA.ALBUM_IMAGE, image
             )
