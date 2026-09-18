@@ -8,8 +8,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="5sp"
     android:layout_marginBottom="10dp"
-    android:orientation="vertical"
-    tools:ignore="all">
+    android:orientation="vertical">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"

@@ -1,7 +1,14 @@
 package com.flatcode.littlemusic.utils
 
-import com.flatcode.littlemusic.activity.*
-import com.flatcode.littlemusic.auth.*
+import com.flatcode.littlemusic.ui.main.*
+import com.flatcode.littlemusic.ui.auth.*
+import com.flatcode.littlemusic.ui.category.*
+import com.flatcode.littlemusic.ui.album.*
+import com.flatcode.littlemusic.ui.artist.*
+import com.flatcode.littlemusic.ui.profile.*
+import com.flatcode.littlemusic.ui.favorites.*
+import com.flatcode.littlemusic.ui.settings.*
+import com.flatcode.littlemusic.ui.showmore.*
 
 object CLASS {
     var MAIN: Class<*> = MainActivity::class.java

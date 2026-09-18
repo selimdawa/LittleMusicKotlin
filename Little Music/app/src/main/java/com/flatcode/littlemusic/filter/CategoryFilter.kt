@@ -1,7 +1,7 @@
 package com.flatcode.littlemusic.filter
 
 import android.widget.Filter
-import com.flatcode.littlemusic.adapter.CategoryAdapter
+import com.flatcode.littlemusic.ui.category.CategoryAdapter
 import com.flatcode.littlemusic.model.Category
 import java.util.*
 

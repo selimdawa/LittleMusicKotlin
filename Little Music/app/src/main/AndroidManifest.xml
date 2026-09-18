@@ -21,7 +21,7 @@
         tools:replace="android:supportsRtl"
         tools:targetApi="31">
         <activity
-            android:name=".activity.SplashActivity"
+            android:name=".ui.main.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -31,66 +31,66 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".auth.AuthActivity"
+            android:name=".ui.auth.AuthActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".auth.ForgetPasswordActivity"
+            android:name=".ui.auth.ForgetPasswordActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".auth.LoginActivity"
+            android:name=".ui.auth.LoginActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".auth.RegisterActivity"
+            android:name=".ui.auth.RegisterActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".activity.PrivacyPolicyActivity"
+            android:name=".ui.settings.PrivacyPolicyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ProfileActivity"
+            android:name=".ui.profile.ProfileActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ProfileEditActivity"
+            android:name=".ui.profile.ProfileEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".activity.FavoritesActivity"
+            android:name=".ui.favorites.FavoritesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.CategorySongsActivity"
+            android:name=".ui.category.CategorySongsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.AlbumsActivity"
+            android:name=".ui.album.AlbumsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.AlbumSongsActivity"
+            android:name=".ui.album.AlbumSongsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ArtistsActivity"
+            android:name=".ui.artist.ArtistsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ArtistSongsActivity"
+            android:name=".ui.artist.ArtistSongsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ShowMoreActivity"
+            android:name=".ui.showmore.ShowMoreActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.CategoriesActivity"
+            android:name=".ui.category.CategoriesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.MyCategoriesActivity"
+            android:name=".ui.category.MyCategoriesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.MyAlbumsActivity"
+            android:name=".ui.album.MyAlbumsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.MyArtistsActivity"
+            android:name=".ui.artist.MyArtistsActivity"
             android:screenOrientation="portrait" />
 
         <activity

@@ -10,8 +10,7 @@
     android:orientation="horizontal"
     android:scrollbarSize="0dp"
     android:scrollbarThumbHorizontal="@color/white"
-    android:visibility="gone"
-    tools:ignore="all">
+    android:visibility="gone">
 
     <LinearLayout
         android:id="@+id/linearSwitch"

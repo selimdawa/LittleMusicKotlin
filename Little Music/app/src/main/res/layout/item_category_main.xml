@@ -11,8 +11,7 @@
     android:src="@color/white"
     app:cardCornerRadius="15dp"
     app:cardElevation="0sp"
-    app:strokeWidth="0dp"
-    tools:ignore="all">
+    app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

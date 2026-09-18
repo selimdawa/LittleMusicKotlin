@@ -2,7 +2,7 @@ package com.flatcode.littlemusic.di
 
 import android.content.Context
 import androidx.room.Room
-import com.flatcode.littlemusic.database.*
+import com.flatcode.littlemusic.db.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

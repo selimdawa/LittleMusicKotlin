@@ -13,5 +13,4 @@
     app:strokeColor="@color/black"
     app:strokeWidth="0.75sp"
     android:background="@color/image_profile"
-    app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle"
-    tools:ignore="all" />
+    app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle" />

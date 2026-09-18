@@ -9,8 +9,7 @@
     android:layout_margin="10sp"
     android:visibility="visible"
     app:cardCornerRadius="6sp"
-    app:strokeWidth="0dp"
-    tools:ignore="all">
+    app:strokeWidth="0dp">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"

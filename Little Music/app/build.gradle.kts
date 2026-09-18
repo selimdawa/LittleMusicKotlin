@@ -46,6 +46,11 @@ android {
 }
 
 dependencies {
+    modules {
+        module("org.jetbrains.kotlin:kotlin-android-extensions-runtime") {
+            replacedBy("org.jetbrains.kotlin:kotlin-parcelize-runtime", "Duplicate class issue")
+        }
+    }
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)

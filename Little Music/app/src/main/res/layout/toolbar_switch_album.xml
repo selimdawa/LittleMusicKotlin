@@ -9,8 +9,7 @@
     android:layout_marginHorizontal="5sp"
     android:orientation="horizontal"
     android:scrollbarSize="0dp"
-    android:scrollbarThumbHorizontal="@color/white"
-    tools:ignore="all">
+    android:scrollbarThumbHorizontal="@color/white">
 
     <LinearLayout
         android:id="@+id/linearSwitchUser"

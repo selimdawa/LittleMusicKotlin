@@ -10,8 +10,7 @@
     app:cardCornerRadius="30dp"
     app:cardElevation="3dp"
     app:cardUseCompatPadding="true"
-    app:strokeWidth="0dp"
-    tools:ignore="all">
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -7,8 +7,7 @@
     android:layout_height="match_parent"
     android:background="?colorOnBackground"
     android:orientation="vertical"
-    tools:context=".activity.PrivacyPolicyActivity"
-    tools:ignore="all">
+    tools:context=".activity.PrivacyPolicyActivity">
 
     <include
         android:id="@+id/toolbar"
