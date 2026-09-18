@@ -24,7 +24,7 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".Activity.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
@@ -36,103 +36,113 @@
         </activity>
 
         <activity
-            android:name=".Auth.ForgetPasswordActivity"
+            android:name=".ui.main.SplashActivity"
+            android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.SongAddActivity"
+            android:name=".ui.auth.LoginActivity"
+            android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.ProfileActivity"
+            android:name=".ui.auth.ForgetPasswordActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.ProfileEditActivity"
+            android:name=".ui.song.SongAddActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.SliderShowActivity"
+            android:name=".ui.profile.ProfileActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.PrivacyPolicyActivity"
+            android:name=".ui.profile.ProfileEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.PrivacyPolicyEditActivity"
+            android:name=".ui.others.SliderShowActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.UsersActivity"
+            android:name=".ui.others.PrivacyPolicyActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.CategoriesActivity"
+            android:name=".ui.others.PrivacyPolicyEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.CategoryAddActivity"
+            android:name=".ui.user.UsersActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.CategoryEditActivity"
+            android:name=".ui.category.CategoriesActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.EditorsChoiceActivity"
+            android:name=".ui.category.CategoryAddActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.EditorsChoiceAddActivity"
+            android:name=".ui.category.CategoryEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.FavoritesActivity"
+            android:name=".ui.editorschoice.EditorsChoiceActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.SongsActivity"
+            android:name=".ui.editorschoice.EditorsChoiceAddActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.SongEditActivity"
+            android:name=".ui.others.FavoritesActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.AlbumsActivity"
+            android:name=".ui.song.SongsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.AlbumAddActivity"
+            android:name=".ui.song.SongEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.AlbumEditActivity"
+            android:name=".ui.album.AlbumsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.ArtistAddActivity"
+            android:name=".ui.album.AlbumAddActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.ArtistEditActivity"
+            android:name=".ui.album.AlbumEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.ArtistsActivity"
+            android:name=".ui.artist.ArtistAddActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.AlbumSongsActivity"
+            android:name=".ui.artist.ArtistEditActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.CategorySongsActivity"
+            android:name=".ui.artist.ArtistsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.ArtistSongsActivity"
+            android:name=".ui.song.AlbumSongsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.song.CategorySongsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.song.ArtistSongsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 

@@ -20,9 +20,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.flatcode.littlemusic.R
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.closeApp
+import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.intentExtra
 import com.flatcode.littlemusic.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import io.selimdawa.bubblebottom.BubbleBottomNavigation
@@ -33,7 +35,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private var binding: ActivityMainBinding? = null
+    private lateinit var binding: ActivityMainBinding
     var activity: Activity? = null
     var context: Context = also { activity = it }
     var bottomNavigation: BubbleBottomNavigation? = null
@@ -46,10 +48,9 @@ class MainActivity : AppCompatActivity() {
         }
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding!!.root
-        setContentView(view)
+        setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbar.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top + 10 // adding original margin
@@ -57,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             windowInsets
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.bottomNavigation) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavigation) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = insets.bottom)
             windowInsets
@@ -68,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         val navController = navHostFragment.navController
 
-        bottomNavigation = binding!!.bottomNavigation
+        bottomNavigation = binding.bottomNavigation
         bottomNavigation!!.add(Model(1, R.drawable.ic_settings))
         bottomNavigation!!.add(Model(2, R.drawable.ic_home))
         bottomNavigation!!.add(Model(3, R.drawable.ic_books))
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                 else -> R.id.homeFragment
             }
 
-            binding!!.toolbar.card.visibility = if (destinationId == R.id.homeFragment) View.VISIBLE else View.GONE
+            binding.toolbar.card.visibility = if (destinationId == R.id.homeFragment) View.VISIBLE else View.GONE
 
             if (navController.currentDestination?.id != destinationId) {
                 val navOptions = NavOptions.Builder()
@@ -96,8 +97,8 @@ class MainActivity : AppCompatActivity() {
         //bottomNavigation.setCount(3, numberSongs);
         bottomNavigation!!.show(2, true)
 
-        binding!!.toolbar.image.setOnClickListener {
-            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
+        binding.toolbar.image.setOnClickListener {
+            context.intentExtra(CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
 
         observeViewModel()
@@ -109,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.profileImage.collect { profileImage ->
                     profileImage?.let {
-                        VOID.GlideImage(true, context, it, binding!!.toolbar.image)
+                        binding.toolbar.image.glideImage(it, true)
                     }
                 }
             }
@@ -117,7 +118,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        VOID.closeApp(context, activity)
+        context.closeApp(activity)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

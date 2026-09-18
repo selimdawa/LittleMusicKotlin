@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(tableName = "artists")
-class Artist(
+data class Artist(
     @PrimaryKey
     var id: String = "",
     var name: String? = null,
@@ -18,20 +18,4 @@ class Artist(
     var songsCount: Int = 0,
     var albumsCount: Int = 0,
     var timestamp: Long = 0
-) : Parcelable {
-
-    constructor(
-        id: String?, name: String?, aboutTheArtist: String?, image: String?, publisher: String?,
-        timestamp: Long, interestedCount: Int, songsCount: Int, albumsCount: Int
-    ) : this() {
-        this.id = id ?: ""
-        this.name = name
-        this.publisher = publisher
-        this.aboutTheArtist = aboutTheArtist
-        this.image = image
-        this.timestamp = timestamp
-        this.interestedCount = interestedCount
-        this.songsCount = songsCount
-        this.albumsCount = albumsCount
-    }
-}
+) : Parcelable

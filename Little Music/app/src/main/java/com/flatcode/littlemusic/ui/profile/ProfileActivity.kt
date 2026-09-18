@@ -14,9 +14,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.intent1
 import com.flatcode.littlemusic.databinding.ActivityProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -26,7 +27,7 @@ import java.text.MessageFormat
 @AndroidEntryPoint
 class ProfileActivity : AppCompatActivity() {
 
-    private var binding: ActivityProfileBinding? = null
+    private lateinit var binding: ActivityProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
     private var profileId: String? = null
 
@@ -34,10 +35,10 @@ class ProfileActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         Timber.i("ProfileActivity Created")
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.edit.parent as View) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.edit.parent as View) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top + 20
@@ -45,7 +46,7 @@ class ProfileActivity : AppCompatActivity() {
             windowInsets
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.numberAlbums.parent.parent as View) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.numberAlbums.parent.parent as View) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = insets.bottom + 20)
             windowInsets
@@ -54,11 +55,11 @@ class ProfileActivity : AppCompatActivity() {
         profileId = intent.getStringExtra(DATA.PROFILE_ID)
 
         if (profileId == DATA.FirebaseUserUid) {
-            binding!!.edit.visibility = View.VISIBLE
-            binding!!.edit.setImageResource(R.drawable.ic_edit_white)
-            binding!!.edit.setOnClickListener { VOID.Intent1(this, CLASS.PROFILE_EDIT) }
+            binding.edit.visibility = View.VISIBLE
+            binding.edit.setImageResource(R.drawable.ic_edit_white)
+            binding.edit.setOnClickListener { this.intent1(CLASS.PROFILE_EDIT) }
         }
-        binding!!.back.setOnClickListener { onBackPressed() }
+        binding.back.setOnClickListener { onBackPressed() }
 
         observeViewModel()
     }
@@ -68,32 +69,32 @@ class ProfileActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.username.collect { username ->
-                        binding!!.username.text = username
+                        binding.username.text = username
                     }
                 }
                 launch {
                     viewModel.profileImage.collect { profileImage ->
-                        VOID.GlideImage(true, this@ProfileActivity, profileImage, binding!!.profile)
+                        binding.profile.glideImage(profileImage, true)
                     }
                 }
                 launch {
                     viewModel.favoritesCount.collect { count ->
-                        binding!!.numberFavorites.text = MessageFormat.format("{0}", count)
+                        binding.numberFavorites.text = MessageFormat.format("{0}", count)
                     }
                 }
                 launch {
                     viewModel.albumsCount.collect { count ->
-                        binding!!.numberAlbums.text = MessageFormat.format("{0}", count)
+                        binding.numberAlbums.text = MessageFormat.format("{0}", count)
                     }
                 }
                 launch {
                     viewModel.artistsCount.collect { count ->
-                        binding!!.numberArtists.text = MessageFormat.format("{0}", count)
+                        binding.numberArtists.text = MessageFormat.format("{0}", count)
                     }
                 }
                 launch {
                     viewModel.categoriesCount.collect { count ->
-                        binding!!.numberCategories.text = MessageFormat.format("{0}", count)
+                        binding.numberCategories.text = MessageFormat.format("{0}", count)
                     }
                 }
             }

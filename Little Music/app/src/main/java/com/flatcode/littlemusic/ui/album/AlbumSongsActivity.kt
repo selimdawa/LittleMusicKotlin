@@ -19,8 +19,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.ui.song.SongAdapter
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.checkInterested
+import com.flatcode.littlemusic.utils.glideBlur
+import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.isInterested
 import com.flatcode.littlemusic.databinding.ActivityAlbumSongsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -30,7 +33,7 @@ import java.text.MessageFormat
 @AndroidEntryPoint
 class AlbumSongsActivity : AppCompatActivity() {
 
-    private var binding: ActivityAlbumSongsBinding? = null
+    private lateinit var binding: ActivityAlbumSongsBinding
     private val viewModel: AlbumSongsViewModel by viewModels()
     private var adapter: SongAdapter? = null
     private val jcAudios = ArrayList<JcAudio>()
@@ -42,10 +45,10 @@ class AlbumSongsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityAlbumSongsBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         Timber.i("AlbumSongsActivity Created")
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbar.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top
@@ -53,7 +56,7 @@ class AlbumSongsActivity : AppCompatActivity() {
             windowInsets
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.player.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.player.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = insets.bottom)
             windowInsets
@@ -75,65 +78,59 @@ class AlbumSongsActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (DATA.searchStatus) {
-                    binding?.let { b ->
-                        b.toolbar.toolbar.visibility = View.VISIBLE
-                        b.toolbar.toolbarSearch.visibility = View.GONE
-                        DATA.searchStatus = false
-                        b.toolbar.textSearch.setText(DATA.EMPTY)
-                    }
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
                 } else {
                     finish()
                 }
             }
         })
 
-        binding?.let { b ->
-            VOID.GlideImage(false, this, albumImage, b.image)
-            VOID.GlideBlur(false, this, albumImage, b.imageBlur, 50)
+        binding.image.glideImage(albumImage, false)
+        binding.imageBlur.glideBlur(albumImage, 50, false)
 
-            b.toolbar.nameSpace.text = albumName
-            b.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
-            b.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.nameSpace.text = albumName
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-            b.toolbar.search.setOnClickListener {
-                b.toolbar.toolbar.visibility = View.GONE
-                b.toolbar.toolbarSearch.visibility = View.VISIBLE
-                DATA.searchStatus = true
-            }
-
-            VOID.isInterested(b.switchBar.interest, albumId, DATA.ALBUMS)
-            b.switchBar.add.setOnClickListener {
-                VOID.checkInterested(b.switchBar.interest, DATA.ALBUMS, albumId)
-            }
-
-            b.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                    try {
-                        adapter?.filter?.filter(s)
-                    } catch (_: Exception) {}
-                }
-                override fun afterTextChanged(s: Editable) {}
-            })
+        binding.toolbar.search.setOnClickListener {
+            binding.toolbar.toolbar.visibility = View.GONE
+            binding.toolbar.toolbarSearch.visibility = View.VISIBLE
+            DATA.searchStatus = true
         }
+
+        binding.switchBar.interest.isInterested(albumId, DATA.ALBUMS)
+        binding.switchBar.add.setOnClickListener {
+            binding.switchBar.interest.checkInterested(DATA.ALBUMS, albumId)
+        }
+
+        binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                try {
+                    adapter?.filter?.filter(s)
+                } catch (_: Exception) {}
+            }
+            override fun afterTextChanged(s: Editable) {}
+        })
     }
 
     private fun setupSwitchBar() {
-        binding?.let { b ->
-            b.switchBar.all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP, albumId!!) }
-            b.switchBar.mostViews.setOnClickListener { viewModel.setType(DATA.VIEWS_COUNT, albumId!!) }
-            b.switchBar.mostLoves.setOnClickListener { viewModel.setType(DATA.LOVES_COUNT, albumId!!) }
-            b.switchBar.name.setOnClickListener { viewModel.setType(DATA.NAME, albumId!!) }
-        }
+        binding.switchBar.all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP, albumId!!) }
+        binding.switchBar.mostViews.setOnClickListener { viewModel.setType(DATA.VIEWS_COUNT, albumId!!) }
+        binding.switchBar.mostLoves.setOnClickListener { viewModel.setType(DATA.LOVES_COUNT, albumId!!) }
+        binding.switchBar.name.setOnClickListener { viewModel.setType(DATA.NAME, albumId!!) }
     }
 
     private fun setupRecyclerView() {
         adapter = SongAdapter(this, ArrayList()) { _, position ->
             changeSelectedSong(position)
-            binding?.player?.jcPlayer?.playAudio(jcAudios[position])
-            binding?.player?.jcPlayer?.visibility = View.VISIBLE
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+            binding.player.jcPlayer.visibility = View.VISIBLE
         }
-        binding!!.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
     }
 
     private fun observeViewModel() {
@@ -144,7 +141,7 @@ class AlbumSongsActivity : AppCompatActivity() {
                         adapter?.list?.clear()
                         adapter?.list?.addAll(songs)
                         adapter?.notifyDataSetChanged()
-                        binding!!.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
+                        binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
                         
                         jcAudios.clear()
                         songs.forEach { song ->
@@ -152,19 +149,19 @@ class AlbumSongsActivity : AppCompatActivity() {
                         }
 
                         if (songs.isNotEmpty()) {
-                            binding!!.recyclerView.visibility = View.VISIBLE
-                            binding!!.emptyText.visibility = View.GONE
-                            binding!!.player.jcPlayer.initPlaylist(jcAudios, null)
+                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.emptyText.visibility = View.GONE
+                            binding.player.jcPlayer.initPlaylist(jcAudios, null)
                         } else {
-                            binding!!.recyclerView.visibility = View.GONE
-                            binding!!.emptyText.visibility = View.VISIBLE
+                            binding.recyclerView.visibility = View.GONE
+                            binding.emptyText.visibility = View.VISIBLE
                             Toast.makeText(this@AlbumSongsActivity, "There are no songs!", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
                 launch {
                     viewModel.isLoading.collect { isLoading ->
-                        binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                        binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
                     }
                 }
             }
@@ -181,12 +178,12 @@ class AlbumSongsActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        binding?.player?.jcPlayer?.pause()
+        binding.player.jcPlayer.pause()
         super.onPause()
     }
 
     override fun onStop() {
-        binding?.player?.jcPlayer?.pause()
+        binding.player.jcPlayer.pause()
         super.onStop()
     }
 

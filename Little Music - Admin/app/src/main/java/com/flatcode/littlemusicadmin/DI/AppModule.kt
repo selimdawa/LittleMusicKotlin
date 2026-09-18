@@ -1,4 +1,4 @@
-package com.flatcode.littlemusicadmin.DI
+package com.flatcode.littlemusicadmin.di
 
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage

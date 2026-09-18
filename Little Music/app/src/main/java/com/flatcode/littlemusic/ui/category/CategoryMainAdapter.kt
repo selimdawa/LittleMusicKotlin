@@ -4,26 +4,21 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import com.google.android.material.card.MaterialCardView
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemusic.databinding.ItemCategoryMainBinding
 import com.flatcode.littlemusic.model.Category
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.databinding.ItemCategoryMainBinding
+import com.flatcode.littlemusic.utils.glideBlur
+import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.intentExtra2
 
 class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Category?>) :
     RecyclerView.Adapter<CategoryMainAdapter.ViewHolder>() {
 
-    private var binding: ItemCategoryMainBinding? = null
-
-    override fun onCreateViewHolder(
-        parent: ViewGroup, viewType: Int
-    ): ViewHolder {
-        binding = ItemCategoryMainBinding.inflate(LayoutInflater.from(context), parent, false)
-        return ViewHolder(binding!!.root)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ItemCategoryMainBinding.inflate(LayoutInflater.from(context), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -32,19 +27,20 @@ class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Cat
         val name = DATA.EMPTY + item.name
         val image = DATA.EMPTY + item.image
 
-        VOID.GlideImage(false, context, image, holder.image)
-        VOID.GlideBlur(false, context, image, holder.imageBlur, 50)
+        val binding = holder.binding
+        binding.image.glideImage(image, false)
+        binding.imageBlur.glideBlur(image, 50, false)
 
         if (name == DATA.EMPTY) {
-            holder.name.visibility = View.GONE
+            binding.name.visibility = View.GONE
         } else {
-            holder.name.visibility = View.VISIBLE
-            holder.name.text = name
+            binding.name.visibility = View.VISIBLE
+            binding.name.text = name
         }
 
-        holder.card.setOnClickListener {
-            VOID.IntentExtra2(
-                context, CLASS.CATEGORY_SONGS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+        binding.card.setOnClickListener {
+            context?.intentExtra2(
+                CLASS.CATEGORY_SONGS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }
@@ -53,17 +49,5 @@ class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Cat
         return list.size
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
-        var image: ImageView
-        var imageBlur: ImageView
-        var name: TextView
-        var card: MaterialCardView
-
-        init {
-            image = binding!!.image
-            imageBlur = binding!!.imageBlur
-            name = binding!!.name
-            card = binding!!.card as MaterialCardView
-        }
-    }
+    inner class ViewHolder(val binding: ItemCategoryMainBinding) : RecyclerView.ViewHolder(binding.root)
 }

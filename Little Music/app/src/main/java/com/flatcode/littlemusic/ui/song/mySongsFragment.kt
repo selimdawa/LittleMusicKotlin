@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.jean.jcplayer.model.JcAudio
+import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.databinding.FragmentMySongsBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,7 +21,8 @@ import timber.log.Timber
 @AndroidEntryPoint
 class mySongsFragment : Fragment() {
 
-    private var binding: FragmentMySongsBinding? = null
+    private var _binding: FragmentMySongsBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: MySongsViewModel by viewModels()
     private var adapter: SongAdapter? = null
     private val jcAudios = ArrayList<JcAudio>()
@@ -28,7 +30,7 @@ class mySongsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMySongsBinding.inflate(inflater, container, false)
+        _binding = FragmentMySongsBinding.inflate(inflater, container, false)
         Timber.d("mySongsFragment Created")
 
         setupSwitchBar()
@@ -37,11 +39,11 @@ class mySongsFragment : Fragment() {
 
         viewModel.getData()
 
-        return binding!!.root
+        return binding.root
     }
 
     private fun setupSwitchBar() {
-        binding!!.switchBar.apply {
+        binding.switchBar.apply {
             all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP) }
             mostViews.setOnClickListener { viewModel.setType(DATA.VIEWS_COUNT) }
             mostLoves.setOnClickListener { viewModel.setType(DATA.LOVES_COUNT) }
@@ -56,10 +58,10 @@ class mySongsFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = SongAdapter(context, ArrayList()) { _, position ->
             changeSelectedSong(position)
-            binding!!.player.jcPlayer.playAudio(jcAudios[position])
-            binding!!.player.jcPlayer.visibility = View.VISIBLE
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+            binding.player.jcPlayer.visibility = View.VISIBLE
         }
-        binding!!.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
     }
 
     private fun observeViewModel() {
@@ -77,19 +79,19 @@ class mySongsFragment : Fragment() {
                         }
 
                         if (songs.isNotEmpty()) {
-                            binding!!.recyclerView.visibility = View.VISIBLE
-                            binding!!.emptyText.visibility = View.GONE
-                            binding!!.player.jcPlayer.initPlaylist(jcAudios, null)
+                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.emptyText.visibility = View.GONE
+                            binding.player.jcPlayer.initPlaylist(jcAudios, null)
                         } else {
-                            binding!!.recyclerView.visibility = View.GONE
-                            binding!!.emptyText.visibility = View.VISIBLE
+                            binding.recyclerView.visibility = View.GONE
+                            binding.emptyText.visibility = View.VISIBLE
                             Toast.makeText(context, "There are no songs!", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
                 launch {
                     viewModel.isLoading.collect { isLoading ->
-                        binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                        binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
                     }
                 }
             }
@@ -106,12 +108,12 @@ class mySongsFragment : Fragment() {
     }
 
     override fun onPause() {
-        binding?.player?.jcPlayer?.pause()
+        binding.player.jcPlayer.pause()
         super.onPause()
     }
 
     override fun onStop() {
-        binding?.player?.jcPlayer?.pause()
+        binding.player.jcPlayer.pause()
         super.onStop()
     }
 
@@ -122,6 +124,6 @@ class mySongsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
     }
 }

@@ -20,17 +20,17 @@ import timber.log.Timber
 @AndroidEntryPoint
 class PrivacyPolicyActivity : AppCompatActivity() {
 
-    private var binding: ActivityPrivacyPolicyBinding? = null
+    private lateinit var binding: ActivityPrivacyPolicyBinding
     private val viewModel: PrivacyPolicyViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         Timber.i("PrivacyPolicyActivity Created")
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbar.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top
@@ -38,8 +38,8 @@ class PrivacyPolicyActivity : AppCompatActivity() {
             windowInsets
         }
 
-        binding!!.toolbar.nameSpace.setText(R.string.privacy_policy)
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.nameSpace.setText(R.string.privacy_policy)
+        binding.toolbar.back.setOnClickListener { onBackPressed() }
 
         observeViewModel()
         viewModel.loadPrivacyPolicy()
@@ -49,7 +49,7 @@ class PrivacyPolicyActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.privacyPolicy.collect { privacyPolicy ->
-                    binding!!.text.text = privacyPolicy
+                    binding.text.text = privacyPolicy
                 }
             }
         }

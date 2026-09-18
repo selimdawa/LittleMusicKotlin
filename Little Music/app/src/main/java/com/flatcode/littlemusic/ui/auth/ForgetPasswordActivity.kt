@@ -15,8 +15,8 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
+import com.flatcode.littlemusic.utils.intent1
 import com.flatcode.littlemusic.databinding.ActivityForgetPasswordBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,7 +25,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 class ForgetPasswordActivity : AppCompatActivity() {
 
-    private var binding: ActivityForgetPasswordBinding? = null
+    private lateinit var binding: ActivityForgetPasswordBinding
     private val viewModel: ForgetPasswordViewModel by viewModels()
     private var dialog: ProgressDialog? = null
 
@@ -33,10 +33,10 @@ class ForgetPasswordActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityForgetPasswordBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         Timber.i("ForgetPasswordActivity Created")
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbarRl) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbarRl) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top + 20
@@ -44,7 +44,7 @@ class ForgetPasswordActivity : AppCompatActivity() {
             windowInsets
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.go.parent as View) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.go.parent as View) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = insets.bottom)
             windowInsets
@@ -54,16 +54,16 @@ class ForgetPasswordActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding!!.noAccount.setOnClickListener {
-            VOID.Intent1(this, CLASS.REGISTER)
+        binding.noAccount.setOnClickListener {
+            this.intent1(CLASS.REGISTER)
             finish()
         }
-        binding!!.login.setOnClickListener {
-            VOID.Intent1(this, CLASS.LOGIN)
+        binding.login.setOnClickListener {
+            this.intent1(CLASS.LOGIN)
             finish()
         }
-        binding!!.go.setOnClickListener {
-            viewModel.recoverPassword(binding!!.emailEt.text.toString().trim())
+        binding.go.setOnClickListener {
+            viewModel.recoverPassword(binding.emailEt.text.toString().trim())
         }
 
         observeViewModel()

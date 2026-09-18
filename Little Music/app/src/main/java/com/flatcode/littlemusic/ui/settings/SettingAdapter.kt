@@ -4,24 +4,23 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.flatcode.littlemusic.model.Setting
-import com.flatcode.littlemusic.utils.VOID
-import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.databinding.ItemSettingBinding
+import com.flatcode.littlemusic.model.Setting
+import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.dialogAboutApp
+import com.flatcode.littlemusic.utils.dialogLogout
+import com.flatcode.littlemusic.utils.intent1
+import com.flatcode.littlemusic.utils.rateApp
+import com.flatcode.littlemusic.utils.shareApp
 import java.text.MessageFormat
 
 class SettingAdapter(private val context: Context?, var list: ArrayList<Setting>) :
     RecyclerView.Adapter<SettingAdapter.ViewHolder>() {
 
-    private var binding: ItemSettingBinding? = null
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemSettingBinding.inflate(LayoutInflater.from(context), parent, false)
-        return ViewHolder(binding!!.root)
+        val binding = ItemSettingBinding.inflate(LayoutInflater.from(context), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -32,26 +31,24 @@ class SettingAdapter(private val context: Context?, var list: ArrayList<Setting>
         val number = item.number
         val to = item.c
 
-        holder.name.text = name
-        holder.image.setImageResource(image)
+        val binding = holder.binding
+        binding.name.text = name
+        binding.image.setImageResource(image)
 
         if (number != 0) {
-            holder.number.visibility = View.VISIBLE
-            holder.number.text = MessageFormat.format("{0}{1}", DATA.EMPTY, number)
+            binding.number.visibility = View.VISIBLE
+            binding.number.text = MessageFormat.format("{0}{1}", DATA.EMPTY, number)
         } else {
-            holder.number.visibility = View.GONE
+            binding.number.visibility = View.GONE
         }
 
-        holder.item.setOnClickListener {
+        binding.item.setOnClickListener {
             when (id) {
-                "6" -> VOID.dialogAboutApp(
-                    context
-                )
-
-                "7" -> VOID.dialogLogout(context)
-                "8" -> VOID.shareApp(context)
-                "9" -> VOID.rateApp(context)
-                else -> VOID.Intent1(context, to)
+                "6" -> context?.dialogAboutApp()
+                "7" -> context?.dialogLogout()
+                "8" -> context?.shareApp()
+                "9" -> context?.rateApp()
+                else -> context?.intent1(to)
             }
         }
     }
@@ -60,17 +57,5 @@ class SettingAdapter(private val context: Context?, var list: ArrayList<Setting>
         return list.size
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
-        var image: ImageView
-        var name: TextView
-        var number: TextView
-        var item: LinearLayout
-
-        init {
-            image = binding!!.image
-            number = binding!!.number
-            name = binding!!.name
-            item = binding!!.item
-        }
-    }
+    inner class ViewHolder(val binding: ItemSettingBinding) : RecyclerView.ViewHolder(binding.root)
 }

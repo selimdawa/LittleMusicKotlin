@@ -15,8 +15,9 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
+import com.flatcode.littlemusic.utils.intent1
+import com.flatcode.littlemusic.utils.intentClear
 import com.flatcode.littlemusic.databinding.ActivityRegisterBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
 
-    private var binding: ActivityRegisterBinding? = null
+    private lateinit var binding: ActivityRegisterBinding
     private val viewModel: RegisterViewModel by viewModels()
     private var dialog: ProgressDialog? = null
 
@@ -33,10 +34,10 @@ class RegisterActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         Timber.i("RegisterActivity Created")
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbarRl) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbarRl) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top + 20
@@ -44,7 +45,7 @@ class RegisterActivity : AppCompatActivity() {
             windowInsets
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.go.parent as View) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.go.parent as View) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = insets.bottom)
             windowInsets
@@ -54,16 +55,16 @@ class RegisterActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding!!.forget.setOnClickListener { VOID.Intent1(this, CLASS.FORGET_PASSWORD) }
-        binding!!.login.setOnClickListener {
-            VOID.Intent1(this, CLASS.LOGIN)
+        binding.forget.setOnClickListener { this.intent1(CLASS.FORGET_PASSWORD) }
+        binding.login.setOnClickListener {
+            this.intent1(CLASS.LOGIN)
             finish()
         }
-        binding!!.go.setOnClickListener {
-            val name = binding!!.nameEt.text.toString().trim()
-            val email = binding!!.emailEt.text.toString().trim()
-            val password = binding!!.passwordEt.text.toString().trim()
-            val cPassword = binding!!.cPasswordEt.text.toString().trim()
+        binding.go.setOnClickListener {
+            val name = binding.nameEt.text.toString().trim()
+            val email = binding.emailEt.text.toString().trim()
+            val password = binding.passwordEt.text.toString().trim()
+            val cPassword = binding.cPasswordEt.text.toString().trim()
             viewModel.register(name, email, password, cPassword)
         }
 
@@ -82,7 +83,7 @@ class RegisterActivity : AppCompatActivity() {
                         is RegisterViewModel.RegisterStatus.Success -> {
                             dialog!!.dismiss()
                             Toast.makeText(this@RegisterActivity, "Account created...", Toast.LENGTH_SHORT).show()
-                            VOID.IntentClear(this@RegisterActivity, CLASS.MAIN)
+                            this@RegisterActivity.intentClear(CLASS.MAIN)
                             finish()
                         }
                         is RegisterViewModel.RegisterStatus.Error -> {

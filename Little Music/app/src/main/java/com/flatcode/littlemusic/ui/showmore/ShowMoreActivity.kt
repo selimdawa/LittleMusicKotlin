@@ -29,7 +29,7 @@ import java.text.MessageFormat
 @AndroidEntryPoint
 class ShowMoreActivity : AppCompatActivity() {
 
-    private var binding: ActivityShowMoreBinding? = null
+    private lateinit var binding: ActivityShowMoreBinding
     private val viewModel: ShowMoreViewModel by viewModels()
     private var adapter: SongAdapter? = null
     private val jcAudios = ArrayList<JcAudio>()
@@ -43,10 +43,10 @@ class ShowMoreActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityShowMoreBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         Timber.i("ShowMoreActivity Created")
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbar.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top
@@ -54,7 +54,7 @@ class ShowMoreActivity : AppCompatActivity() {
             windowInsets
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.player.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.player.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = insets.bottom)
             windowInsets
@@ -72,17 +72,17 @@ class ShowMoreActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        binding!!.toolbar.nameSpace.text = name
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.nameSpace.text = name
+        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressed() }
 
-        binding!!.toolbar.search.setOnClickListener {
-            binding!!.toolbar.toolbar.visibility = View.GONE
-            binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
+        binding.toolbar.search.setOnClickListener {
+            binding.toolbar.toolbar.visibility = View.GONE
+            binding.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
 
-        binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
+        binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
@@ -95,15 +95,15 @@ class ShowMoreActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         if (isReverse == "true") {
-            recyclerView = binding!!.recyclerViewReverse
+            recyclerView = binding.recyclerViewReverse
         } else {
-            recyclerView = binding!!.recyclerView
+            recyclerView = binding.recyclerView
         }
         
         adapter = SongAdapter(this, ArrayList()) { _, position ->
             changeSelectedSong(position)
-            binding!!.player.jcPlayer.playAudio(jcAudios[position])
-            binding!!.player.jcPlayer.visibility = View.VISIBLE
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+            binding.player.jcPlayer.visibility = View.VISIBLE
         }
         recyclerView!!.adapter = adapter
     }
@@ -116,7 +116,7 @@ class ShowMoreActivity : AppCompatActivity() {
                         adapter?.list?.clear()
                         adapter?.list?.addAll(songs)
                         adapter?.notifyDataSetChanged()
-                        binding!!.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
+                        binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
                         
                         jcAudios.clear()
                         songs.forEach { song ->
@@ -125,18 +125,18 @@ class ShowMoreActivity : AppCompatActivity() {
 
                         if (songs.isNotEmpty()) {
                             recyclerView!!.visibility = View.VISIBLE
-                            binding!!.emptyText.visibility = View.GONE
-                            binding!!.player.jcPlayer.initPlaylist(jcAudios, null)
+                            binding.emptyText.visibility = View.GONE
+                            binding.player.jcPlayer.initPlaylist(jcAudios, null)
                         } else {
                             recyclerView!!.visibility = View.GONE
-                            binding!!.emptyText.visibility = View.VISIBLE
+                            binding.emptyText.visibility = View.VISIBLE
                             Toast.makeText(this@ShowMoreActivity, "There are no songs!", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
                 launch {
                     viewModel.isLoading.collect { isLoading ->
-                        binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                        binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
                     }
                 }
             }

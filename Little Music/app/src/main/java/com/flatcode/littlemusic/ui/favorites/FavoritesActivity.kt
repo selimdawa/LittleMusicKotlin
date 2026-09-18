@@ -29,7 +29,7 @@ import java.text.MessageFormat
 @AndroidEntryPoint
 class FavoritesActivity : AppCompatActivity() {
 
-    private var binding: ActivityFavoritesBinding? = null
+    private lateinit var binding: ActivityFavoritesBinding
     private val viewModel: FavoritesViewModel by viewModels()
     private var adapter: SongAdapter? = null
     private val jcAudios = ArrayList<JcAudio>()
@@ -38,10 +38,10 @@ class FavoritesActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityFavoritesBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         Timber.i("FavoritesActivity Created")
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbar.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top
@@ -49,7 +49,7 @@ class FavoritesActivity : AppCompatActivity() {
             windowInsets
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.player.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.player.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = insets.bottom)
             windowInsets
@@ -64,16 +64,16 @@ class FavoritesActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        binding!!.toolbar.nameSpace.setText(R.string.favorites)
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.nameSpace.setText(R.string.favorites)
+        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressed() }
 
-        binding!!.toolbar.search.setOnClickListener {
-            binding!!.toolbar.toolbar.visibility = View.GONE
-            binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
+        binding.toolbar.search.setOnClickListener {
+            binding.toolbar.toolbar.visibility = View.GONE
+            binding.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
+        binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
@@ -85,19 +85,19 @@ class FavoritesActivity : AppCompatActivity() {
     }
 
     private fun setupSwitchBar() {
-        binding!!.switchBar.all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP) }
-        binding!!.switchBar.mostViews.setOnClickListener { viewModel.setType(DATA.VIEWS_COUNT) }
-        binding!!.switchBar.mostLoves.setOnClickListener { viewModel.setType(DATA.LOVES_COUNT) }
-        binding!!.switchBar.name.setOnClickListener { viewModel.setType(DATA.NAME) }
+        binding.switchBar.all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP) }
+        binding.switchBar.mostViews.setOnClickListener { viewModel.setType(DATA.VIEWS_COUNT) }
+        binding.switchBar.mostLoves.setOnClickListener { viewModel.setType(DATA.LOVES_COUNT) }
+        binding.switchBar.name.setOnClickListener { viewModel.setType(DATA.NAME) }
     }
 
     private fun setupRecyclerView() {
         adapter = SongAdapter(this, ArrayList()) { _, position ->
             changeSelectedSong(position)
-            binding!!.player.jcPlayer.playAudio(jcAudios[position])
-            binding!!.player.jcPlayer.visibility = View.VISIBLE
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+            binding.player.jcPlayer.visibility = View.VISIBLE
         }
-        binding!!.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
     }
 
     private fun observeViewModel() {
@@ -108,7 +108,7 @@ class FavoritesActivity : AppCompatActivity() {
                         adapter?.list?.clear()
                         adapter?.list?.addAll(songs)
                         adapter?.notifyDataSetChanged()
-                        binding!!.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
+                        binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
                         
                         jcAudios.clear()
                         songs.forEach { song ->
@@ -116,19 +116,19 @@ class FavoritesActivity : AppCompatActivity() {
                         }
 
                         if (songs.isNotEmpty()) {
-                            binding!!.recyclerView.visibility = View.VISIBLE
-                            binding!!.emptyText.visibility = View.GONE
-                            binding!!.player.jcPlayer.initPlaylist(jcAudios, null)
+                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.emptyText.visibility = View.GONE
+                            binding.player.jcPlayer.initPlaylist(jcAudios, null)
                         } else {
-                            binding!!.recyclerView.visibility = View.GONE
-                            binding!!.emptyText.visibility = View.VISIBLE
+                            binding.recyclerView.visibility = View.GONE
+                            binding.emptyText.visibility = View.VISIBLE
                             Toast.makeText(this@FavoritesActivity, "There are no songs!", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
                 launch {
                     viewModel.isLoading.collect { isLoading ->
-                        binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                        binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
                     }
                 }
             }
@@ -146,10 +146,10 @@ class FavoritesActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (DATA.searchStatus) {
-            binding!!.toolbar.toolbar.visibility = View.VISIBLE
-            binding!!.toolbar.toolbarSearch.visibility = View.GONE
+            binding.toolbar.toolbar.visibility = View.VISIBLE
+            binding.toolbar.toolbarSearch.visibility = View.GONE
             DATA.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
+            binding.toolbar.textSearch.setText(DATA.EMPTY)
         } else super.onBackPressed()
     }
 

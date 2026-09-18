@@ -19,8 +19,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.cropImageSquare
+import com.flatcode.littlemusic.utils.glideImage
 import com.flatcode.littlemusic.databinding.ActivityProfileEditBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -30,7 +31,7 @@ import com.theartofdev.edmodo.cropper.CropImage
 @AndroidEntryPoint
 class ProfileEditActivity : AppCompatActivity() {
 
-    private var binding: ActivityProfileEditBinding? = null
+    private lateinit var binding: ActivityProfileEditBinding
     private val viewModel: ProfileEditViewModel by viewModels()
     private var imageUri: Uri? = null
     private var dialog: ProgressDialog? = null
@@ -39,10 +40,10 @@ class ProfileEditActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityProfileEditBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         Timber.i("ProfileEditActivity Created")
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbar.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top + 10
@@ -50,7 +51,7 @@ class ProfileEditActivity : AppCompatActivity() {
             windowInsets
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.go.parent as View) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.go.parent as View) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = insets.bottom)
             windowInsets
@@ -60,11 +61,11 @@ class ProfileEditActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding!!.toolbar.nameSpace.setText(R.string.edit_profile)
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        binding!!.image.setOnClickListener { VOID.CropImageSquare(this) }
-        binding!!.go.setOnClickListener {
-            viewModel.updateProfile(binding!!.nameEt.text.toString().trim(), imageUri, this)
+        binding.toolbar.nameSpace.setText(R.string.edit_profile)
+        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.image.setOnClickListener { this.cropImageSquare() }
+        binding.go.setOnClickListener {
+            viewModel.updateProfile(binding.nameEt.text.toString().trim(), imageUri, this)
         }
 
         observeViewModel()
@@ -76,12 +77,12 @@ class ProfileEditActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.username.collect { username ->
-                        binding!!.nameEt.setText(username)
+                        binding.nameEt.setText(username)
                     }
                 }
                 launch {
                     viewModel.profileImage.collect { profileImage ->
-                        VOID.GlideImage(true, this@ProfileEditActivity, profileImage, binding!!.profileImage)
+                        binding.profileImage.glideImage(profileImage, true)
                     }
                 }
                 launch {
@@ -116,7 +117,7 @@ class ProfileEditActivity : AppCompatActivity() {
                 imageUri = uri
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             } else {
-                VOID.CropImageSquare(this)
+                this.cropImageSquare()
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {

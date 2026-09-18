@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
+import com.flatcode.littlemusic.utils.intent1
 import com.flatcode.littlemusic.databinding.ActivitySplashBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -19,14 +19,14 @@ import timber.log.Timber
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
 
-    private var binding: ActivitySplashBinding? = null
+    private lateinit var binding: ActivitySplashBinding
     private val viewModel: SplashViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         Timber.i("SplashActivity Created")
 
         Handler(Looper.getMainLooper()).postDelayed({
@@ -42,9 +42,9 @@ class SplashActivity : AppCompatActivity() {
                 viewModel.isUserLoggedIn.collect { isLoggedIn ->
                     isLoggedIn?.let {
                         if (it) {
-                            VOID.Intent1(this@SplashActivity, CLASS.MAIN)
+                            this@SplashActivity.intent1(CLASS.MAIN)
                         } else {
-                            VOID.Intent1(this@SplashActivity, CLASS.AUTH)
+                            this@SplashActivity.intent1(CLASS.AUTH)
                         }
                         finish()
                     }

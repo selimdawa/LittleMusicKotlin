@@ -19,8 +19,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.ui.album.AlbumAdapter
 import com.flatcode.littlemusic.ui.song.SongAdapter
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.checkInterested
+import com.flatcode.littlemusic.utils.dialogAboutArtist
+import com.flatcode.littlemusic.utils.isInterested
 import com.flatcode.littlemusic.databinding.ActivityArtistSongsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -30,7 +32,7 @@ import java.text.MessageFormat
 @AndroidEntryPoint
 class ArtistSongsActivity : AppCompatActivity() {
 
-    private var binding: ActivityArtistSongsBinding? = null
+    private lateinit var binding: ActivityArtistSongsBinding
     private val viewModel: ArtistSongsViewModel by viewModels()
     
     private var albumAdapter: AlbumAdapter? = null
@@ -49,10 +51,10 @@ class ArtistSongsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityArtistSongsBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         Timber.i("ArtistSongsActivity Created")
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbar.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top
@@ -60,7 +62,7 @@ class ArtistSongsActivity : AppCompatActivity() {
             windowInsets
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.player.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.player.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = insets.bottom)
             windowInsets
@@ -80,16 +82,16 @@ class ArtistSongsActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        binding!!.toolbar.nameSpace.text = artistName
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        binding!!.toolbar.search.setOnClickListener {
-            binding!!.toolbar.toolbar.visibility = View.GONE
-            binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
+        binding.toolbar.nameSpace.text = artistName
+        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.search.setOnClickListener {
+            binding.toolbar.toolbar.visibility = View.GONE
+            binding.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressed() }
 
-        binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
+        binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
@@ -101,44 +103,44 @@ class ArtistSongsActivity : AppCompatActivity() {
     }
 
     private fun setupSwitchBars() {
-        binding!!.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
+        binding.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
         
-        VOID.isInterested(binding!!.switchBarSongs.interest, artistId, DATA.ARTISTS)
-        binding!!.switchBarSongs.add.setOnClickListener { VOID.checkInterested(binding!!.switchBarSongs.interest, DATA.ARTISTS, artistId) }
+        binding.switchBarSongs.interest.isInterested(artistId, DATA.ARTISTS)
+        binding.switchBarSongs.add.setOnClickListener { binding.switchBarSongs.interest.checkInterested(DATA.ARTISTS, artistId) }
 
-        VOID.isInterested(binding!!.switchBarAlbums.interest, artistId, DATA.ARTISTS)
-        binding!!.switchBarAlbums.add.setOnClickListener { VOID.checkInterested(binding!!.switchBarAlbums.interest, DATA.ARTISTS, artistId) }
+        binding.switchBarAlbums.interest.isInterested(artistId, DATA.ARTISTS)
+        binding.switchBarAlbums.add.setOnClickListener { binding.switchBarAlbums.interest.checkInterested(DATA.ARTISTS, artistId) }
 
-        binding!!.switchBarAlbums.songs.setOnClickListener {
+        binding.switchBarAlbums.songs.setOnClickListener {
             isAlbum = false
             isSong = true
-            binding!!.switchBarAlbums.scrollSwitch.visibility = View.GONE
-            binding!!.switchBarSongs.scrollSwitch.visibility = View.VISIBLE
-            binding!!.player.jcPlayer.pause()
-            binding!!.player.jcPlayer.visibility = View.GONE
+            binding.switchBarAlbums.scrollSwitch.visibility = View.GONE
+            binding.switchBarSongs.scrollSwitch.visibility = View.VISIBLE
+            binding.player.jcPlayer.pause()
+            binding.player.jcPlayer.visibility = View.GONE
             viewModel.getSongs(artistId)
             if (DATA.searchStatus) onBackPressed()
         }
         
-        binding!!.switchBarAlbums.apply {
-            aboutTheArtist.setOnClickListener { VOID.dialogAboutArtist(this@ArtistSongsActivity, artistImage, artistName, artistAbout) }
+        binding.switchBarAlbums.apply {
+            aboutTheArtist.setOnClickListener { this@ArtistSongsActivity.dialogAboutArtist(artistImage, artistName, artistAbout) }
             all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP, artistId!!, true) }
             mostSongs.setOnClickListener { viewModel.setType(DATA.SONGS_COUNT, artistId!!, true) }
             mostInterested.setOnClickListener { viewModel.setType(DATA.INTERESTED_COUNT, artistId!!, true) }
             name.setOnClickListener { viewModel.setType(DATA.NAME, artistId!!, true) }
         }
 
-        binding!!.switchBarSongs.albums.setOnClickListener {
+        binding.switchBarSongs.albums.setOnClickListener {
             isAlbum = true
             isSong = false
-            binding!!.switchBarSongs.scrollSwitch.visibility = View.GONE
-            binding!!.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
+            binding.switchBarSongs.scrollSwitch.visibility = View.GONE
+            binding.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
             viewModel.getAlbums(artistId)
             if (DATA.searchStatus) onBackPressed()
         }
         
-        binding!!.switchBarSongs.apply {
-            aboutTheArtist.setOnClickListener { VOID.dialogAboutArtist(this@ArtistSongsActivity, artistImage, artistName, artistAbout) }
+        binding.switchBarSongs.apply {
+            aboutTheArtist.setOnClickListener { this@ArtistSongsActivity.dialogAboutArtist(artistImage, artistName, artistAbout) }
             all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP, artistId!!, false) }
             mostViews.setOnClickListener { viewModel.setType(DATA.VIEWS_COUNT, artistId!!, false) }
             mostLoves.setOnClickListener { viewModel.setType(DATA.LOVES_COUNT, artistId!!, false) }
@@ -148,14 +150,14 @@ class ArtistSongsActivity : AppCompatActivity() {
 
     private fun setupRecyclerViews() {
         albumAdapter = AlbumAdapter(this, ArrayList())
-        binding!!.recyclerAlbums.adapter = albumAdapter
+        binding.recyclerAlbums.adapter = albumAdapter
 
         songAdapter = SongAdapter(this, ArrayList()) { _, position ->
             changeSelectedSong(position)
-            binding!!.player.jcPlayer.playAudio(jcAudios[position])
-            binding!!.player.jcPlayer.visibility = View.VISIBLE
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+            binding.player.jcPlayer.visibility = View.VISIBLE
         }
-        binding!!.recyclerSongs.adapter = songAdapter
+        binding.recyclerSongs.adapter = songAdapter
     }
 
     private fun observeViewModel() {
@@ -167,14 +169,14 @@ class ArtistSongsActivity : AppCompatActivity() {
                             albumAdapter?.list?.clear()
                             albumAdapter?.list?.addAll(albums)
                             albumAdapter?.notifyDataSetChanged()
-                            binding!!.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
-                            binding!!.progress.visibility = View.GONE
+                            binding.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
+                            binding.progress.visibility = View.GONE
                             if (albums.isNotEmpty()) {
-                                binding!!.recyclerAlbums.visibility = View.VISIBLE
-                                binding!!.emptyText.visibility = View.GONE
+                                binding.recyclerAlbums.visibility = View.VISIBLE
+                                binding.emptyText.visibility = View.GONE
                             } else {
-                                binding!!.recyclerAlbums.visibility = View.GONE
-                                binding!!.emptyText.visibility = View.VISIBLE
+                                binding.recyclerAlbums.visibility = View.GONE
+                                binding.emptyText.visibility = View.VISIBLE
                             }
                         }
                     }
@@ -185,21 +187,21 @@ class ArtistSongsActivity : AppCompatActivity() {
                             songAdapter?.list?.clear()
                             songAdapter?.list?.addAll(songs)
                             songAdapter?.notifyDataSetChanged()
-                            binding!!.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
+                            binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
                             
                             jcAudios.clear()
                             songs.forEach { song ->
                                 jcAudios.add(JcAudio.createFromURL(song.name ?: "", song.songLink ?: ""))
                             }
                             
-                            binding!!.progress.visibility = View.GONE
+                            binding.progress.visibility = View.GONE
                             if (songs.isNotEmpty()) {
-                                binding!!.recyclerSongs.visibility = View.VISIBLE
-                                binding!!.emptyText.visibility = View.GONE
-                                binding!!.player.jcPlayer.initPlaylist(jcAudios, null)
+                                binding.recyclerSongs.visibility = View.VISIBLE
+                                binding.emptyText.visibility = View.GONE
+                                binding.player.jcPlayer.initPlaylist(jcAudios, null)
                             } else {
-                                binding!!.recyclerSongs.visibility = View.GONE
-                                binding!!.emptyText.visibility = View.VISIBLE
+                                binding.recyclerSongs.visibility = View.GONE
+                                binding.emptyText.visibility = View.VISIBLE
                                 Toast.makeText(this@ArtistSongsActivity, "There are no songs!", Toast.LENGTH_SHORT).show()
                             }
                         }
@@ -207,7 +209,7 @@ class ArtistSongsActivity : AppCompatActivity() {
                 }
                 launch {
                     viewModel.isLoading.collect { isLoading ->
-                        binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                        binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
                     }
                 }
             }
@@ -225,20 +227,20 @@ class ArtistSongsActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (DATA.searchStatus) {
-            binding!!.toolbar.toolbar.visibility = View.VISIBLE
-            binding!!.toolbar.toolbarSearch.visibility = View.GONE
+            binding.toolbar.toolbar.visibility = View.VISIBLE
+            binding.toolbar.toolbarSearch.visibility = View.GONE
             DATA.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
+            binding.toolbar.textSearch.setText(DATA.EMPTY)
         } else super.onBackPressed()
     }
 
     override fun onPause() {
-        binding!!.player.jcPlayer.pause()
+        binding.player.jcPlayer.pause()
         super.onPause()
     }
 
     override fun onStop() {
-        binding!!.player.jcPlayer.pause()
+        binding.player.jcPlayer.pause()
         super.onStop()
     }
 

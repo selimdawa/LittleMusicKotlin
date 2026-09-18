@@ -1,9 +1,13 @@
-package com.flatcode.littlemusicadmin.DI
+package com.flatcode.littlemusicadmin.di
 
 import android.content.Context
 import androidx.room.Room
-import com.flatcode.littlemusicadmin.Database.AppDatabase
-import com.flatcode.littlemusicadmin.Database.Dao.*
+import com.flatcode.littlemusicadmin.db.AlbumDao
+import com.flatcode.littlemusicadmin.db.AppDatabase
+import com.flatcode.littlemusicadmin.db.ArtistDao
+import com.flatcode.littlemusicadmin.db.CategoryDao
+import com.flatcode.littlemusicadmin.db.SongDao
+import com.flatcode.littlemusicadmin.db.UserDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

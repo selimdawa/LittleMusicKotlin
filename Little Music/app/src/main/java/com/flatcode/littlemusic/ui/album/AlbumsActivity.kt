@@ -25,7 +25,7 @@ import java.text.MessageFormat
 @AndroidEntryPoint
 class AlbumsActivity : AppCompatActivity() {
 
-    private var binding: ActivityAlbumsBinding? = null
+    private lateinit var binding: ActivityAlbumsBinding
     private val viewModel: AlbumsViewModel by viewModels()
     private var adapter: AlbumAdapter? = null
 
@@ -33,10 +33,10 @@ class AlbumsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityAlbumsBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         Timber.i("AlbumsActivity Created")
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbar.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top
@@ -53,16 +53,16 @@ class AlbumsActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        binding!!.toolbar.nameSpace.setText(R.string.albums)
-        binding!!.toolbar.back.setOnClickListener { onBackPressed() }
-        binding!!.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.nameSpace.setText(R.string.albums)
+        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressed() }
 
-        binding!!.toolbar.search.setOnClickListener {
-            binding!!.toolbar.toolbar.visibility = View.GONE
-            binding!!.toolbar.toolbarSearch.visibility = View.VISIBLE
+        binding.toolbar.search.setOnClickListener {
+            binding.toolbar.toolbar.visibility = View.GONE
+            binding.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding!!.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
+        binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
@@ -77,14 +77,14 @@ class AlbumsActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         adapter = AlbumAdapter(this, ArrayList())
-        binding!!.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
     }
 
     private fun setupSwitchBar() {
-        binding!!.switchBar.all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP) }
-        binding!!.switchBar.mostSongs.setOnClickListener { viewModel.setType(DATA.SONGS_COUNT) }
-        binding!!.switchBar.mostInterested.setOnClickListener { viewModel.setType(DATA.INTERESTED_COUNT) }
-        binding!!.switchBar.name.setOnClickListener { viewModel.setType(DATA.NAME) }
+        binding.switchBar.all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP) }
+        binding.switchBar.mostSongs.setOnClickListener { viewModel.setType(DATA.SONGS_COUNT) }
+        binding.switchBar.mostInterested.setOnClickListener { viewModel.setType(DATA.INTERESTED_COUNT) }
+        binding.switchBar.name.setOnClickListener { viewModel.setType(DATA.NAME) }
     }
 
     private fun observeViewModel() {
@@ -95,20 +95,20 @@ class AlbumsActivity : AppCompatActivity() {
                         adapter?.list?.clear()
                         adapter?.list?.addAll(albums)
                         adapter?.notifyDataSetChanged()
-                        binding!!.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
+                        binding.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
                         
                         if (albums.isNotEmpty()) {
-                            binding!!.recyclerView.visibility = View.VISIBLE
-                            binding!!.emptyText.visibility = View.GONE
+                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.emptyText.visibility = View.GONE
                         } else {
-                            binding!!.recyclerView.visibility = View.GONE
-                            binding!!.emptyText.visibility = View.VISIBLE
+                            binding.recyclerView.visibility = View.GONE
+                            binding.emptyText.visibility = View.VISIBLE
                         }
                     }
                 }
                 launch {
                     viewModel.isLoading.collect { isLoading ->
-                        binding!!.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                        binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
                     }
                 }
             }
@@ -117,10 +117,10 @@ class AlbumsActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (DATA.searchStatus) {
-            binding!!.toolbar.toolbar.visibility = View.VISIBLE
-            binding!!.toolbar.toolbarSearch.visibility = View.GONE
+            binding.toolbar.toolbar.visibility = View.VISIBLE
+            binding.toolbar.toolbarSearch.visibility = View.GONE
             DATA.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
+            binding.toolbar.textSearch.setText(DATA.EMPTY)
         } else super.onBackPressed()
     }
 

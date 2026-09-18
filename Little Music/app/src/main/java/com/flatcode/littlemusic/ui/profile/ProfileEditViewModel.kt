@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemusic.repository.UserRepository
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.VOID
+import com.flatcode.littlemusic.utils.getFileExtension
 import com.flatcode.littlemusic.ui.BaseViewModel
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -59,7 +59,7 @@ class ProfileEditViewModel @Inject constructor(
     private fun uploadImage(name: String, imageUri: Uri, context: Context) {
         _updateStatus.value = UpdateStatus.Loading("Uploading Image...")
         val filePathAndName = "Images/Profile/" + DATA.FirebaseUserUid
-        val extension = VOID.getFileExtension(imageUri, context)
+        val extension = imageUri.getFileExtension(context)
         val reference = storage.getReference("$filePathAndName.$extension")
         
         reference.putFile(imageUri)

@@ -17,25 +17,26 @@ import timber.log.Timber
 @AndroidEntryPoint
 class CategoriesFragment : Fragment() {
 
-    private var binding: FragmentCategoriesBinding? = null
+    private var _binding: FragmentCategoriesBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: CategoriesFragViewModel by viewModels()
     private var adapter: CategoryMainAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCategoriesBinding.inflate(inflater, container, false)
+        _binding = FragmentCategoriesBinding.inflate(inflater, container, false)
         Timber.d("CategoriesFragment Created")
 
         setupRecyclerView()
         observeViewModel()
 
-        return binding!!.root
+        return binding.root
     }
 
     private fun setupRecyclerView() {
         adapter = CategoryMainAdapter(context, ArrayList())
-        binding!!.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
     }
 
     private fun observeViewModel() {
@@ -48,17 +49,17 @@ class CategoriesFragment : Fragment() {
                         adapter?.notifyDataSetChanged()
                         
                         if (categories.isNotEmpty()) {
-                            binding!!.recyclerView.visibility = View.VISIBLE
-                            binding!!.emptyText.visibility = View.GONE
+                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.emptyText.visibility = View.GONE
                         } else {
-                            binding!!.recyclerView.visibility = View.GONE
-                            binding!!.emptyText.visibility = View.VISIBLE
+                            binding.recyclerView.visibility = View.GONE
+                            binding.emptyText.visibility = View.VISIBLE
                         }
                     }
                 }
                 launch {
                     viewModel.isLoading.collect { isLoading ->
-                        binding!!.bar.visibility = if (isLoading) View.VISIBLE else View.GONE
+                        binding.bar.visibility = if (isLoading) View.VISIBLE else View.GONE
                     }
                 }
             }
@@ -72,6 +73,6 @@ class CategoriesFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
     }
 }

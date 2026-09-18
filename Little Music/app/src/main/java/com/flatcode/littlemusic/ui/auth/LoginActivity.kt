@@ -15,8 +15,9 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
+import com.flatcode.littlemusic.utils.intent1
+import com.flatcode.littlemusic.utils.intentClear
 import com.flatcode.littlemusic.databinding.ActivityLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
-    private var binding: ActivityLoginBinding? = null
+    private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
     private var dialog: ProgressDialog? = null
 
@@ -33,10 +34,10 @@ class LoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         Timber.i("LoginActivity Created")
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.toolbarRl) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbarRl) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top + 20 // adding original margin (20sp)
@@ -44,7 +45,7 @@ class LoginActivity : AppCompatActivity() {
             windowInsets
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.loginBtn.parent as View) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.loginBtn.parent as View) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = insets.bottom)
             windowInsets
@@ -54,11 +55,11 @@ class LoginActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding!!.forget.setOnClickListener { VOID.Intent1(this, CLASS.FORGET_PASSWORD) }
-        binding!!.noAccount.setOnClickListener { VOID.Intent1(this, CLASS.REGISTER) }
-        binding!!.loginBtn.setOnClickListener {
-            val email = binding!!.emailEt.text.toString().trim()
-            val password = binding!!.passwordEt.text.toString().trim()
+        binding.forget.setOnClickListener { this.intent1(CLASS.FORGET_PASSWORD) }
+        binding.noAccount.setOnClickListener { this.intent1(CLASS.REGISTER) }
+        binding.loginBtn.setOnClickListener {
+            val email = binding.emailEt.text.toString().trim()
+            val password = binding.passwordEt.text.toString().trim()
             viewModel.login(email, password)
         }
 
@@ -76,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
                         }
                         is LoginViewModel.LoginStatus.Success -> {
                             dialog!!.dismiss()
-                            VOID.IntentClear(this@LoginActivity, CLASS.MAIN)
+                            this@LoginActivity.intentClear(CLASS.MAIN)
                         }
                         is LoginViewModel.LoginStatus.Error -> {
                             dialog!!.dismiss()

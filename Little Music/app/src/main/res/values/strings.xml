@@ -10,6 +10,7 @@
     <string name="login">Login</string>
     <string name="forget_password">Forget Password?</string>
     <string name="register">Register</string>
+    <string name="space"> </string>
     <string name="welcome_to">Welcome to</string>
     <string name="email_example">abc@example.com</string>
     <string name="password_hint">********</string>

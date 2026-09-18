@@ -9,9 +9,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.intentExtra
 import com.flatcode.littlemusic.databinding.FragmentSettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -20,32 +21,33 @@ import timber.log.Timber
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
 
-    private var binding: FragmentSettingsBinding? = null
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: SettingsViewModel by viewModels()
     private var adapter: SettingAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         Timber.d("SettingsFragment Created")
 
         setupToolbar()
         setupRecyclerView()
         observeViewModel()
 
-        return binding!!.root
+        return binding.root
     }
 
     private fun setupToolbar() {
-        binding!!.toolbar.item.setOnClickListener {
-            VOID.IntentExtra(context, CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
+        binding.toolbar.item.setOnClickListener {
+            context?.intentExtra(CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
     }
 
     private fun setupRecyclerView() {
         adapter = SettingAdapter(context, ArrayList())
-        binding!!.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
     }
 
     private fun observeViewModel() {
@@ -54,9 +56,9 @@ class SettingsFragment : Fragment() {
                 launch {
                     viewModel.user.collect { user ->
                         user?.let {
-                            VOID.GlideImage(true, context, it.profileImage, binding!!.toolbar.imageProfile)
-                            binding!!.toolbar.username.text = it.username
-                            binding!!.toolbar.email.text = it.email
+                            binding.toolbar.imageProfile.glideImage(it.profileImage, true)
+                            binding.toolbar.username.text = it.username
+                            binding.toolbar.email.text = it.email
                         }
                     }
                 }
@@ -79,6 +81,6 @@ class SettingsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
     }
 }

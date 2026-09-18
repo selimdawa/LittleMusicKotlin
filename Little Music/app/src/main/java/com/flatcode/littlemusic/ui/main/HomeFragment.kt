@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.model.Category
 import com.flatcode.littlemusic.model.Song
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.intentExtra3
 import com.flatcode.littlemusic.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 import io.selimdawa.autoimageslider.SliderAnimations
@@ -28,7 +28,8 @@ import timber.log.Timber
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
-    private var binding: FragmentHomeBinding? = null
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
 
     private var adapter: SongMainAdapter? = null
@@ -47,7 +48,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         Timber.d("HomeFragment Created")
 
         setupAdapters()
@@ -59,83 +60,79 @@ class HomeFragment : Fragment() {
         viewModel.loadSliderCount()
         viewModel.loadSongs()
 
-        return binding!!.root
+        return binding.root
     }
 
     private fun setupAdapters() {
-        binding?.let { b ->
-            categoryAdapter = CategoryHomeAdapter(context, arrayListOf())
-            b.recyclerCategory.adapter = categoryAdapter
+        categoryAdapter = CategoryHomeAdapter(context, arrayListOf())
+        binding.recyclerCategory.adapter = categoryAdapter
 
-            adapter = SongMainAdapter(context, arrayListOf(), { _, position ->
-                changeSelectedSong(position, adapter)
-                b.player.jcPlayer.playAudio(jcAudios[position])
-                changeSelectedSong(-1, adapter2)
-                changeSelectedSong(-1, adapter3)
-                changeSelectedSong(-1, adapter4)
-            }) { _, _ -> b.player.jcPlayer.pause() }
-            b.recyclerView.adapter = adapter
+        adapter = SongMainAdapter(context, arrayListOf(), { _, position ->
+            changeSelectedSong(position, adapter)
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+            changeSelectedSong(-1, adapter2)
+            changeSelectedSong(-1, adapter3)
+            changeSelectedSong(-1, adapter4)
+        }) { _, _ -> binding.player.jcPlayer.pause() }
+        binding.recyclerView.adapter = adapter
 
-            adapter2 = SongMainAdapter(context, arrayListOf(), { _, position ->
-                changeSelectedSong(position, adapter2)
-                changeSelectedSong(-1, adapter)
-                changeSelectedSong(-1, adapter3)
-                changeSelectedSong(-1, adapter4)
-                b.player.jcPlayer.playAudio(jcAudios[position])
-            }) { _, _ -> b.player.jcPlayer.pause() }
-            b.recyclerView2.adapter = adapter2
+        adapter2 = SongMainAdapter(context, arrayListOf(), { _, position ->
+            changeSelectedSong(position, adapter2)
+            changeSelectedSong(-1, adapter)
+            changeSelectedSong(-1, adapter3)
+            changeSelectedSong(-1, adapter4)
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+        }) { _, _ -> binding.player.jcPlayer.pause() }
+        binding.recyclerView2.adapter = adapter2
 
-            adapter3 = SongMainAdapter(context, arrayListOf(), { _, position ->
-                changeSelectedSong(position, adapter3)
-                changeSelectedSong(-1, adapter)
-                changeSelectedSong(-1, adapter2)
-                changeSelectedSong(-1, adapter4)
-                b.player.jcPlayer.playAudio(jcAudios[position])
-            }) { _, _ -> b.player.jcPlayer.pause() }
-            b.recyclerView3.adapter = adapter3
+        adapter3 = SongMainAdapter(context, arrayListOf(), { _, position ->
+            changeSelectedSong(position, adapter3)
+            changeSelectedSong(-1, adapter)
+            changeSelectedSong(-1, adapter2)
+            changeSelectedSong(-1, adapter4)
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+        }) { _, _ -> binding.player.jcPlayer.pause() }
+        binding.recyclerView3.adapter = adapter3
 
-            adapter4 = SongMainAdapter(context, arrayListOf(), { _, position ->
-                changeSelectedSong(position, adapter4)
-                changeSelectedSong(-1, adapter)
-                changeSelectedSong(-1, adapter2)
-                changeSelectedSong(-1, adapter3)
-                b.player.jcPlayer.playAudio(jcAudios[position])
-            }) { _, _ -> b.player.jcPlayer.pause() }
-            b.recyclerView4.adapter = adapter4
-        }
+        adapter4 = SongMainAdapter(context, arrayListOf(), { _, position ->
+            changeSelectedSong(position, adapter4)
+            changeSelectedSong(-1, adapter)
+            changeSelectedSong(-1, adapter2)
+            changeSelectedSong(-1, adapter3)
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+        }) { _, _ -> binding.player.jcPlayer.pause() }
+        binding.recyclerView4.adapter = adapter4
     }
 
     private fun setupClickListeners() {
-        binding?.let { b ->
-            b.showMore.setOnClickListener {
-                VOID.IntentExtra3(
-                    context, CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE, DATA.EDITORS_CHOICE,
-                    DATA.SHOW_MORE_NAME, b.name.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + one
-                )
-            }
-            b.showMore2.setOnClickListener {
-                VOID.IntentExtra3(
-                    context, CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE, DATA.VIEWS_COUNT,
-                    DATA.SHOW_MORE_NAME, b.mostViews.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + two
-                )
-            }
-            b.showMore3.setOnClickListener {
-                VOID.IntentExtra3(
-                    context, CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE, DATA.LOVES_COUNT,
-                    DATA.SHOW_MORE_NAME, b.name3.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + three
-                )
-            }
-            b.showMore4.setOnClickListener {
-                VOID.IntentExtra3(
-                    context, CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE, DATA.TIMESTAMP,
-                    DATA.SHOW_MORE_NAME, b.name4.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + four
-                )
-            }
+        binding.showMore.setOnClickListener {
+            context?.intentExtra3(
+                CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE, DATA.EDITORS_CHOICE,
+                DATA.SHOW_MORE_NAME, binding.name.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + one
+            )
+        }
+        binding.showMore2.setOnClickListener {
+            context?.intentExtra3(
+                CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE, DATA.VIEWS_COUNT,
+                DATA.SHOW_MORE_NAME, binding.mostViews.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + two
+            )
+        }
+        binding.showMore3.setOnClickListener {
+            context?.intentExtra3(
+                CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE, DATA.LOVES_COUNT,
+                DATA.SHOW_MORE_NAME, binding.name3.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + three
+            )
+        }
+        binding.showMore4.setOnClickListener {
+            context?.intentExtra3(
+                CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE, DATA.TIMESTAMP,
+                DATA.SHOW_MORE_NAME, binding.name4.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + four
+            )
         }
     }
 
     private fun setupImageSlider() {
-        binding?.imageSlider?.apply {
+        binding.imageSlider.apply {
             setIndicatorAnimation(IndicatorAnimationType.WORM)
             setSliderTransformAnimation(SliderAnimations.SIMPLE)
             isAutoCycle = true
@@ -156,28 +153,28 @@ class HomeFragment : Fragment() {
                 launch {
                     viewModel.sliderCount.collect { count ->
                         if (count > 0) {
-                            binding?.imageSlider?.setSliderAdapter(ImageSliderAdapter(context, count))
+                            binding.imageSlider.setSliderAdapter(ImageSliderAdapter(context, count))
                         }
                     }
                 }
                 launch {
                     viewModel.editorsChoiceSongs.collect { songs ->
-                        updateSongList(songs, adapter, binding?.bar, binding?.recyclerView, binding?.empty)
+                        updateSongList(songs, adapter, binding.bar, binding.recyclerView, binding.empty)
                     }
                 }
                 launch {
                     viewModel.mostViewedSongs.collect { songs ->
-                        updateSongList(songs, adapter2, binding?.bar2, binding?.recyclerView2, binding?.empty2)
+                        updateSongList(songs, adapter2, binding.bar2, binding.recyclerView2, binding.empty2)
                     }
                 }
                 launch {
                     viewModel.mostLovedSongs.collect { songs ->
-                        updateSongList(songs, adapter3, binding?.bar3, binding?.recyclerView3, binding?.empty3)
+                        updateSongList(songs, adapter3, binding.bar3, binding.recyclerView3, binding.empty3)
                     }
                 }
                 launch {
                     viewModel.latestSongs.collect { songs ->
-                        updateSongList(songs, adapter4, binding?.bar4, binding?.recyclerView4, binding?.empty4)
+                        updateSongList(songs, adapter4, binding.bar4, binding.recyclerView4, binding.empty4)
                     }
                 }
             }
@@ -201,7 +198,7 @@ class HomeFragment : Fragment() {
             songs.forEach { song ->
                 jcAudios.add(JcAudio.createFromURL(song.name ?: "", song.songLink ?: ""))
             }
-            binding?.player?.jcPlayer?.initPlaylist(jcAudios, null)
+            binding.player.jcPlayer.initPlaylist(jcAudios, null)
         } else {
             recyclerView?.visibility = View.GONE
             empty?.visibility = View.VISIBLE
@@ -218,17 +215,17 @@ class HomeFragment : Fragment() {
     }
 
     override fun onPause() {
-        binding?.player?.jcPlayer?.pause()
+        binding.player.jcPlayer.pause()
         super.onPause()
     }
 
     override fun onStop() {
-        binding?.player?.jcPlayer?.pause()
+        binding.player.jcPlayer.pause()
         super.onStop()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
     }
 }

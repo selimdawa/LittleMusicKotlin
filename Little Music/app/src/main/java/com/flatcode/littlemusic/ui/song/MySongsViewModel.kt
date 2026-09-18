@@ -1,6 +1,7 @@
 package com.flatcode.littlemusic.ui.song
 
 import androidx.lifecycle.viewModelScope
+import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.repository.MusicRepository
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.ui.BaseViewModel

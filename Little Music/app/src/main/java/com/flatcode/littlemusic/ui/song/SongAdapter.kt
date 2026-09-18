@@ -7,16 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.ImageView
 import android.widget.TextView
-import com.google.android.material.card.MaterialCardView
 import androidx.recyclerview.widget.RecyclerView
+import com.flatcode.littlemusic.databinding.ItemSongBinding
 import com.flatcode.littlemusic.filter.SongFilter
 import com.flatcode.littlemusic.model.Song
-import com.flatcode.littlemusic.utils.VOID
 import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.databinding.ItemSongBinding
+import com.flatcode.littlemusic.utils.checkFavorite
+import com.flatcode.littlemusic.utils.checkLove
+import com.flatcode.littlemusic.utils.convertDuration
+import com.flatcode.littlemusic.utils.dataName
+import com.flatcode.littlemusic.utils.incrementViewCount
+import com.flatcode.littlemusic.utils.intentExtra2
+import com.flatcode.littlemusic.utils.intentExtra3
+import com.flatcode.littlemusic.utils.isFavorite
+import com.flatcode.littlemusic.utils.isLoves
+import com.flatcode.littlemusic.utils.nrLoves
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -28,14 +35,13 @@ class SongAdapter(
     private var listener: (Song?, Int) -> Unit
 ) : RecyclerView.Adapter<SongAdapter.ViewHolder>(), Filterable {
 
-    private var binding: ItemSongBinding? = null
     var selectedPosition = -1
     var filterList: ArrayList<Song?> = list
     private var filter: SongFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemSongBinding.inflate(LayoutInflater.from(context), parent, false)
-        return ViewHolder(binding!!.root)
+        val binding = ItemSongBinding.inflate(LayoutInflater.from(context), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -47,27 +53,28 @@ class SongAdapter(
         val categoryId = DATA.EMPTY + item.categoryId
         val nrLoves = DATA.EMPTY + item.lovesCount
 
-        holder.name.text = name
-        VOID.dataName(DATA.ARTISTS, artistId, holder.artist)
-        VOID.dataName(DATA.ALBUMS, albumId, holder.album)
-        VOID.dataName(DATA.CATEGORIES, categoryId, holder.category)
-        val duration = VOID.convertDuration(item.duration!!.toLong())
-        holder.duration.text = duration
-        holder.nrLoves.text = nrLoves
+        val binding = holder.binding
+        binding.name.text = name
+        binding.artist.dataName(DATA.ARTISTS, artistId)
+        binding.album.dataName(DATA.ALBUMS, albumId)
+        binding.category.dataName(DATA.CATEGORIES, categoryId)
+        val duration = item.duration!!.toLong().convertDuration()
+        binding.duration.text = duration
+        binding.nrLoves.text = nrLoves
 
-        VOID.isFavorite(holder.favorite, id, DATA.FirebaseUserUid)
-        VOID.isLoves(holder.love, id)
-        VOID.nrLoves(binding!!.nrLoves, id)
-        holder.favorite.setOnClickListener { VOID.checkFavorite(holder.favorite, id) }
-        holder.love.setOnClickListener { VOID.checkLove(holder.love, id) }
+        binding.favorite.isFavorite(id, DATA.FirebaseUserUid)
+        binding.love.isLoves(id)
+        binding.nrLoves.nrLoves(id)
+        binding.favorite.setOnClickListener { binding.favorite.checkFavorite(id) }
+        binding.love.setOnClickListener { binding.love.checkLove(id) }
 
-        IntentData(DATA.ARTISTS, artistId, DATA.ARTIST, holder.artist)
-        IntentData(DATA.ALBUMS, albumId, DATA.ALBUM, holder.album)
-        IntentData(DATA.CATEGORIES, categoryId, DATA.CATEGORY, holder.category)
+        IntentData(DATA.ARTISTS, artistId, DATA.ARTIST, binding.artist)
+        IntentData(DATA.ALBUMS, albumId, DATA.ALBUM, binding.album)
+        IntentData(DATA.CATEGORIES, categoryId, DATA.CATEGORY, binding.category)
 
         holder.bind(item, listener, id)
-        if (selectedPosition == position) open(holder.wave)
-        else holder.wave.visibility = View.GONE
+        if (selectedPosition == position) open(binding.wave)
+        else binding.wave.visibility = View.GONE
     }
 
     override fun getItemCount(): Int {
@@ -81,32 +88,12 @@ class SongAdapter(
         return filter!!
     }
 
-    inner class ViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
-        var name: TextView
-        var artist: TextView
-        var album: TextView
-        var category: TextView
-        var duration: TextView
-        var nrLoves: TextView
-        var favorite: ImageView = binding!!.favorite
-        var love: ImageView = binding!!.love
-        var card: MaterialCardView = binding!!.card as MaterialCardView
-        var wave: MultiWaveHeader = binding!!.wave as MultiWaveHeader
-
+    inner class ViewHolder(val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(getSongs: Song?, listener: (Song?, Int) -> Unit, id: String?) {
-            card.setOnClickListener {
+            binding.card.setOnClickListener {
                 listener(getSongs, adapterPosition)
-                VOID.incrementViewCount(id)
+                id?.incrementViewCount()
             }
-        }
-
-        init {
-            name = binding!!.name
-            artist = binding!!.artist
-            album = binding!!.album
-            category = binding!!.category
-            duration = binding!!.duration
-            nrLoves = binding!!.nrLoves
         }
     }
 
@@ -117,19 +104,19 @@ class SongAdapter(
                 val Name = DATA.EMPTY + snapshot.child(DATA.NAME).value
                 val Image = DATA.EMPTY + snapshot.child(DATA.IMAGE).value
                 if (type == DATA.ARTIST) text.setOnClickListener {
-                    VOID.IntentExtra2(
-                        context, CLASS.ARTIST_SONGS, DATA.ARTIST_ID, dataId, DATA.ARTIST_NAME, Name
+                    context?.intentExtra2(
+                        CLASS.ARTIST_SONGS, DATA.ARTIST_ID, dataId, DATA.ARTIST_NAME, Name
                     )
                 }
                 if (type == DATA.ALBUM) text.setOnClickListener {
-                    VOID.IntentExtra3(
-                        context, CLASS.ALBUM_SONGS, DATA.ALBUM_ID, dataId,
+                    context?.intentExtra3(
+                        CLASS.ALBUM_SONGS, DATA.ALBUM_ID, dataId,
                         DATA.ALBUM_NAME, Name, DATA.ALBUM_IMAGE, Image
                     )
                 }
                 if (type == DATA.CATEGORY) text.setOnClickListener {
-                    VOID.IntentExtra2(
-                        context, CLASS.CATEGORY_SONGS, DATA.CATEGORY_ID, dataId,
+                    context?.intentExtra2(
+                        CLASS.CATEGORY_SONGS, DATA.CATEGORY_ID, dataId,
                         DATA.CATEGORY_NAME, Name
                     )
                 }
