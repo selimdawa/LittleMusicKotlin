@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="?mc_bg"
     android:orientation="vertical"
-    tools:context=".activity.BookAddActivity"
+    tools:context=".activity.ProfileEditActivity"
     tools:ignore="all">
 
     <include

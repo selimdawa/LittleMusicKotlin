@@ -2,6 +2,7 @@
 <com.google.android.material.imageview.ShapeableImageView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="all"
     android:id="@+id/image"
     android:layout_width="40sp"
     android:layout_height="40sp"
