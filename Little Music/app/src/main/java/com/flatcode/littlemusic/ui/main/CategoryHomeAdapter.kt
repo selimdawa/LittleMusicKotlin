@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemCategoryHomeBinding
 import com.flatcode.littlemusic.model.Category
-import com.flatcode.littlemusic.utils.CLASS
+import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.glideImage
 import com.flatcode.littlemusic.utils.intentExtra2
@@ -30,7 +30,7 @@ class CategoryHomeAdapter(private val context: Context?, var list: ArrayList<Cat
 
         binding.image.setOnClickListener {
             context?.intentExtra2(
-                CLASS.CATEGORY_SONGS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+                CategorySongsActivity::class.java, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }

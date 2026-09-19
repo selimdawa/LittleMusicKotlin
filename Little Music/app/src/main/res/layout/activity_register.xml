@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".auth.RegisterActivity"
-    tools:ignore="all">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@null"
+        android:importantForAccessibility="no"
         android:scaleType="centerCrop"
         android:src="@drawable/background" />
 
@@ -20,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0.5"
-        android:contentDescription="@null"
+        android:importantForAccessibility="no"
         android:src="@color/white"
         android:visibility="gone" />
 
@@ -29,13 +26,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0.5"
-        android:contentDescription="@null"
+        android:importantForAccessibility="no"
         android:src="@color/black"
         android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -50,7 +48,7 @@
                 android:layout_width="150sp"
                 android:layout_height="150sp"
                 android:layout_centerHorizontal="true"
-                android:contentDescription="@null"
+                android:importantForAccessibility="no"
                 android:src="@drawable/logo" />
 
             <TextView
@@ -79,17 +77,17 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10sp"
                     android:drawablePadding="5sp"
-                    app:drawableStartCompat="@drawable/ic_person_white"
-                    app:drawableTint="?colorError"
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:text="@string/username"
                     android:textColor="?colorError"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/ic_person_white"
+                    app:drawableTint="?colorError" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/nameTil"
@@ -115,17 +113,17 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10sp"
                     android:drawablePadding="5sp"
-                    app:drawableStartCompat="@drawable/ic_email_gray"
-                    app:drawableTint="?colorError"
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:text="@string/email"
                     android:textColor="?colorError"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/ic_email_gray"
+                    app:drawableTint="?colorError" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/emailTil"
@@ -151,17 +149,17 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10sp"
                     android:drawablePadding="5sp"
-                    app:drawableStartCompat="@drawable/ic_lock_gray"
-                    app:drawableTint="?colorError"
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:text="@string/password"
                     android:textColor="?colorError"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/ic_lock_gray"
+                    app:drawableTint="?colorError" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/cPasswordTil"
@@ -214,17 +212,18 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
                     android:paddingVertical="15sp">
 
                     <TextView
                         android:id="@+id/login"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_alignParentStart="true"
+
                         android:background="@drawable/button6"
                         android:backgroundTint="?mc_track"
                         android:gravity="center"
@@ -233,15 +232,11 @@
                         android:textColor="@color/white"
                         android:textStyle="bold" />
 
-                    <View
-                        android:layout_width="10sp"
-                        android:layout_height="match_parent" />
-
                     <TextView
                         android:id="@+id/forget"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_alignParentEnd="true"
                         android:background="@drawable/button6"
                         android:backgroundTint="@color/black"
                         android:gravity="center"
@@ -249,23 +244,31 @@
                         android:text="@string/forget_password"
                         android:textColor="@color/white" />
 
-                </LinearLayout>
+                </RelativeLayout>
 
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
 
-        <ImageButton
-            android:id="@+id/go"
-            android:layout_width="60sp"
-            android:layout_height="60sp"
-            android:layout_gravity="center"
-            android:layout_margin="20sp"
-            android:background="@drawable/button2"
-            android:contentDescription="@string/register"
-            android:rotation="180"
-            android:src="@drawable/ic_back_white"
-            android:textColor="@color/white" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0sp"
+            android:layout_marginBottom="20sp"
+            android:layout_weight="0.3"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/go"
+                android:layout_width="60sp"
+                android:layout_height="60sp"
+                android:layout_margin="20sp"
+                android:background="@drawable/button2"
+                android:importantForAccessibility="no"
+                android:rotation="180"
+                android:src="@drawable/ic_back_white"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

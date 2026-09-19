@@ -20,7 +20,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.flatcode.littlemusic.R
-import com.flatcode.littlemusic.utils.CLASS
+import com.flatcode.littlemusic.ui.profile.ProfileActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.closeApp
 import com.flatcode.littlemusic.utils.glideImage
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation!!.show(2, true)
 
         binding.toolbar.image.setOnClickListener {
-            context.intentExtra(CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
+            context.intentExtra(ProfileActivity::class.java, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
 
         observeViewModel()

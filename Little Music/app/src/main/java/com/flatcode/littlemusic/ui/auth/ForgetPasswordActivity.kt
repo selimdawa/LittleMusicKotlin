@@ -15,7 +15,6 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.utils.intent1
 import com.flatcode.littlemusic.databinding.ActivityForgetPasswordBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,11 +54,11 @@ class ForgetPasswordActivity : AppCompatActivity() {
         dialog!!.setCanceledOnTouchOutside(false)
 
         binding.noAccount.setOnClickListener {
-            this.intent1(CLASS.REGISTER)
+            this.intent1(RegisterActivity::class.java)
             finish()
         }
         binding.login.setOnClickListener {
-            this.intent1(CLASS.LOGIN)
+            this.intent1(LoginActivity::class.java)
             finish()
         }
         binding.go.setOnClickListener {

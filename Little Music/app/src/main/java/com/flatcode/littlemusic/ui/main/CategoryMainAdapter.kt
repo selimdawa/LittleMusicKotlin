@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemCategoryMainBinding
 import com.flatcode.littlemusic.model.Category
-import com.flatcode.littlemusic.utils.CLASS
+import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.glideBlur
 import com.flatcode.littlemusic.utils.glideImage
@@ -40,7 +40,7 @@ class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Cat
 
         binding.card.setOnClickListener {
             context?.intentExtra2(
-                CLASS.CATEGORY_SONGS, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+                CategorySongsActivity::class.java, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
             )
         }
     }

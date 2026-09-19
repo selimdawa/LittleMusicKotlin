@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.model.Category
 import com.flatcode.littlemusic.model.Song
-import com.flatcode.littlemusic.utils.CLASS
+import com.flatcode.littlemusic.ui.showmore.ShowMoreActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.intentExtra3
 import com.flatcode.littlemusic.databinding.FragmentHomeBinding
@@ -107,25 +107,25 @@ class HomeFragment : Fragment() {
     private fun setupClickListeners() {
         binding.showMore.setOnClickListener {
             context?.intentExtra3(
-                CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE, DATA.EDITORS_CHOICE,
+                ShowMoreActivity::class.java, DATA.SHOW_MORE_TYPE, DATA.EDITORS_CHOICE,
                 DATA.SHOW_MORE_NAME, binding.name.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + one
             )
         }
         binding.showMore2.setOnClickListener {
             context?.intentExtra3(
-                CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE, DATA.VIEWS_COUNT,
+                ShowMoreActivity::class.java, DATA.SHOW_MORE_TYPE, DATA.VIEWS_COUNT,
                 DATA.SHOW_MORE_NAME, binding.mostViews.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + two
             )
         }
         binding.showMore3.setOnClickListener {
             context?.intentExtra3(
-                CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE, DATA.LOVES_COUNT,
+                ShowMoreActivity::class.java, DATA.SHOW_MORE_TYPE, DATA.LOVES_COUNT,
                 DATA.SHOW_MORE_NAME, binding.name3.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + three
             )
         }
         binding.showMore4.setOnClickListener {
             context?.intentExtra3(
-                CLASS.SHOW_MORE, DATA.SHOW_MORE_TYPE, DATA.TIMESTAMP,
+                ShowMoreActivity::class.java, DATA.SHOW_MORE_TYPE, DATA.TIMESTAMP,
                 DATA.SHOW_MORE_NAME, binding.name4.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + four
             )
         }

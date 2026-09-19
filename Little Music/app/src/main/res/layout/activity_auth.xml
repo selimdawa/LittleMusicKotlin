@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".auth.AuthActivity"
-    tools:ignore="all">
+    android:layout_height="match_parent">
 
-    <FrameLayout
+    <ImageView
+        android:id="@+id/background"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background" />
 
-        <ImageView
-            android:id="@+id/background"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@null"
-            android:scaleType="centerCrop"
-            android:src="@drawable/background" />
+    <ImageView
+        android:id="@+id/backWhite"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:importantForAccessibility="no"
+        android:src="@color/white"
+        android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/backWhite"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.5"
-            android:contentDescription="@null"
-            android:src="@color/white"
-            android:visibility="gone" />
+    <ImageView
+        android:id="@+id/backBlack"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:importantForAccessibility="no"
+        android:src="@color/black"
+        android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/backBlack"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.5"
-            android:contentDescription="@null"
-            android:src="@color/black"
-            android:visibility="gone" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -48,7 +47,7 @@
                 android:layout_height="150sp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="40sp"
-                android:contentDescription="@null"
+                android:importantForAccessibility="no"
                 android:src="@drawable/logo" />
 
             <LinearLayout
@@ -70,11 +69,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/space" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4sp"
                     android:text="@string/app_name"
                     android:textColor="?colorError"
                     android:textSize="21sp"
@@ -89,21 +84,27 @@
                 android:layout_above="@+id/skipBtn"
                 android:layout_marginBottom="10sp"
                 android:background="@drawable/button6"
-                android:backgroundTint="?mc_track"
                 android:text="@string/login"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="?mc_track" />
 
-            <Button
+            <TextView
                 android:id="@+id/skipBtn"
+                android:gravity="center"
+                android:padding="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:background="@drawable/button"
                 android:text="@string/register"
-                android:textColor="?colorError" />
+                android:textColor="?attr/colorError"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
-    </FrameLayout>
+    </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>

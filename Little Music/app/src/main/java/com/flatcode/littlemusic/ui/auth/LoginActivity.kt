@@ -15,7 +15,8 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemusic.utils.CLASS
+import com.flatcode.littlemusic.ui.main.MainActivity
+import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.intent1
 import com.flatcode.littlemusic.utils.intentClear
 import com.flatcode.littlemusic.databinding.ActivityLoginBinding
@@ -55,8 +56,8 @@ class LoginActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding.forget.setOnClickListener { this.intent1(CLASS.FORGET_PASSWORD) }
-        binding.noAccount.setOnClickListener { this.intent1(CLASS.REGISTER) }
+        binding.forget.setOnClickListener { this.intent1(ForgetPasswordActivity::class.java) }
+        binding.noAccount.setOnClickListener { this.intent1(RegisterActivity::class.java) }
         binding.loginBtn.setOnClickListener {
             val email = binding.emailEt.text.toString().trim()
             val password = binding.passwordEt.text.toString().trim()
@@ -77,7 +78,7 @@ class LoginActivity : AppCompatActivity() {
                         }
                         is LoginViewModel.LoginStatus.Success -> {
                             dialog!!.dismiss()
-                            this@LoginActivity.intentClear(CLASS.MAIN)
+                            this@LoginActivity.intentClear(MainActivity::class.java)
                         }
                         is LoginViewModel.LoginStatus.Error -> {
                             dialog!!.dismiss()

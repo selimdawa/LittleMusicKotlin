@@ -15,7 +15,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
-import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.intent1
 import com.flatcode.littlemusic.databinding.ActivityMyAlbumsBinding
@@ -77,7 +76,7 @@ class MyAlbumsActivity : AppCompatActivity() {
     }
 
     private fun setupSwitchBar() {
-        binding.switchBar.explore.setOnClickListener { this.intent1(CLASS.ALBUMS) }
+        binding.switchBar.explore.setOnClickListener { this.intent1(AlbumsActivity::class.java) }
         binding.switchBar.all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP) }
         binding.switchBar.mostSongs.setOnClickListener { viewModel.setType(DATA.SONGS_COUNT) }
         binding.switchBar.mostInterested.setOnClickListener { viewModel.setType(DATA.INTERESTED_COUNT) }

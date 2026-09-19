@@ -1,6 +1,6 @@
 [versions]
 agp = "9.4.0"
-androidImageCropper = "2.8.0"
+androidImageCropper = "4.5.0"
 firebaseBom = "34.18.0"
 coil = "3.6.2"
 jcplayer = "2.7.2"
@@ -23,10 +23,11 @@ lifecycle = "2.11.0"
 room = "2.8.5"
 navigation = "2.10.1"
 timber = "5.0.1"
+cloudinary = "3.1.2"
 kotlin = "2.4.20"
 
 [libraries]
-android-image-cropper = { module = "com.theartofdev.edmodo:android-image-cropper", version.ref = "androidImageCropper" }
+android-image-cropper = { module = "com.github.CanHub:Android-Image-Cropper", version.ref = "androidImageCropper" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }

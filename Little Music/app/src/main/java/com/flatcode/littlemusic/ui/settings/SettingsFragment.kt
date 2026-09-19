@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemusic.utils.CLASS
+import com.flatcode.littlemusic.ui.profile.ProfileActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.glideImage
 import com.flatcode.littlemusic.utils.intentExtra
@@ -41,7 +41,7 @@ class SettingsFragment : Fragment() {
 
     private fun setupToolbar() {
         binding.toolbar.item.setOnClickListener {
-            context?.intentExtra(CLASS.PROFILE, DATA.PROFILE_ID, DATA.FirebaseUserUid)
+            context?.intentExtra(ProfileActivity::class.java, DATA.PROFILE_ID, DATA.FirebaseUserUid)
         }
     }
 

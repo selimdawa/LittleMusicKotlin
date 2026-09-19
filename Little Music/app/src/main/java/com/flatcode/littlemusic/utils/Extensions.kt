@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -15,15 +16,20 @@ import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.scale
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.placeholder
 import coil3.request.transformations
+import coil3.size.Size
+import coil3.transform.Transformation
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.databinding.DialogAboutAppBinding
 import com.flatcode.littlemusic.databinding.DialogAboutArtistBinding
 import com.flatcode.littlemusic.databinding.DialogCloseAppBinding
 import com.flatcode.littlemusic.databinding.DialogLogoutBinding
+import com.flatcode.littlemusic.ui.auth.AuthActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -152,7 +158,7 @@ fun Context.dialogLogout() {
     lp.height = WindowManager.LayoutParams.WRAP_CONTENT
     binding.yes.setOnClickListener {
         FirebaseAuth.getInstance().signOut()
-        this.intentClear(CLASS.AUTH)
+        this.intentClear(AuthActivity::class.java)
     }
     binding.no.setOnClickListener { dialog.cancel() }
     dialog.show()
@@ -436,7 +442,8 @@ fun String.incrementInterestedRemoveCount(type: String?) {
             val removeInterestedCount = interestedCount.toLong() - 1
             val hashMap = HashMap<String, Any>()
             hashMap[DATA.INTERESTED_COUNT] = removeInterestedCount
-            val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference(type)
+            val reference: DatabaseReference =
+                FirebaseDatabase.getInstance().getReference(type)
             reference.child(this@incrementInterestedRemoveCount).updateChildren(hashMap)
         }
 
@@ -454,4 +461,96 @@ fun TextView.dataName(database: String?, dataId: String?) {
 
         override fun onCancelled(error: DatabaseError) {}
     })
+}
+
+fun Long.getTimeAgo(): String? {
+    var time = this
+    if (time < 1000000000000L) {
+        time *= 1000
+    }
+    val now = System.currentTimeMillis()
+    if (time > now || time <= 0) return null
+
+    val diff = now - time
+    return when {
+        diff < 60000 -> "just now"
+        diff < 120000 -> "a minute ago"
+        diff < 3000000 -> "${diff / 60000} minutes ago"
+        diff < 5400000 -> "an hour ago"
+        diff < 86400000 -> "${diff / 3600000} hours ago"
+        diff < 172800000 -> "yesterday"
+        else -> "${diff / 86400000} days ago"
+    }
+}
+
+fun Long.getMessageAgo(): String? {
+    var time = this
+    if (time < 1000000000000L) {
+        time *= 1000
+    }
+    val now = System.currentTimeMillis()
+    if (time > now || time <= 0) return null
+
+    val diff = now - time
+    return when {
+        diff < 60000 -> "1 s"
+        diff < 120000 -> "1 m"
+        diff < 3000000 -> "${diff / 60000} m"
+        diff < 5400000 -> "1 h"
+        diff < 86400000 -> "${diff / 3600000} h"
+        diff < 172800000 -> "1 d"
+        else -> "${diff / 86400000} d"
+    }
+}
+
+class SimpleBlurTransformation(private val radius: Float) : Transformation() {
+    override val cacheKey: String = "${SimpleBlurTransformation::class.java.name}-$radius"
+
+    override suspend fun transform(input: Bitmap, size: Size): Bitmap {
+        if (input.isRecycled) return input
+        val scaleFactor = 6
+        val w = (input.width / scaleFactor).coerceAtLeast(1)
+        val h = (input.height / scaleFactor).coerceAtLeast(1)
+        val small = input.scale(w, h, true)
+        val r = (radius / scaleFactor).toInt().coerceAtLeast(1)
+        val pix = IntArray(w * h)
+        small.getPixels(pix, 0, w, 0, 0, w, h)
+        val blurred = IntArray(w * h)
+        for (y in 0 until h) for (x in 0 until w) {
+            var rs = 0L
+            var gs = 0L
+            var bs = 0L
+            var c = 0
+            for (i in -r..r) {
+                val xi = (x + i).coerceIn(0, w - 1)
+                val p = pix[y * w + xi]
+                rs += (p shr 16) and 0xff
+                gs += (p shr 8) and 0xff
+                bs += p and 0xff
+                c++
+            }
+            blurred[y * w + x] = (0xff shl 24) or ((rs / c).toInt() shl 16) or ((gs / c).toInt() shl 8) or (bs / c).toInt()
+        }
+        for (x in 0 until w) for (y in 0 until h) {
+            var rs = 0L
+            var gs = 0L
+            var bs = 0L
+            var c = 0
+            for (i in -r..r) {
+                val yi = (y + i).coerceIn(0, h - 1)
+                val p = blurred[yi * w + x]
+                rs += (p shr 16) and 0xff
+                gs += (p shr 8) and 0xff
+                bs += p and 0xff
+                c++
+            }
+            pix[y * w + x] = (0xff shl 24) or ((rs / c).toInt() shl 16) or ((gs / c).toInt() shl 8) or (bs / c).toInt()
+        }
+        val output = createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        output.setPixels(pix, 0, w, 0, 0, w, h)
+        val finalOutput = output.scale(input.width, input.height, true)
+        if (output != finalOutput) output.recycle()
+        if (small != input) small.recycle()
+        return finalOutput
+    }
 }

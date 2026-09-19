@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemSongHomeBinding
 import com.flatcode.littlemusic.filter.SongMainFilter
 import com.flatcode.littlemusic.model.Song
-import com.flatcode.littlemusic.utils.CLASS
+import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
+import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
+import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkFavorite
 import com.flatcode.littlemusic.utils.checkLove
@@ -116,17 +118,17 @@ class SongMainAdapter(
                 val Image = DATA.EMPTY + snapshot.child(DATA.IMAGE).value
                 if (type == DATA.ARTIST) text.setOnClickListener {
                     context?.intentExtra2(
-                        CLASS.ARTIST_SONGS, DATA.ARTIST_ID, dataId, DATA.ARTIST_NAME, Name)
+                        ArtistSongsActivity::class.java, DATA.ARTIST_ID, dataId, DATA.ARTIST_NAME, Name)
                 }
                 if (type == DATA.ALBUM) text.setOnClickListener {
                     context?.intentExtra3(
-                        CLASS.ALBUM_SONGS, DATA.ALBUM_ID, dataId,
+                        AlbumSongsActivity::class.java, DATA.ALBUM_ID, dataId,
                         DATA.ALBUM_NAME, Name, DATA.ALBUM_IMAGE, Image
                     )
                 }
                 if (type == DATA.CATEGORY) text.setOnClickListener {
                     context?.intentExtra2(
-                        CLASS.CATEGORY_SONGS, DATA.CATEGORY_ID, dataId,
+                        CategorySongsActivity::class.java, DATA.CATEGORY_ID, dataId,
                         DATA.CATEGORY_NAME, Name
                     )
                 }

@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemArtistBinding
 import com.flatcode.littlemusic.filter.ArtistFilter
 import com.flatcode.littlemusic.model.Artist
-import com.flatcode.littlemusic.utils.CLASS
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.glideImage
@@ -65,7 +64,7 @@ class ArtistAdapter(private val activity: Activity, var list: ArrayList<Artist?>
 
         binding.item.setOnClickListener {
             activity.intentExtra4(
-                CLASS.ARTIST_SONGS, DATA.ARTIST_ID, id, DATA.ARTIST_NAME,
+                ArtistSongsActivity::class.java, DATA.ARTIST_ID, id, DATA.ARTIST_NAME,
                 name, DATA.ARTIST_IMAGE, image, DATA.ARTIST_ABOUT, aboutTheArtist
             )
         }

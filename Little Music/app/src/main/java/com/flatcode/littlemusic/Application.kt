@@ -9,6 +9,7 @@ import dagger.hilt.android.HiltAndroidApp
 import io.selimdawa.multicolors.MultiColorManager
 import timber.log.Timber
 import com.flatcode.littlemusic.BuildConfig
+import com.flatcode.littlemusic.utils.DATA
 import java.util.Calendar
 import java.util.Locale
 
@@ -21,6 +22,12 @@ class Application : Application(), SingletonImageLoader.Factory {
             Timber.plant(Timber.DebugTree())
         }
     }
+
+    // Cloudinary Initialization
+    val config = mapOf(
+        "cloud_name" to DATA.CLOUDINARY_CLOUD_NAME, "secure" to true
+    )
+    MediaManager.init(this, config)
 
     override fun newImageLoader(context: coil3.PlatformContext): ImageLoader {
         return ImageLoader.Builder(context)
