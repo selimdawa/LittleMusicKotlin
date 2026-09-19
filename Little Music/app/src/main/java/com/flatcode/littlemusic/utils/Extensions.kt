@@ -38,56 +38,29 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import java.io.Serializable
 import java.text.MessageFormat
 
-fun Context.intentClear(c: Class<*>?) {
-    val intent = Intent(this, c)
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-    this.startActivity(intent)
-}
-
-fun Context.intent1(c: Class<*>?) {
-    val intent = Intent(this, c)
-    this.startActivity(intent)
-}
-
-fun Context.intentExtra(c: Class<*>?, key: String?, value: String?) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    this.startActivity(intent)
-}
-
-fun Context.intentExtra2(
-    c: Class<*>?, key: String?, value: String?,
-    key2: String?, value2: String?,
+inline fun <reified T : Activity> Context.openActivity(
+    c: Class<*>? = null,
+    clear: Boolean = false,
+    vararg extras: Pair<String, Any?>
 ) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    intent.putExtra(key2, value2)
-    this.startActivity(intent)
-}
-
-fun Context.intentExtra3(
-    c: Class<*>?, key: String?, value: String?,
-    key2: String?, value2: String?, key3: String?, value3: String?,
-) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    intent.putExtra(key2, value2)
-    intent.putExtra(key3, value3)
-    this.startActivity(intent)
-}
-
-fun Context.intentExtra4(
-    c: Class<*>?, key: String?, value: String?, key2: String?,
-    value2: String?, key3: String?, value3: String?, key4: String?, value4: String?,
-) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    intent.putExtra(key2, value2)
-    intent.putExtra(key3, value3)
-    intent.putExtra(key4, value4)
-    this.startActivity(intent)
+    val target = c ?: T::class.java
+    val intent = Intent(this, target).apply {
+        if (clear) addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        extras.forEach { (key, value) ->
+            when (value) {
+                is String -> putExtra(key, value)
+                is Int -> putExtra(key, value)
+                is Boolean -> putExtra(key, value)
+                is Double -> putExtra(key, value)
+                is Long -> putExtra(key, value)
+                is Serializable -> putExtra(key, value)
+            }
+        }
+    }
+    startActivity(intent)
 }
 
 fun ImageView.glideImage(url: String?, isUser: Boolean = false) {
@@ -158,7 +131,7 @@ fun Context.dialogLogout() {
     lp.height = WindowManager.LayoutParams.WRAP_CONTENT
     binding.yes.setOnClickListener {
         FirebaseAuth.getInstance().signOut()
-        this.intentClear(AuthActivity::class.java)
+        this.openActivity<AuthActivity>(clear = true)
     }
     binding.no.setOnClickListener { dialog.cancel() }
     dialog.show()

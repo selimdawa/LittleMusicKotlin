@@ -10,7 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.ui.auth.AuthActivity
-import com.flatcode.littlemusic.utils.intent1
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivitySplashBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -42,9 +42,9 @@ class SplashActivity : AppCompatActivity() {
                 viewModel.isUserLoggedIn.collect { isLoggedIn ->
                     isLoggedIn?.let {
                         if (it) {
-                            this@SplashActivity.intent1(MainActivity::class.java)
+                            this@SplashActivity.openActivity<MainActivity>()
                         } else {
-                            this@SplashActivity.intent1(AuthActivity::class.java)
+                            this@SplashActivity.openActivity<AuthActivity>()
                         }
                         finish()
                     }

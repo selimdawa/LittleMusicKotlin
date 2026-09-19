@@ -17,8 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.ui.main.MainActivity
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.intent1
-import com.flatcode.littlemusic.utils.intentClear
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityRegisterBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -56,9 +55,9 @@ class RegisterActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding.forget.setOnClickListener { this.intent1(ForgetPasswordActivity::class.java) }
+        binding.forget.setOnClickListener { this.openActivity<ForgetPasswordActivity>() }
         binding.login.setOnClickListener {
-            this.intent1(LoginActivity::class.java)
+            this.openActivity<LoginActivity>()
             finish()
         }
         binding.go.setOnClickListener {
@@ -84,7 +83,7 @@ class RegisterActivity : AppCompatActivity() {
                         is RegisterViewModel.RegisterStatus.Success -> {
                             dialog!!.dismiss()
                             Toast.makeText(this@RegisterActivity, "Account created...", Toast.LENGTH_SHORT).show()
-                            this@RegisterActivity.intentClear(MainActivity::class.java)
+                            this@RegisterActivity.openActivity<MainActivity>(true)
                             finish()
                         }
                         is RegisterViewModel.RegisterStatus.Error -> {

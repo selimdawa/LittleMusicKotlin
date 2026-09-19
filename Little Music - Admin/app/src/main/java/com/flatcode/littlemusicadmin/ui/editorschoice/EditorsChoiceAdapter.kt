@@ -38,9 +38,8 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
 
         holder.binding.numberEditorsChoice.text = MessageFormat.format("{0}{1}", DATA.EMPTY, id)
         holder.binding.add.setOnClickListener {
-            activity.openActivity(
-                EditorsChoiceAddActivity::class.java, DATA.EDITORS_CHOICE_ID, editorsChoiceId,
-                DATA.OLD_ID, null
+            activity.openActivity<EditorsChoiceAddActivity>(
+                extras = arrayOf(DATA.EDITORS_CHOICE_ID to editorsChoiceId, DATA.OLD_ID to null)
             )
         }
     }
@@ -77,9 +76,10 @@ class EditorsChoiceAdapter(private val activity: Activity, var list: List<Editor
                             )
                         }
                         change.setOnClickListener {
-                            activity.openActivity(
-                                EditorsChoiceAddActivity::class.java,
-                                DATA.EDITORS_CHOICE_ID, position, DATA.OLD_ID, id
+                            activity.openActivity<EditorsChoiceAddActivity>(
+                                extras = arrayOf(
+                                    DATA.EDITORS_CHOICE_ID to position, DATA.OLD_ID to id
+                                )
                             )
                         }
                     } else {

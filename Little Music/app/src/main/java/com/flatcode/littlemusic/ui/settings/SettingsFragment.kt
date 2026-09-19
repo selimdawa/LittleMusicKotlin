@@ -12,7 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.ui.profile.ProfileActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.glideImage
-import com.flatcode.littlemusic.utils.intentExtra
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.FragmentSettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -40,9 +40,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupToolbar() {
-        binding.toolbar.item.setOnClickListener {
-            context?.intentExtra(ProfileActivity::class.java, DATA.PROFILE_ID, DATA.FirebaseUserUid)
-        }
+            context?.openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to DATA.FirebaseUserUid))
     }
 
     private fun setupRecyclerView() {

@@ -9,7 +9,7 @@ import com.flatcode.littlemusic.model.Category
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.glideImage
-import com.flatcode.littlemusic.utils.intentExtra2
+import com.flatcode.littlemusic.utils.openActivity
 
 class CategoryHomeAdapter(private val context: Context?, var list: ArrayList<Category?>) :
     RecyclerView.Adapter<CategoryHomeAdapter.ViewHolder>() {
@@ -29,8 +29,8 @@ class CategoryHomeAdapter(private val context: Context?, var list: ArrayList<Cat
         binding.image.glideImage(image, false)
 
         binding.image.setOnClickListener {
-            context?.intentExtra2(
-                CategorySongsActivity::class.java, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+            context?.openActivity<CategorySongsActivity>(
+                extras = arrayOf(DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name)
             )
         }
     }

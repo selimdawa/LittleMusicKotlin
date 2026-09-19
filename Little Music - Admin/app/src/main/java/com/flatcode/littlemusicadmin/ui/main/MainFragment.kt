@@ -59,7 +59,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.toolbar.image.setOnClickListener {
-            mContext.openActivity(ProfileActivity::class.java, DATA.PROFILE_ID, DATA.FirebaseUserUid)
+            mContext.openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to DATA.FirebaseUserUid))
         }
 
         list = ArrayList()
@@ -102,19 +102,19 @@ class MainFragment : Fragment() {
         albums: Int, artists: Int, favorites: Int,
     ) {
         list!!.clear()
-        val item1 = Main(R.drawable.ic_person, "Users", users, UsersActivity::class.java)
-        val item2 = Main(R.drawable.ic_add, "Add Song", 0, SongAddActivity::class.java)
-        val item3 = Main(R.drawable.ic_music, "Songs", songs, SongsActivity::class.java)
-        val item4 = Main(R.drawable.ic_users, "Editors Choice", editorsChoice, EditorsChoiceActivity::class.java)
-        val item5 = Main(R.drawable.ic_add_category, "Add Category", 0, CategoryAddActivity::class.java)
-        val item6 = Main(R.drawable.ic_category_gray, "Categories", categories, CategoriesActivity::class.java)
-        val item7 = Main(R.drawable.ic_slider, "Slider Show", sliderShow, SliderShowActivity::class.java)
-        val item8 = Main(R.drawable.ic_adds, "Add Album", 0, AlbumAddActivity::class.java)
-        val item9 = Main(R.drawable.ic_album, "Albums", albums, AlbumsActivity::class.java)
-        val item10 = Main(R.drawable.ic__add, "Add Artist", 0, ArtistAddActivity::class.java)
-        val item11 = Main(R.drawable.ic_mic, "Artists", artists, ArtistsActivity::class.java)
-        val item12 = Main(R.drawable.ic_star_selected, "Favorites", favorites, FavoritesActivity::class.java)
-        val item13 = Main(R.drawable.ic_privacy_policy, "Privacy Policy", 0, PrivacyPolicyActivity::class.java)
+        val item1 = Main(R.drawable.ic_person, "Users", users) { it.openActivity<UsersActivity>() }
+        val item2 = Main(R.drawable.ic_add, "Add Song", 0) { it.openActivity<SongAddActivity>() }
+        val item3 = Main(R.drawable.ic_music, "Songs", songs) { it.openActivity<SongsActivity>() }
+        val item4 = Main(R.drawable.ic_users, "Editors Choice", editorsChoice) { it.openActivity<EditorsChoiceActivity>() }
+        val item5 = Main(R.drawable.ic_add_category, "Add Category", 0) { it.openActivity<CategoryAddActivity>() }
+        val item6 = Main(R.drawable.ic_category_gray, "Categories", categories) { it.openActivity<CategoriesActivity>() }
+        val item7 = Main(R.drawable.ic_slider, "Slider Show", sliderShow) { it.openActivity<SliderShowActivity>() }
+        val item8 = Main(R.drawable.ic_adds, "Add Album", 0) { it.openActivity<AlbumAddActivity>() }
+        val item9 = Main(R.drawable.ic_album, "Albums", albums) { it.openActivity<AlbumsActivity>() }
+        val item10 = Main(R.drawable.ic__add, "Add Artist", 0) { it.openActivity<ArtistAddActivity>() }
+        val item11 = Main(R.drawable.ic_mic, "Artists", artists) { it.openActivity<ArtistsActivity>() }
+        val item12 = Main(R.drawable.ic_star_selected, "Favorites", favorites) { it.openActivity<FavoritesActivity>() }
+        val item13 = Main(R.drawable.ic_privacy_policy, "Privacy Policy", 0) { it.openActivity<PrivacyPolicyActivity>() }
         
         list!!.add(item1)
         list!!.add(item2)

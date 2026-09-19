@@ -17,7 +17,7 @@ import com.flatcode.littlemusic.model.Category
 import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.ui.showmore.ShowMoreActivity
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.intentExtra3
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 import io.selimdawa.autoimageslider.SliderAnimations
@@ -106,27 +106,39 @@ class HomeFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.showMore.setOnClickListener {
-            context?.intentExtra3(
-                ShowMoreActivity::class.java, DATA.SHOW_MORE_TYPE, DATA.EDITORS_CHOICE,
-                DATA.SHOW_MORE_NAME, binding.name.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + one
+            context?.openActivity<ShowMoreActivity>(
+                extras = arrayOf(
+                    DATA.SHOW_MORE_TYPE to DATA.EDITORS_CHOICE,
+                    DATA.SHOW_MORE_NAME to binding.name.text.toString(),
+                    DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + one)
+                )
             )
         }
         binding.showMore2.setOnClickListener {
-            context?.intentExtra3(
-                ShowMoreActivity::class.java, DATA.SHOW_MORE_TYPE, DATA.VIEWS_COUNT,
-                DATA.SHOW_MORE_NAME, binding.mostViews.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + two
+            context?.openActivity<ShowMoreActivity>(
+                extras = arrayOf(
+                    DATA.SHOW_MORE_TYPE to DATA.VIEWS_COUNT,
+                    DATA.SHOW_MORE_NAME to binding.mostViews.text.toString(),
+                    DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + two)
+                )
             )
         }
         binding.showMore3.setOnClickListener {
-            context?.intentExtra3(
-                ShowMoreActivity::class.java, DATA.SHOW_MORE_TYPE, DATA.LOVES_COUNT,
-                DATA.SHOW_MORE_NAME, binding.name3.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + three
+            context?.openActivity<ShowMoreActivity>(
+                extras = arrayOf(
+                    DATA.SHOW_MORE_TYPE to DATA.LOVES_COUNT,
+                    DATA.SHOW_MORE_NAME to binding.name3.text.toString(),
+                    DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + three)
+                )
             )
         }
         binding.showMore4.setOnClickListener {
-            context?.intentExtra3(
-                ShowMoreActivity::class.java, DATA.SHOW_MORE_TYPE, DATA.TIMESTAMP,
-                DATA.SHOW_MORE_NAME, binding.name4.text.toString(), DATA.SHOW_MORE_BOOLEAN, DATA.EMPTY + four
+            context?.openActivity<ShowMoreActivity>(
+                extras = arrayOf(
+                    DATA.SHOW_MORE_TYPE to DATA.TIMESTAMP,
+                    DATA.SHOW_MORE_NAME to binding.name4.text.toString(),
+                    DATA.SHOW_MORE_BOOLEAN to (DATA.EMPTY + four)
+                )
             )
         }
     }

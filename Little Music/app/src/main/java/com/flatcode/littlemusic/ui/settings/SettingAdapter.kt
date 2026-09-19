@@ -1,5 +1,6 @@
 package com.flatcode.littlemusic.ui.settings
 
+import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,7 @@ import com.flatcode.littlemusic.model.Setting
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.dialogAboutApp
 import com.flatcode.littlemusic.utils.dialogLogout
-import com.flatcode.littlemusic.utils.intent1
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.utils.rateApp
 import com.flatcode.littlemusic.utils.shareApp
 import java.text.MessageFormat
@@ -48,7 +49,7 @@ class SettingAdapter(private val context: Context?, var list: ArrayList<Setting>
                 "7" -> context?.dialogLogout()
                 "8" -> context?.shareApp()
                 "9" -> context?.rateApp()
-                else -> context?.intent1(to)
+                else -> context?.openActivity<Activity>(c = to)
             }
         }
     }

@@ -24,7 +24,7 @@ import com.flatcode.littlemusic.ui.profile.ProfileActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.closeApp
 import com.flatcode.littlemusic.utils.glideImage
-import com.flatcode.littlemusic.utils.intentExtra
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import io.selimdawa.bubblebottom.BubbleBottomNavigation
@@ -97,9 +97,7 @@ class MainActivity : AppCompatActivity() {
         //bottomNavigation.setCount(3, numberSongs);
         bottomNavigation!!.show(2, true)
 
-        binding.toolbar.image.setOnClickListener {
-            context.intentExtra(ProfileActivity::class.java, DATA.PROFILE_ID, DATA.FirebaseUserUid)
-        }
+            context.openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to DATA.FirebaseUserUid))
 
         observeViewModel()
         viewModel.loadUserInfo()

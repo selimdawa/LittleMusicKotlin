@@ -50,7 +50,7 @@ class LoginFragment : Fragment() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding.forget.setOnClickListener { mContext.openActivity(ForgetPasswordActivity::class.java) }
+        binding.forget.setOnClickListener { mContext.openActivity<ForgetPasswordActivity>() }
         binding.loginBtn.setOnClickListener { validateData() }
     }
 

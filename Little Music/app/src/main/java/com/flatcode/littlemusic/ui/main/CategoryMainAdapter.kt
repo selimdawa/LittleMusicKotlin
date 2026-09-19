@@ -11,7 +11,7 @@ import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.glideBlur
 import com.flatcode.littlemusic.utils.glideImage
-import com.flatcode.littlemusic.utils.intentExtra2
+import com.flatcode.littlemusic.utils.openActivity
 
 class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Category?>) :
     RecyclerView.Adapter<CategoryMainAdapter.ViewHolder>() {
@@ -39,8 +39,8 @@ class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Cat
         }
 
         binding.card.setOnClickListener {
-            context?.intentExtra2(
-                CategorySongsActivity::class.java, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+            context?.openActivity<CategorySongsActivity>(
+                extras = arrayOf(DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name)
             )
         }
     }

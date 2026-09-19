@@ -13,7 +13,7 @@ import com.flatcode.littlemusic.model.Album
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.glideImage
-import com.flatcode.littlemusic.utils.intentExtra3
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.utils.isInterested
 import java.text.MessageFormat
 
@@ -61,9 +61,12 @@ class AlbumAdapter(private val activity: Activity, var list: ArrayList<Album?>) 
         binding.add.isInterested(id, DATA.ALBUMS)
         binding.add.setOnClickListener { binding.add.checkInterested(DATA.ALBUMS, id) }
         binding.item.setOnClickListener {
-            activity.intentExtra3(
-                AlbumSongsActivity::class.java, DATA.ALBUM_ID, id,
-                DATA.ALBUM_NAME, name, DATA.ALBUM_IMAGE, image
+            activity.openActivity<AlbumSongsActivity>(
+                extras = arrayOf(
+                    DATA.ALBUM_ID to id,
+                    DATA.ALBUM_NAME to name,
+                    DATA.ALBUM_IMAGE to image
+                )
             )
         }
     }

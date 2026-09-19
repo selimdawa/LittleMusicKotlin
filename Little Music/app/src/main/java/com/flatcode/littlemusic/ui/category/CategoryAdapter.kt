@@ -13,7 +13,7 @@ import com.flatcode.littlemusic.model.Category
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.glideImage
-import com.flatcode.littlemusic.utils.intentExtra2
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.utils.isInterested
 import java.text.MessageFormat
 
@@ -69,8 +69,8 @@ class CategoryAdapter(private val activity: Activity, var list: ArrayList<Catego
         binding.add.setOnClickListener { binding.add.checkInterested(DATA.CATEGORIES, id) }
 
         binding.item.setOnClickListener {
-            activity.intentExtra2(
-                CategorySongsActivity::class.java, DATA.CATEGORY_ID, id, DATA.CATEGORY_NAME, name
+            activity.openActivity<CategorySongsActivity>(
+                extras = arrayOf(DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name)
             )
         }
     }

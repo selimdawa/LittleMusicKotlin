@@ -1,7 +1,6 @@
 package com.flatcode.littlemusicadmin.ui.main
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +25,6 @@ class MainAdapter(private val context: Context, var list: List<Main>) :
         val number = model.number
         val name = model.title
         //String id = list.getId();
-        val c = model.c
 
         if (image != 0) {
             holder.binding.image.setImageResource(image)
@@ -43,8 +41,7 @@ class MainAdapter(private val context: Context, var list: List<Main>) :
 
         holder.binding.name.text = name
         holder.itemView.setOnClickListener {
-            val intent = Intent(context, c)
-            context.startActivity(intent)
+            model.navigate?.invoke(context)
         }
     }
 

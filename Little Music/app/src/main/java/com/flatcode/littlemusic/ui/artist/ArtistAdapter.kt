@@ -13,7 +13,7 @@ import com.flatcode.littlemusic.model.Artist
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.glideImage
-import com.flatcode.littlemusic.utils.intentExtra4
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.utils.isInterested
 import java.text.MessageFormat
 
@@ -63,9 +63,13 @@ class ArtistAdapter(private val activity: Activity, var list: ArrayList<Artist?>
         binding.add.setOnClickListener { binding.add.checkInterested(DATA.ARTISTS, id) }
 
         binding.item.setOnClickListener {
-            activity.intentExtra4(
-                ArtistSongsActivity::class.java, DATA.ARTIST_ID, id, DATA.ARTIST_NAME,
-                name, DATA.ARTIST_IMAGE, image, DATA.ARTIST_ABOUT, aboutTheArtist
+            activity.openActivity<ArtistSongsActivity>(
+                extras = arrayOf(
+                    DATA.ARTIST_ID to id,
+                    DATA.ARTIST_NAME to name,
+                    DATA.ARTIST_IMAGE to image,
+                    DATA.ARTIST_ABOUT to aboutTheArtist
+                )
             )
         }
     }

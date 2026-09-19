@@ -17,8 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.ui.main.MainActivity
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.intent1
-import com.flatcode.littlemusic.utils.intentClear
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -56,8 +55,8 @@ class LoginActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding.forget.setOnClickListener { this.intent1(ForgetPasswordActivity::class.java) }
-        binding.noAccount.setOnClickListener { this.intent1(RegisterActivity::class.java) }
+        binding.forget.setOnClickListener { this.openActivity<ForgetPasswordActivity>() }
+        binding.noAccount.setOnClickListener { this.openActivity<RegisterActivity>() }
         binding.loginBtn.setOnClickListener {
             val email = binding.emailEt.text.toString().trim()
             val password = binding.passwordEt.text.toString().trim()
@@ -78,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
                         }
                         is LoginViewModel.LoginStatus.Success -> {
                             dialog!!.dismiss()
-                            this@LoginActivity.intentClear(MainActivity::class.java)
+                            this@LoginActivity.openActivity<MainActivity>(true)
                         }
                         is LoginViewModel.LoginStatus.Error -> {
                             dialog!!.dismiss()

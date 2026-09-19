@@ -38,7 +38,7 @@ class UserAdapter(private val context: Context, var list: ArrayList<User?>) :
         }
 
         holder.binding.item.setOnClickListener {
-            context.openActivity(ProfileActivity::class.java, DATA.PROFILE_ID, id)
+            context.openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to id))
         }
     }
 

@@ -9,6 +9,8 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.Window
 import android.view.WindowManager
@@ -42,54 +44,30 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import java.io.Serializable
 import java.text.MessageFormat
 import java.util.Locale
 
-fun Context.openActivity(c: Class<*>?) {
-    val intent = Intent(this, c)
-    this.startActivity(intent)
-}
-
-fun Context.openActivityClear(c: Class<*>?) {
-    val intent = Intent(this, c)
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-    this.startActivity(intent)
-}
-
-fun Context.openActivity(c: Class<*>?, key: String?, value: String?) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    this.startActivity(intent)
-}
-
-fun Context.openActivity(c: Class<*>?, key: String?, value: String?, key2: String?, value2: String?) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    intent.putExtra(key2, value2)
-    this.startActivity(intent)
-}
-
-fun Context.openActivity(
-    c: Class<*>?, key: String?, value: String?,
-    key2: String?, value2: String?, key3: String?, value3: String?,
+inline fun <reified T : Activity> Context.openActivity(
+    clear: Boolean = false, vararg extras: Pair<String, Any?>
 ) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    intent.putExtra(key2, value2)
-    intent.putExtra(key3, value3)
-    this.startActivity(intent)
-}
-
-fun Context.openActivity(
-    c: Class<*>?, key: String?, value: String?, key2: String?,
-    value2: String?, key3: String?, value3: String?, key4: String?, value4: String?,
-) {
-    val intent = Intent(this, c)
-    intent.putExtra(key, value)
-    intent.putExtra(key2, value2)
-    intent.putExtra(key3, value3)
-    intent.putExtra(key4, value4)
-    this.startActivity(intent)
+    val intent = Intent(this, T::class.java).apply {
+        if (clear) addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        extras.forEach { (key, value) ->
+            when (value) {
+                is String -> putExtra(key, value)
+                is Int -> putExtra(key, value)
+                is Boolean -> putExtra(key, value)
+                is Long -> putExtra(key, value)
+                is Double -> putExtra(key, value)
+                is Float -> putExtra(key, value)
+                is Serializable -> putExtra(key, value)
+                is Bundle -> putExtra(key, value)
+                is Parcelable -> putExtra(key, value)
+            }
+        }
+    }
+    startActivity(intent)
 }
 
 fun ImageView.glide(isUser: Boolean, url: String?) {
@@ -145,6 +123,7 @@ fun String?.incrementViewCount() {
             val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
             reference.child(this@incrementViewCount).updateChildren(hashMap)
         }
+
         override fun onCancelled(error: DatabaseError) {}
     })
 }
@@ -164,6 +143,7 @@ fun String?.incrementLovesCount() {
             val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
             reference.child(this@incrementLovesCount).updateChildren(hashMap)
         }
+
         override fun onCancelled(error: DatabaseError) {}
     })
 }
@@ -183,6 +163,7 @@ fun String?.incrementLovesRemoveCount() {
             val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
             reference.child(this@incrementLovesRemoveCount).updateChildren(hashMap)
         }
+
         override fun onCancelled(error: DatabaseError) {}
     })
 }
@@ -202,6 +183,7 @@ fun String?.incrementItemCount(database: String, childDB: String) {
             val reference = FirebaseDatabase.getInstance().getReference(database)
             reference.child(this@incrementItemCount).updateChildren(hashMap)
         }
+
         override fun onCancelled(error: DatabaseError) {}
     })
 }
@@ -212,8 +194,8 @@ fun String?.incrementItemRemoveCount(database: String, childDB: String) {
     ref.child(this).addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             var lovesCount = DATA.EMPTY + snapshot.child(childDB).value
-            if (lovesCount == DATA.EMPTY || lovesCount == DATA.NULL)
-                lovesCount = DATA.EMPTY + DATA.ZERO
+            if (lovesCount == DATA.EMPTY || lovesCount == DATA.NULL) lovesCount =
+                DATA.EMPTY + DATA.ZERO
 
             val i = lovesCount.toInt()
             if (i > 0) {
@@ -225,6 +207,7 @@ fun String?.incrementItemRemoveCount(database: String, childDB: String) {
                 reference.child(this@incrementItemRemoveCount).updateChildren(hashMap)
             }
         }
+
         override fun onCancelled(error: DatabaseError) {}
     })
 }
@@ -241,16 +224,15 @@ fun ImageView.isFavorite(id: String?, userId: String?) {
                 this@isFavorite.tag = "add"
             }
         }
+
         override fun onCancelled(databaseError: DatabaseError) {}
     })
 }
 
 fun ImageView.checkFavorite(id: String?) {
     if (this.tag == "add") FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
-        .child(DATA.FirebaseUserUid)
-        .child(id!!).setValue(true) else FirebaseDatabase.getInstance()
-        .getReference(DATA.FAVORITES).child(DATA.FirebaseUserUid)
-        .child(id!!).removeValue()
+        .child(DATA.FirebaseUserUid).child(id!!).setValue(true) else FirebaseDatabase.getInstance()
+        .getReference(DATA.FAVORITES).child(DATA.FirebaseUserUid).child(id!!).removeValue()
 }
 
 fun ImageView.checkLove(id: String?) {
@@ -277,6 +259,7 @@ fun ImageView.isLoves(id: String?) {
                 this@isLoves.tag = "love"
             }
         }
+
         override fun onCancelled(databaseError: DatabaseError) {}
     })
 }
@@ -287,26 +270,20 @@ fun TextView.nrLoves(id: String?) {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             this@nrLoves.text = MessageFormat.format(" {0} ", dataSnapshot.childrenCount)
         }
+
         override fun onCancelled(databaseError: DatabaseError) {}
     })
 }
 
 fun Activity.cropImageSquare() {
-    CropImage.activity()
-        .setMinCropResultSize(DATA.MIX_SQUARE, DATA.MIX_SQUARE)
-        .setAspectRatio(1, 1)
-        .setCropShape(CropImageView.CropShape.OVAL)
-        .start(this)
+    CropImage.activity().setMinCropResultSize(DATA.MIX_SQUARE, DATA.MIX_SQUARE).setAspectRatio(1, 1)
+        .setCropShape(CropImageView.CropShape.OVAL).start(this)
 }
 
 fun Activity.cropImageSlider() {
-    CropImage.activity()
-        .setGuidelines(CropImageView.Guidelines.ON)
-        .setMultiTouchEnabled(true)
-        .setMinCropResultSize(DATA.MIX_SLIDER_X, DATA.MIX_SLIDER_Y)
-        .setAspectRatio(16, 9)
-        .setCropShape(CropImageView.CropShape.OVAL)
-        .start(this)
+    CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setMultiTouchEnabled(true)
+        .setMinCropResultSize(DATA.MIX_SLIDER_X, DATA.MIX_SLIDER_Y).setAspectRatio(16, 9)
+        .setCropShape(CropImageView.CropShape.OVAL).start(this)
 }
 
 fun Uri.getFileExtension(context: Context): String? {
@@ -324,14 +301,25 @@ fun Category.moreDelete(
     val name = DATA.EMPTY + this.name
     val options = arrayOf("Edit", "Delete")
     val builder = AlertDialog.Builder(activity)
-    builder.setTitle("Choose Options")
-        .setItems(options) { _, which ->
+    builder.setTitle("Choose Options").setItems(options) { _, which ->
             if (which == 0) {
-                activity.openActivity(CategoryEditActivity::class.java, DATA.CATEGORY_ID, id)
+                activity.openActivity<CategoryEditActivity>(extras = arrayOf(DATA.CATEGORY_ID to id))
             } else if (which == 1) {
                 activity.dialogOptionDelete(
-                    id, name, DATA.CATEGORY, DATA.CATEGORIES, false,
-                    DB, idDB, childDB, DB2, idDB2, childDB2, DB3, idDB3, childDB3
+                    id,
+                    name,
+                    DATA.CATEGORY,
+                    DATA.CATEGORIES,
+                    false,
+                    DB,
+                    idDB,
+                    childDB,
+                    DB2,
+                    idDB2,
+                    childDB2,
+                    DB3,
+                    idDB3,
+                    childDB3
                 )
             }
         }.show()
@@ -348,17 +336,29 @@ fun Album.moreDelete(
     val name = DATA.EMPTY + this.name
     val options = arrayOf("Edit", "Delete")
     val builder = AlertDialog.Builder(activity)
-    builder.setTitle("Choose Options")
-        .setItems(options) { _, which ->
+    builder.setTitle("Choose Options").setItems(options) { _, which ->
             if (which == 0) {
-                activity.openActivity(
-                    AlbumEditActivity::class.java, DATA.ALBUM_ID, id, DATA.CATEGORY_ID,
-                    category, DATA.ARTIST_ID, artist
+                activity.openActivity<AlbumEditActivity>(
+                    extras = arrayOf(
+                        DATA.ALBUM_ID to id, DATA.CATEGORY_ID to category, DATA.ARTIST_ID to artist
+                    )
                 )
             } else if (which == 1) {
                 activity.dialogOptionDelete(
-                    id, name, DATA.ALBUM, DATA.ALBUMS, false,
-                    DB, idDB, childDB, DB2, idDB2, childDB2, DB3, idDB3, childDB3
+                    id,
+                    name,
+                    DATA.ALBUM,
+                    DATA.ALBUMS,
+                    false,
+                    DB,
+                    idDB,
+                    childDB,
+                    DB2,
+                    idDB2,
+                    childDB2,
+                    DB3,
+                    idDB3,
+                    childDB3
                 )
             }
         }.show()
@@ -373,14 +373,25 @@ fun Artist.moreDelete(
     val name = DATA.EMPTY + this.name
     val options = arrayOf("Edit", "Delete")
     val builder = AlertDialog.Builder(activity)
-    builder.setTitle("Choose Options")
-        .setItems(options) { _, which ->
+    builder.setTitle("Choose Options").setItems(options) { _, which ->
             if (which == 0) {
-                activity.openActivity(ArtistEditActivity::class.java, DATA.ARTIST_ID, id)
+                activity.openActivity<ArtistEditActivity>(extras = arrayOf(DATA.ARTIST_ID to id))
             } else if (which == 1) {
                 activity.dialogOptionDelete(
-                    id, name, DATA.ARTIST, DATA.ARTISTS, false,
-                    DB, idDB, childDB, DB2, idDB2, childDB2, DB3, idDB3, childDB3
+                    id,
+                    name,
+                    DATA.ARTIST,
+                    DATA.ARTISTS,
+                    false,
+                    DB,
+                    idDB,
+                    childDB,
+                    DB2,
+                    idDB2,
+                    childDB2,
+                    DB3,
+                    idDB3,
+                    childDB3
                 )
             }
         }.show()
@@ -398,17 +409,32 @@ fun Song.moreDelete(
     val album = DATA.EMPTY + this.albumId
     val options = arrayOf("Edit", "Delete")
     val builder = AlertDialog.Builder(activity)
-    builder.setTitle("Choose Options")
-        .setItems(options) { _, which ->
+    builder.setTitle("Choose Options").setItems(options) { _, which ->
             if (which == 0) {
-                activity.openActivity(
-                    SongEditActivity::class.java, DATA.SONG_ID, id, DATA.CATEGORY_ID,
-                    category, DATA.ARTIST_ID, artist, DATA.ALBUM_ID, album
+                activity.openActivity<SongEditActivity>(
+                    extras = arrayOf(
+                        DATA.SONG_ID to id,
+                        DATA.CATEGORY_ID to category,
+                        DATA.ARTIST_ID to artist,
+                        DATA.ALBUM_ID to album
+                    )
                 )
             } else if (which == 1) {
                 activity.dialogOptionDelete(
-                    id, name, DATA.SONG, DATA.SONGS, false,
-                    DB, idDB, childDB, DB2, idDB2, childDB2, DB3, idDB3, childDB3
+                    id,
+                    name,
+                    DATA.SONG,
+                    DATA.SONGS,
+                    false,
+                    DB,
+                    idDB,
+                    childDB,
+                    DB2,
+                    idDB2,
+                    childDB2,
+                    DB3,
+                    idDB3,
+                    childDB3
                 )
             }
         }.show()
@@ -437,8 +463,19 @@ fun Activity.dialogOptionDelete(
             this.dialogUpdateEditorsChoice(dialog, id)
         } else {
             this.deleteDB(
-                dialog, id, name, nameDB, DB, idDB, childDB, DB2, idDB2, childDB2,
-                DB3, idDB3, childDB3
+                dialog,
+                id,
+                name,
+                nameDB,
+                DB,
+                idDB,
+                childDB,
+                DB2,
+                idDB2,
+                childDB2,
+                DB3,
+                idDB3,
+                childDB3
             )
         }
     }
@@ -460,8 +497,7 @@ fun Context.dialogUpdateEditorsChoice(dialogDelete: Dialog, id: String?) {
         dialogDelete.dismiss()
     }.addOnFailureListener { e: Exception ->
         dialog.dismiss()
-        Toast.makeText(this, "Failed to update db duo to " + e.message, Toast.LENGTH_SHORT)
-            .show()
+        Toast.makeText(this, "Failed to update db duo to " + e.message, Toast.LENGTH_SHORT).show()
         dialogDelete.dismiss()
     }
 }
@@ -477,12 +513,18 @@ fun Activity.deleteDB(
     dialog.show()
     val reference = FirebaseDatabase.getInstance().getReference(nameDB!!)
     reference.child(id!!).removeValue().addOnSuccessListener {
-        if ((DB != null) && (idDB != null) && (childDB != null))
-            idDB.incrementItemRemoveCount(DB, childDB)
-        if ((DB2 != null) && (idDB2 != null) && (childDB2 != null))
-            idDB2.incrementItemRemoveCount(DB2, childDB2)
-        if ((DB3 != null) && (idDB3 != null) && (childDB3 != null))
-            idDB3.incrementItemRemoveCount(DB3, childDB3)
+        if ((DB != null) && (idDB != null) && (childDB != null)) idDB.incrementItemRemoveCount(
+            DB,
+            childDB
+        )
+        if ((DB2 != null) && (idDB2 != null) && (childDB2 != null)) idDB2.incrementItemRemoveCount(
+            DB2,
+            childDB2
+        )
+        if ((DB3 != null) && (idDB3 != null) && (childDB3 != null)) idDB3.incrementItemRemoveCount(
+            DB3,
+            childDB3
+        )
         DATA.isChange = true
         this.onBackPressed()
         dialog.dismiss()
@@ -507,8 +549,7 @@ fun Activity.addToEditorsChoice(id: String?, number: Int) {
         this.finish()
     }.addOnFailureListener { e: Exception ->
         dialog.dismiss()
-        Toast.makeText(this, "Failed to update db duo to " + e.message, Toast.LENGTH_SHORT)
-            .show()
+        Toast.makeText(this, "Failed to update db duo to " + e.message, Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -519,6 +560,7 @@ fun TextView.dataName(database: String?, dataId: String?) {
             val nameValue = DATA.EMPTY + snapshot.child(DATA.NAME).value
             this@dataName.text = MessageFormat.format("{0}{1}", DATA.EMPTY, nameValue)
         }
+
         override fun onCancelled(error: DatabaseError) {}
     })
 }

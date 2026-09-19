@@ -58,9 +58,11 @@ class ArtistAdapter(private val activity: Activity, var list: ArrayList<Artist?>
             )
         }
         holder.binding.item.setOnClickListener {
-            activity.openActivity(
-                ArtistSongsActivity::class.java, DATA.ARTIST_ID, id, DATA.ARTIST_NAME,
-                name, DATA.ARTIST_IMAGE, image, DATA.ARTIST_ABOUT, aboutTheArtist
+            activity.openActivity<ArtistSongsActivity>(
+                extras = arrayOf(
+                    DATA.ARTIST_ID to id, DATA.ARTIST_NAME to name,
+                    DATA.ARTIST_IMAGE to image, DATA.ARTIST_ABOUT to aboutTheArtist
+                )
             )
         }
     }

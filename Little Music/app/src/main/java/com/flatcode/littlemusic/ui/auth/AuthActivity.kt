@@ -3,7 +3,7 @@ package com.flatcode.littlemusic.ui.auth
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusic.utils.intent1
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityAuthBinding
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -20,7 +20,7 @@ class AuthActivity : AppCompatActivity() {
         setContentView(binding.root)
         Timber.i("AuthActivity Created")
 
-        binding.loginBtn.setOnClickListener { this.intent1(LoginActivity::class.java) }
-        binding.skipBtn.setOnClickListener { this.intent1(RegisterActivity::class.java) }
+        binding.loginBtn.setOnClickListener { this.openActivity<LoginActivity>() }
+        binding.skipBtn.setOnClickListener { this.openActivity<RegisterActivity>() }
     }
 }

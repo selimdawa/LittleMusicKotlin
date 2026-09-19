@@ -16,7 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.glideImage
-import com.flatcode.littlemusic.utils.intent1
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -56,7 +56,7 @@ class ProfileActivity : AppCompatActivity() {
         if (profileId == DATA.FirebaseUserUid) {
             binding.edit.visibility = View.VISIBLE
             binding.edit.setImageResource(R.drawable.ic_edit_white)
-            binding.edit.setOnClickListener { this.intent1(ProfileEditActivity::class.java) }
+            binding.edit.setOnClickListener { this.openActivity<ProfileEditActivity>() }
         }
         binding.back.setOnClickListener { onBackPressed() }
 
