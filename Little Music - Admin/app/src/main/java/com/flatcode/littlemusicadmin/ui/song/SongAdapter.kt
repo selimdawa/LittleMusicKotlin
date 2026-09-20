@@ -1,122 +1,97 @@
 package com.flatcode.littlemusicadmin.ui.song
 
-import android.app.Activity
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.flatcode.littlemusicadmin.model.Song
-import com.flatcode.littlemusicadmin.utils.*
+import android.widget.ImageView
+import androidx.core.view.isVisible
 import com.flatcode.littlemusicadmin.databinding.ItemSongBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.flatcode.littlemusicadmin.model.Song
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.convertDuration
+import com.flatcode.littlemusicadmin.utils.dataName
+import com.flatcode.littlemusicadmin.utils.isFavorite
+import com.flatcode.littlemusicadmin.utils.isLoves
+import com.flatcode.littlemusicadmin.utils.nrLoves
 import com.scwang.wave.MultiWaveHeader
 
 class SongAdapter(
-    private val activity: Activity, var list: ArrayList<Song?>, listener: (Song?, Int) -> Unit,
-) : RecyclerView.Adapter<SongAdapter.ViewHolder>(), Filterable {
+    private val onItemClick: (Song, Int) -> Unit,
+    private val onFavoriteClick: (Song, ImageView) -> Unit,
+    private val onLoveClick: (Song, ImageView) -> Unit,
+    private val onMoreClick: (Song) -> Unit,
+    private val onArtistClick: (String) -> Unit,
+    private val onAlbumClick: (String) -> Unit,
+    private val onCategoryClick: (String) -> Unit
+) : ListAdapter<Song, SongAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     var selectedPosition = -1
-    private val listener: (Song?, Int) -> Unit
-    var filterList: ArrayList<Song?>
-    private var filter: SongFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemSongBinding.inflate(LayoutInflater.from(activity), parent, false)
+        val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = DATA.EMPTY + item!!.id
-        val name = DATA.EMPTY + item.name
-        val artistId = DATA.EMPTY + item.artistId
-        val albumId = DATA.EMPTY + item.albumId
-        val categoryId = DATA.EMPTY + item.categoryId
-        val nrLoves = DATA.EMPTY + item.lovesCount
-
-        holder.binding.name.text = name
-        holder.binding.artist.dataName(DATA.ARTISTS, artistId)
-        holder.binding.album.dataName(DATA.ALBUMS, albumId)
-        holder.binding.category.dataName(DATA.CATEGORIES, categoryId)
-        val duration = item.duration!!.toLong().convertDuration()
-        holder.binding.duration.text = duration
-        holder.binding.nrLoves.text = nrLoves
-
-        holder.binding.favorite.isFavorite(id, DATA.FirebaseUserUid)
-        holder.binding.love.isLoves(id)
-        holder.binding.nrLoves.nrLoves(id)
-
-        holder.binding.favorite.setOnClickListener { holder.binding.favorite.checkFavorite(id) }
-        holder.binding.love.setOnClickListener { holder.binding.love.checkLove(id) }
-        IntentData(DATA.ARTISTS, artistId, DATA.ARTIST, holder.binding.artist)
-        IntentData(DATA.ALBUMS, albumId, DATA.ALBUM, holder.binding.album)
-        IntentData(DATA.CATEGORIES, categoryId, DATA.CATEGORY, holder.binding.category)
-
-        holder.binding.more.setOnClickListener {
-            item.moreDelete(
-                activity, DATA.ARTISTS, artistId, DATA.SONGS_COUNT, DATA.CATEGORIES,
-                categoryId, DATA.SONGS_COUNT, DATA.ALBUMS, albumId, DATA.SONGS_COUNT
-            )
-        }
-        holder.bind(item, listener, id)
-        if (selectedPosition == position) open(holder.binding.wave) else holder.binding.wave.visibility = View.GONE
+        val item = getItem(position) ?: return
+        holder.bind(
+            item, position, selectedPosition,
+            onItemClick, onFavoriteClick, onLoveClick, onMoreClick,
+            onArtistClick, onAlbumClick, onCategoryClick
+        )
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    class ViewHolder(private val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(
+            item: Song, position: Int, selectedPosition: Int,
+            onItemClick: (Song, Int) -> Unit,
+            onFavoriteClick: (Song, ImageView) -> Unit,
+            onLoveClick: (Song, ImageView) -> Unit,
+            onMoreClick: (Song) -> Unit,
+            onArtistClick: (String) -> Unit,
+            onAlbumClick: (String) -> Unit,
+            onCategoryClick: (String) -> Unit
+        ) {
+            val id = item.id
+            val artistId = item.artistId
+            val albumId = item.albumId
+            val categoryId = item.categoryId
 
-    override fun getFilter(): Filter {
-        if (filter == null) {
-            filter = SongFilter(filterList, this)
-        }
-        return filter!!
-    }
+            binding.name.text = item.name
+            binding.artist.dataName(DATA.ARTISTS, artistId)
+            binding.album.dataName(DATA.ALBUMS, albumId)
+            binding.category.dataName(DATA.CATEGORIES, categoryId)
 
-    inner class ViewHolder(val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(getSongs: Song?, listener: (Song?, Int) -> Unit, id: String?) {
+            binding.duration.text = item.duration?.toLongOrNull()?.convertDuration() ?: ""
+            binding.nrLoves.text = item.lovesCount.toString()
+
+            binding.favorite.isFavorite(id, DATA.FirebaseUserUid)
+            binding.love.isLoves(id)
+            binding.nrLoves.nrLoves(id)
+
+            binding.favorite.setOnClickListener { onFavoriteClick(item, binding.favorite) }
+            binding.love.setOnClickListener { onLoveClick(item, binding.love) }
+
+            binding.artist.setOnClickListener { artistId?.let { onArtistClick(it) } }
+            binding.album.setOnClickListener { albumId?.let { onAlbumClick(it) } }
+            binding.category.setOnClickListener { categoryId?.let { onCategoryClick(it) } }
+
+            binding.more.setOnClickListener { onMoreClick(item) }
+
             binding.card.setOnClickListener {
-                listener(getSongs, adapterPosition)
-                id!!.incrementViewCount()
+                onItemClick(item, position)
                 binding.wave.waveHeight = 40
             }
-        }
-    }
 
-    private fun IntentData(database: String?, dataId: String, type: String?, text: TextView) {
-        val reference = FirebaseDatabase.getInstance().getReference(database!!)
-        reference.child(dataId).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val Name = DATA.EMPTY + snapshot.child(DATA.NAME).value
-                val Image = DATA.EMPTY + snapshot.child(DATA.IMAGE).value
-                if (type == DATA.ARTIST) text.setOnClickListener {
-                    activity.openActivity<ArtistSongsActivity>(
-                        extras = arrayOf(DATA.ARTIST_ID to dataId, DATA.ARTIST_NAME to Name)
-                    )
-                }
-                if (type == DATA.ALBUM) text.setOnClickListener {
-                    activity.openActivity<AlbumSongsActivity>(
-                        extras = arrayOf(
-                            DATA.ALBUM_ID to dataId, DATA.ALBUM_NAME to Name, DATA.ALBUM_IMAGE to Image
-                        )
-                    )
-                }
-                if (type == DATA.CATEGORY) text.setOnClickListener {
-                    activity.openActivity<CategorySongsActivity>(
-                        extras = arrayOf(DATA.CATEGORY_ID to dataId, DATA.CATEGORY_NAME to Name)
-                    )
-                }
+            binding.wave.isVisible = selectedPosition == position
+            if (binding.wave.isVisible) {
+                open(binding.wave)
             }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
+        }
     }
 
     companion object {
@@ -130,10 +105,21 @@ class SongAdapter(
             wave.closeColor = Color.DKGRAY
             wave.visibility = View.VISIBLE
         }
-    }
 
-    init {
-        filterList = list
-        this.listener = listener
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Song>() {
+            override fun areItemsTheSame(oldItem: Song, newItem: Song): Boolean =
+                oldItem.id == newItem.id
+
+            override fun areContentsTheSame(oldItem: Song, newItem: Song): Boolean =
+                oldItem.name == newItem.name &&
+                        oldItem.publisher == newItem.publisher &&
+                        oldItem.categoryId == newItem.categoryId &&
+                        oldItem.artistId == newItem.artistId &&
+                        oldItem.albumId == newItem.albumId &&
+                        oldItem.duration == newItem.duration &&
+                        oldItem.songLink == newItem.songLink &&
+                        oldItem.viewsCount == newItem.viewsCount &&
+                        oldItem.lovesCount == newItem.lovesCount
+        }
     }
 }

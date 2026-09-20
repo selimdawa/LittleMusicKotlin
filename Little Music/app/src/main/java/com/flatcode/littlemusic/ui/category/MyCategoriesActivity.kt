@@ -16,6 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.utils.DATA
+import android.widget.ImageView
+import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityMyCategoriesBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -85,7 +87,14 @@ class MyCategoriesActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = CategoryAdapter(this, ArrayList())
+        adapter = CategoryAdapter(
+            onItemClick = { category ->
+                openActivity<CategorySongsActivity>(
+                    extras = arrayOf(DATA.CATEGORY_ID to category.id, DATA.CATEGORY_NAME to category.name)
+                )
+            },
+            onInterestedClick = { category, view -> (view as? ImageView)?.checkInterested(DATA.CATEGORIES, category.id) }
+        )
         binding.recyclerView.adapter = adapter
     }
 
@@ -94,9 +103,7 @@ class MyCategoriesActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.categories.collect { categories ->
-                        adapter?.list?.clear()
-                        adapter?.list?.addAll(categories)
-                        adapter?.notifyDataSetChanged()
+                        adapter?.setList(categories)
                         binding.toolbar.number.text = MessageFormat.format("( {0} )", categories.size)
                         
                         if (categories.isNotEmpty()) {

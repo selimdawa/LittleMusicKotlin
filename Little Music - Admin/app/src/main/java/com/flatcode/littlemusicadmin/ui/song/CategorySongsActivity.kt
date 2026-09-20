@@ -27,9 +27,7 @@ class CategorySongsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCategorySongsBinding
     var activity: Activity = this@CategorySongsActivity
-    var albumList: ArrayList<Album?>? = null
     var albumAdapter: AlbumAdapter? = null
-    var songList: ArrayList<Song?>? = null
     var songAdapter: SongAdapter? = null
     var isAlbum = true
     var isSong = false
@@ -75,8 +73,7 @@ class CategorySongsActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        albumList = ArrayList()
-        albumAdapter = AlbumAdapter(activity, albumList!!)
+        albumAdapter = AlbumAdapter(activity)
         binding.recyclerAlbums.adapter = albumAdapter
 
         initSongs()
@@ -147,10 +144,8 @@ class CategorySongsActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.albums.collectLatest { albums ->
                 if (isAlbum) {
-                    albumList!!.clear()
-                    albumList!!.addAll(albums)
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
-                    albumAdapter!!.notifyDataSetChanged()
+                    albumAdapter!!.submitFullList(albums)
                     updateVisibility()
                 }
             }
@@ -160,10 +155,8 @@ class CategorySongsActivity : AppCompatActivity() {
             viewModel.songs.collectLatest { songs ->
                 if (isSong) {
                     changeSelectedSong(-1)
-                    songList!!.clear()
                     jcAudios!!.clear()
                     for (item in songs) {
-                        songList!!.add(item)
                         val name = item.name
                         val songLink = item.songLink
                         if (name != null && songLink != null) {
@@ -171,7 +164,7 @@ class CategorySongsActivity : AppCompatActivity() {
                         }
                     }
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
-                    songAdapter!!.notifyDataSetChanged()
+                    songAdapter!!.submitFullList(songs)
                     if (songs.isNotEmpty()) {
                         binding.player.jcPlayer.initPlaylist(jcAudios!!, null)
                     }
@@ -190,7 +183,7 @@ class CategorySongsActivity : AppCompatActivity() {
     private fun updateVisibility() {
         if (isAlbum) {
             binding.recyclerSongs.visibility = View.GONE
-            if (albumList!!.isNotEmpty()) {
+            if (albumAdapter!!.itemCount > 0) {
                 binding.recyclerAlbums.visibility = View.VISIBLE
                 binding.emptyText.visibility = View.GONE
             } else {
@@ -199,7 +192,7 @@ class CategorySongsActivity : AppCompatActivity() {
             }
         } else {
             binding.recyclerAlbums.visibility = View.GONE
-            if (songList!!.isNotEmpty()) {
+            if (songAdapter!!.itemCount > 0) {
                 binding.recyclerSongs.visibility = View.VISIBLE
                 binding.emptyText.visibility = View.GONE
             } else {

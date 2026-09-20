@@ -5,15 +5,15 @@ import com.flatcode.littlemusic.ui.album.AlbumAdapter
 import com.flatcode.littlemusic.model.Album
 import java.util.*
 
-class AlbumFilter(var list: ArrayList<Album?>, var adapter: AlbumAdapter) : Filter() {
+class AlbumFilter(var list: List<Album>, var adapter: AlbumAdapter) : Filter() {
     override fun performFiltering(constraint: CharSequence): FilterResults {
         var constraint: CharSequence? = constraint
         val results = FilterResults()
         if (constraint != null && constraint.length > 0) {
             constraint = constraint.toString().uppercase(Locale.getDefault())
-            val filter = ArrayList<Album?>()
+            val filter = ArrayList<Album>()
             for (i in list.indices) {
-                if (list[i]!!.name!!.uppercase(Locale.getDefault()).contains(constraint)) {
+                if (list[i].name!!.uppercase(Locale.getDefault()).contains(constraint)) {
                     filter.add(list[i])
                 }
             }
@@ -27,7 +27,6 @@ class AlbumFilter(var list: ArrayList<Album?>, var adapter: AlbumAdapter) : Filt
     }
 
     override fun publishResults(constraint: CharSequence, results: FilterResults) {
-        adapter.list = (results.values as ArrayList<Album?>)
-        adapter.notifyDataSetChanged()
+        adapter.submitList(results.values as ArrayList<Album>)
     }
 }

@@ -35,8 +35,8 @@ class HomeViewModel @Inject constructor(
     private val _latestSongs = MutableStateFlow<List<Song>>(emptyList())
     val latestSongs: StateFlow<List<Song>> = _latestSongs
 
-    private val _sliderCount = MutableStateFlow(0)
-    val sliderCount: StateFlow<Int> = _sliderCount
+    private val _sliderImages = MutableStateFlow<List<String>>(emptyList())
+    val sliderImages: StateFlow<List<String>> = _sliderImages
 
     fun loadCategories() {
         viewModelScope.launch {
@@ -46,10 +46,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun loadSliderCount() {
+    fun loadSliderImages() {
         viewModelScope.launch {
-            toolsRepository.getSliderCount().collect { count ->
-                _sliderCount.value = count
+            toolsRepository.getSliderImages().collect { images ->
+                _sliderImages.value = images
             }
         }
     }

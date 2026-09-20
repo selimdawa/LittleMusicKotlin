@@ -12,7 +12,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import io.selimdawa.autoimageslider.adapter.SliderViewAdapter
 
-class ImageSliderAdapter(var context: Context?, var setTotalCount: Int) :
+class ImageSliderAdapter(private val imageList: List<String>) :
     SliderViewAdapter<ImageSliderAdapter.SliderViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SliderViewHolder {
@@ -21,24 +21,14 @@ class ImageSliderAdapter(var context: Context?, var setTotalCount: Int) :
     }
 
     override fun onBind(viewHolder: SliderViewHolder, position: Int) {
-        val dbChildKey = (position + 1).toString()
-
-        FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW).child(dbChildKey)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val imageLink = snapshot.value?.toString()
-
-                    if (!imageLink.isNullOrEmpty() && viewHolder.itemView.context != null) {
-                        viewHolder.binding.imageView.load(imageLink)
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {}
-            })
+        val imageLink = imageList[position]
+        if (imageLink.isNotEmpty()) {
+            viewHolder.binding.imageView.load(imageLink)
+        }
     }
 
     override fun getItemCount(): Int {
-        return setTotalCount
+        return imageList.size
     }
 
     class SliderViewHolder(val binding: ItemSliderBinding) : ViewHolder(binding.root)

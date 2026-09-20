@@ -16,6 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.utils.DATA
+import android.widget.ImageView
+import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityMyArtistsBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -85,7 +87,19 @@ class MyArtistsActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = ArtistAdapter(this, ArrayList())
+        adapter = ArtistAdapter(
+            onItemClick = { artist ->
+                openActivity<ArtistSongsActivity>(
+                    extras = arrayOf(
+                        DATA.ARTIST_ID to artist.id,
+                        DATA.ARTIST_NAME to artist.name,
+                        DATA.ARTIST_IMAGE to artist.image,
+                        DATA.ARTIST_ABOUT to artist.aboutTheArtist
+                    )
+                )
+            },
+            onInterestedClick = { artist, view -> (view as? ImageView)?.checkInterested(DATA.ARTISTS, artist.id) }
+        )
         binding.recyclerView.adapter = adapter
     }
 
@@ -94,9 +108,7 @@ class MyArtistsActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.artists.collect { artists ->
-                        adapter?.list?.clear()
-                        adapter?.list?.addAll(artists)
-                        adapter?.notifyDataSetChanged()
+                        adapter?.setList(artists)
                         binding.toolbar.number.text = MessageFormat.format("( {0} )", artists.size)
                         
                         if (artists.isNotEmpty()) {

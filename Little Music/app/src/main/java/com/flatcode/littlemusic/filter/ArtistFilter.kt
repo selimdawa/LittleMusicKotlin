@@ -5,15 +5,15 @@ import com.flatcode.littlemusic.ui.artist.ArtistAdapter
 import com.flatcode.littlemusic.model.Artist
 import java.util.*
 
-class ArtistFilter(var list: ArrayList<Artist?>, var adapter: ArtistAdapter) : Filter() {
+class ArtistFilter(var list: List<Artist>, var adapter: ArtistAdapter) : Filter() {
     override fun performFiltering(constraint: CharSequence): FilterResults {
         var constraint: CharSequence? = constraint
         val results = FilterResults()
         if (constraint != null && constraint.length > 0) {
             constraint = constraint.toString().uppercase(Locale.getDefault())
-            val filter = ArrayList<Artist?>()
+            val filter = ArrayList<Artist>()
             for (i in list.indices) {
-                if (list[i]!!.name!!.uppercase(Locale.getDefault()).contains(constraint)) {
+                if (list[i].name!!.uppercase(Locale.getDefault()).contains(constraint)) {
                     filter.add(list[i])
                 }
             }
@@ -27,7 +27,6 @@ class ArtistFilter(var list: ArrayList<Artist?>, var adapter: ArtistAdapter) : F
     }
 
     override fun publishResults(constraint: CharSequence, results: FilterResults) {
-        adapter.list = (results.values as ArrayList<Artist?>)
-        adapter.notifyDataSetChanged()
+        adapter.submitList(results.values as ArrayList<Artist>)
     }
 }

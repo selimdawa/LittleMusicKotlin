@@ -9,6 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.FragmentCategoriesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -35,7 +37,11 @@ class CategoriesFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = CategoryMainAdapter(context, ArrayList())
+        adapter = CategoryMainAdapter { category ->
+            context?.openActivity<CategorySongsActivity>(
+                extras = arrayOf(DATA.CATEGORY_ID to category.id, DATA.CATEGORY_NAME to category.name)
+            )
+        }
         binding.recyclerView.adapter = adapter
     }
 
@@ -44,9 +50,7 @@ class CategoriesFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.categories.collect { categories ->
-                        adapter?.list?.clear()
-                        adapter?.list?.addAll(categories)
-                        adapter?.notifyDataSetChanged()
+                        adapter?.submitList(categories)
                         
                         if (categories.isNotEmpty()) {
                             binding.recyclerView.visibility = View.VISIBLE

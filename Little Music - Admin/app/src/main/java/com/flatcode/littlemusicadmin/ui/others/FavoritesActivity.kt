@@ -27,7 +27,6 @@ class FavoritesActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPageSongSwitchBinding
     private val activity: Activity = this@FavoritesActivity
-    var list: ArrayList<Song?>? = null
     var adapter: SongAdapter? = null
     var jcAudios: ArrayList<JcAudio>? = null
     private var currentSong = 0
@@ -79,9 +78,8 @@ class FavoritesActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        list = ArrayList()
         jcAudios = ArrayList()
-        adapter = SongAdapter(activity, list!!) { _, position: Int ->
+        adapter = SongAdapter(activity) { _, position: Int ->
             changeSelectedSong(position)
             binding.player.jcPlayer.playAudio(jcAudios!![position])
             binding.player.jcPlayer.visibility = View.VISIBLE
@@ -93,22 +91,18 @@ class FavoritesActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.favorites.collectLatest { songs ->
                 changeSelectedSong(-1)
-                list!!.clear()
                 jcAudios!!.clear()
-                var i = 0
                 for (item in songs) {
-                    list!!.add(item)
                     val name = item.name
                     val songLink = item.songLink
                     if (name != null && songLink != null) {
                         jcAudios!!.add(JcAudio.createFromURL(name, songLink))
                     }
-                    i++
                 }
-                binding.toolbar.number.text = MessageFormat.format("( {0} )", i)
-                adapter!!.notifyDataSetChanged()
+                binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
+                adapter!!.submitFullList(songs)
 
-                if (list!!.isNotEmpty()) {
+                if (songs.isNotEmpty()) {
                     binding.recyclerView.visibility = View.VISIBLE
                     binding.emptyText.visibility = View.GONE
                     binding.player.jcPlayer.initPlaylist(jcAudios!!, null)

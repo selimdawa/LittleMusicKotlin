@@ -1,3 +1,6 @@
 package com.flatcode.littlemusicadmin.model
 
-class EditorsChoice
+data class EditorsChoice(
+    val position: Int,
+    val song: Song? = null
+)

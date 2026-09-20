@@ -1,56 +1,73 @@
 package com.flatcode.littlemusicadmin.ui.editorschoice
 
-import android.app.Activity
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusicadmin.model.EditorsChoice
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityEditorsChoiceBinding
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.dialogOptionDelete
+import com.flatcode.littlemusicadmin.utils.openActivity
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class EditorsChoiceActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEditorsChoiceBinding
-    var activity: Activity = this@EditorsChoiceActivity
-    var list: ArrayList<EditorsChoice>? = null
-    var adapter: EditorsChoiceAdapter? = null
-    var editorsChoice = EditorsChoice()
+    private var adapter: EditorsChoiceAdapter? = null
+    private val viewModel: EditorsChoiceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityEditorsChoiceBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        
         binding.toolbar.nameSpace.setText(R.string.editors_choice)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { finish() }
 
-        list = ArrayList()
-        adapter = EditorsChoiceAdapter(activity, list!!)
+        adapter = EditorsChoiceAdapter(
+            onAddClick = { item ->
+                openActivity<EditorsChoiceAddActivity>(
+                    extras = arrayOf(DATA.EDITORS_CHOICE_ID to item.position.toString(), DATA.OLD_ID to null)
+                )
+            },
+            onChangeClick = { item ->
+                openActivity<EditorsChoiceAddActivity>(
+                    extras = arrayOf(DATA.EDITORS_CHOICE_ID to item.position.toString(), DATA.OLD_ID to item.song?.id)
+                )
+            },
+            onRemoveClick = { item ->
+                item.song?.let { song ->
+                    dialogOptionDelete(
+                        song.id, song.name ?: "", DATA.EDITORS_CHOICE, DATA.EDITORS_CHOICE,
+                        true, DATA.NULL, DATA.NULL, DATA.NULL, DATA.NULL,
+                        DATA.NULL, DATA.NULL, DATA.NULL, DATA.NULL, DATA.NULL
+                    )
+                }
+            }
+        )
         binding.recyclerView.adapter = adapter
 
-        data
+        observeViewModel()
     }
 
-    val data: Unit
-        get() {
-            list!!.clear()
-            for (i in 0..49)
-                list!!.add(editorsChoice)
-            adapter!!.notifyDataSetChanged()
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.editorsChoiceList.collectLatest { list ->
+                adapter!!.submitList(list)
+            }
         }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
-    }
-
-    override fun onRestart() {
-        data
-        super.onRestart()
-    }
-
-    override fun onResume() {
-        data
-        super.onResume()
+        lifecycleScope.launch {
+            viewModel.isLoading.collectLatest { isLoading ->
+                binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+        }
     }
 }

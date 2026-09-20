@@ -216,4 +216,88 @@ class SongRepository @Inject constructor(
         ref.addValueEventListener(listener)
         awaitClose { ref.removeEventListener(listener) }
     }
+
+    fun getEditorsChoiceSongs(): Flow<List<Song>> = callbackFlow {
+        val ref = database.getReference(DATA.SONGS)
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = mutableListOf<Song>()
+                for (data in snapshot.children) {
+                    val item = data.getValue(Song::class.java)
+                    if (item?.id != null && item.editorsChoice != 0) {
+                        item.key = data.key
+                        list.add(item)
+                    }
+                }
+                trySend(list)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e(error.toException(), "Error getting editors choice songs")
+                close(error.toException())
+            }
+        }
+        ref.addValueEventListener(listener)
+        awaitClose { ref.removeEventListener(listener) }
+    }
+
+    fun getSongsNotInEditorsChoice(orderBy: String): Flow<List<Song>> = callbackFlow {
+        val ref = database.getReference(DATA.SONGS).orderByChild(orderBy)
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = mutableListOf<Song>()
+                for (data in snapshot.children) {
+                    val item = data.getValue(Song::class.java)
+                    if (item?.id != null && item.editorsChoice == 0) {
+                        item.key = data.key
+                        list.add(item)
+                    }
+                }
+                trySend(list)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e(error.toException(), "Error getting songs not in editors choice")
+                close(error.toException())
+            }
+        }
+        ref.addValueEventListener(listener)
+        awaitClose { ref.removeEventListener(listener) }
+    }
+
+    fun getFavoritesNotInEditorsChoice(orderBy: String): Flow<List<Song>> = callbackFlow {
+        val favoritesRef = database.getReference(DATA.FAVORITES).child(DATA.FirebaseUserUid)
+        val songsRef = database.getReference(DATA.SONGS).orderByChild(orderBy)
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(favoritesSnapshot: DataSnapshot) {
+                val favoriteIds = favoritesSnapshot.children.mapNotNull { it.key }
+                songsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(songsSnapshot: DataSnapshot) {
+                        val list = mutableListOf<Song>()
+                        for (data in songsSnapshot.children) {
+                            val item = data.getValue(Song::class.java)
+                            if (item?.id != null && favoriteIds.contains(item.id) && item.editorsChoice == 0) {
+                                item.key = data.key
+                                list.add(item)
+                            }
+                        }
+                        trySend(list)
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        Timber.e(error.toException(), "Error getting favorites not in editors choice")
+                        close(error.toException())
+                    }
+                })
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e(error.toException(), "Error getting favorites list")
+                close(error.toException())
+            }
+        }
+        favoritesRef.addValueEventListener(listener)
+        awaitClose { favoritesRef.removeEventListener(listener) }
+    }
 }

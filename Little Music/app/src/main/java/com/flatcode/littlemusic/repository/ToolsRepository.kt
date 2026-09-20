@@ -33,15 +33,16 @@ class ToolsRepository @Inject constructor() {
         awaitClose { reference.removeEventListener(listener) }
     }
 
-    fun getSliderCount(): Flow<Int> = callbackFlow {
+    fun getSliderImages(): Flow<List<String>> = callbackFlow {
         val reference = database.getReference(DATA.SLIDER_SHOW)
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.childrenCount.toInt())
+                val images = snapshot.children.mapNotNull { it.child(DATA.IMAGE).value?.toString() }
+                trySend(images)
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Timber.e(error.toException(), "getSliderCount failed")
+                Timber.e(error.toException(), "getSliderImages failed")
                 close(error.toException())
             }
         }

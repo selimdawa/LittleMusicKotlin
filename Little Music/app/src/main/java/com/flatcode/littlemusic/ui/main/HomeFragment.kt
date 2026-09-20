@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -13,8 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jean.jcplayer.model.JcAudio
-import com.flatcode.littlemusic.model.Category
-import com.flatcode.littlemusic.model.Song
+import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
+import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
+import com.flatcode.littlemusic.ui.category.CategorySongsActivity
+import com.flatcode.littlemusic.utils.checkFavorite
+import com.flatcode.littlemusic.utils.checkLove
 import com.flatcode.littlemusic.ui.showmore.ShowMoreActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.openActivity
@@ -57,51 +61,90 @@ class HomeFragment : Fragment() {
         observeViewModel()
 
         viewModel.loadCategories()
-        viewModel.loadSliderCount()
+        viewModel.loadSliderImages()
         viewModel.loadSongs()
 
         return binding.root
     }
 
     private fun setupAdapters() {
-        categoryAdapter = CategoryHomeAdapter(context, arrayListOf())
+        categoryAdapter = CategoryHomeAdapter { category ->
+            context?.openActivity<CategorySongsActivity>(
+                extras = arrayOf(
+                    DATA.CATEGORY_ID to category.id,
+                    DATA.CATEGORY_NAME to category.name
+                )
+            )
+        }
         binding.recyclerCategory.adapter = categoryAdapter
 
-        adapter = SongMainAdapter(context, arrayListOf(), { _, position ->
-            changeSelectedSong(position, adapter)
-            binding.player.jcPlayer.playAudio(jcAudios[position])
-            changeSelectedSong(-1, adapter2)
-            changeSelectedSong(-1, adapter3)
-            changeSelectedSong(-1, adapter4)
-        }) { _, _ -> binding.player.jcPlayer.pause() }
+        adapter = SongMainAdapter(
+            onPlayClick = { _, position -> playSong(position, adapter, adapter2, adapter3, adapter4) },
+            onPauseClick = { _, _ -> binding.player.jcPlayer.pause() },
+            onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
+            onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
+            onArtistClick = { id, name -> openArtistSongs(id, name) },
+            onAlbumClick = { id, name, image -> openAlbumSongs(id, name, image) },
+            onCategoryClick = { id, name -> openCategorySongs(id, name) }
+        )
         binding.recyclerView.adapter = adapter
 
-        adapter2 = SongMainAdapter(context, arrayListOf(), { _, position ->
-            changeSelectedSong(position, adapter2)
-            changeSelectedSong(-1, adapter)
-            changeSelectedSong(-1, adapter3)
-            changeSelectedSong(-1, adapter4)
-            binding.player.jcPlayer.playAudio(jcAudios[position])
-        }) { _, _ -> binding.player.jcPlayer.pause() }
+        adapter2 = SongMainAdapter(
+            onPlayClick = { _, position -> playSong(position, adapter2, adapter, adapter3, adapter4) },
+            onPauseClick = { _, _ -> binding.player.jcPlayer.pause() },
+            onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
+            onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
+            onArtistClick = { id, name -> openArtistSongs(id, name) },
+            onAlbumClick = { id, name, image -> openAlbumSongs(id, name, image) },
+            onCategoryClick = { id, name -> openCategorySongs(id, name) }
+        )
         binding.recyclerView2.adapter = adapter2
 
-        adapter3 = SongMainAdapter(context, arrayListOf(), { _, position ->
-            changeSelectedSong(position, adapter3)
-            changeSelectedSong(-1, adapter)
-            changeSelectedSong(-1, adapter2)
-            changeSelectedSong(-1, adapter4)
-            binding.player.jcPlayer.playAudio(jcAudios[position])
-        }) { _, _ -> binding.player.jcPlayer.pause() }
+        adapter3 = SongMainAdapter(
+            onPlayClick = { _, position -> playSong(position, adapter3, adapter, adapter2, adapter4) },
+            onPauseClick = { _, _ -> binding.player.jcPlayer.pause() },
+            onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
+            onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
+            onArtistClick = { id, name -> openArtistSongs(id, name) },
+            onAlbumClick = { id, name, image -> openAlbumSongs(id, name, image) },
+            onCategoryClick = { id, name -> openCategorySongs(id, name) }
+        )
         binding.recyclerView3.adapter = adapter3
 
-        adapter4 = SongMainAdapter(context, arrayListOf(), { _, position ->
-            changeSelectedSong(position, adapter4)
-            changeSelectedSong(-1, adapter)
-            changeSelectedSong(-1, adapter2)
-            changeSelectedSong(-1, adapter3)
-            binding.player.jcPlayer.playAudio(jcAudios[position])
-        }) { _, _ -> binding.player.jcPlayer.pause() }
+        adapter4 = SongMainAdapter(
+            onPlayClick = { _, position -> playSong(position, adapter4, adapter, adapter2, adapter3) },
+            onPauseClick = { _, _ -> binding.player.jcPlayer.pause() },
+            onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
+            onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
+            onArtistClick = { id, name -> openArtistSongs(id, name) },
+            onAlbumClick = { id, name, image -> openAlbumSongs(id, name, image) },
+            onCategoryClick = { id, name -> openCategorySongs(id, name) }
+        )
         binding.recyclerView4.adapter = adapter4
+    }
+
+    private fun playSong(position: Int, current: SongMainAdapter?, vararg others: SongMainAdapter?) {
+        changeSelectedSong(position, current)
+        others.forEach { changeSelectedSong(-1, it) }
+        binding.player.jcPlayer.playAudio(jcAudios[position])
+    }
+
+    private fun openArtistSongs(id: String, name: String) {
+        context?.openActivity<ArtistSongsActivity>(
+            extras = arrayOf(DATA.ARTIST_ID to id, DATA.ARTIST_NAME to name)
+        )
+    }
+
+    private fun openAlbumSongs(id: String, name: String, image: String) {
+        context?.openActivity<AlbumSongsActivity>(
+            extras = arrayOf(DATA.ALBUM_ID to id, DATA.ALBUM_NAME to name, DATA.ALBUM_IMAGE to image)
+        )
+    }
+
+    private fun openCategorySongs(id: String, name: String) {
+        context?.openActivity<CategorySongsActivity>(
+            extras = arrayOf(DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name)
+        )
     }
 
     private fun setupClickListeners() {
@@ -157,15 +200,13 @@ class HomeFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.categories.collect { categories ->
-                        categoryAdapter?.list?.clear()
-                        categoryAdapter?.list?.addAll(categories)
-                        categoryAdapter?.notifyDataSetChanged()
+                        categoryAdapter?.submitList(categories)
                     }
                 }
                 launch {
-                    viewModel.sliderCount.collect { count ->
-                        if (count > 0) {
-                            binding.imageSlider.setSliderAdapter(ImageSliderAdapter(context, count))
+                    viewModel.sliderImages.collect { images ->
+                        if (images.isNotEmpty()) {
+                            binding.imageSlider.setSliderAdapter(ImageSliderAdapter(images))
                         }
                     }
                 }
@@ -197,9 +238,7 @@ class HomeFragment : Fragment() {
         songs: List<Song>, adapter: SongMainAdapter?, bar: ProgressBar?,
         recyclerView: RecyclerView?, empty: TextView?,
     ) {
-        adapter?.list?.clear()
-        adapter?.list?.addAll(songs)
-        adapter?.notifyDataSetChanged()
+        adapter?.setList(songs)
         bar?.visibility = View.GONE
 
         if (songs.isNotEmpty()) {

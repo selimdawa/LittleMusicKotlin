@@ -1,33 +1,32 @@
 package com.flatcode.littlemusicadmin.ui.editorschoice
 
-import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusicadmin.model.Song
+import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.*
 import com.flatcode.littlemusicadmin.databinding.ActivityEditorsChoiceAddBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.addToEditorsChoice
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.text.MessageFormat
 
+@AndroidEntryPoint
 class EditorsChoiceAddActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEditorsChoiceAddBinding
-    var activity: Activity = this@EditorsChoiceAddActivity
-    var item: MutableList<String?>? = null
-    var list: ArrayList<Song?>? = null
-    var adapter: EditorsChoiceSongAdapter? = null
-    var editorsChoiceId: String? = null
-    var type: String? = null
-    var oldId: String? = null
+    private var adapter: EditorsChoiceSongAdapter? = null
+    private var editorsChoiceId: Int = 0
+    private var oldId: String? = null
+    private val viewModel: EditorsChoiceAddViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -35,15 +34,12 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
         binding = ActivityEditorsChoiceAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val intent = intent
-        editorsChoiceId = intent.getStringExtra(DATA.EDITORS_CHOICE_ID)
+        editorsChoiceId = intent.getStringExtra(DATA.EDITORS_CHOICE_ID)?.toInt() ?: 0
         oldId = intent.getStringExtra(DATA.OLD_ID)
-        val id = editorsChoiceId!!.toInt()
 
         binding.toolbar.nameSpace.setText(R.string.editors_choice)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
-        type = DATA.TIMESTAMP
+        binding.toolbar.back.setOnClickListener { finish() }
+        binding.toolbar.close.setOnClickListener { finish() }
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -54,125 +50,68 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
         binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                try {
-                    adapter!!.filter.filter(s)
-                } catch (e: Exception) {
-                    //None
-                }
+                viewModel.setSearchQuery(s.toString())
             }
 
             override fun afterTextChanged(s: Editable) {}
         })
 
-        list = ArrayList()
-        adapter = EditorsChoiceSongAdapter(activity, oldId, list!!, id)
+        adapter = EditorsChoiceSongAdapter { song ->
+            if (oldId != null) {
+                addToEditorsChoice(song.id, editorsChoiceId)
+                addToEditorsChoice(oldId, 0)
+            } else {
+                addToEditorsChoice(song.id, editorsChoiceId)
+            }
+        }
         binding.recyclerView.adapter = adapter
 
-        binding.all.setOnClickListener {
-            type = DATA.TIMESTAMP
-            getData(type)
-        }
-        binding.name.setOnClickListener {
-            type = DATA.NAME
-            getData(type)
-        }
-        binding.mostViews.setOnClickListener {
-            type = DATA.VIEWS_COUNT
-            getData(type)
-        }
-        binding.mostLoves.setOnClickListener {
-            type = DATA.LOVES_COUNT
-            getData(type)
-        }
-        binding.favorites.setOnClickListener {
-            type = DATA.NAME
-            getFavorites(type)
-        }
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        getData(type)
+        binding.all.setOnClickListener { viewModel.setOrderBy(DATA.TIMESTAMP) }
+        binding.name.setOnClickListener { viewModel.setOrderBy(DATA.NAME) }
+        binding.mostViews.setOnClickListener { viewModel.setOrderBy(DATA.VIEWS_COUNT) }
+        binding.mostLoves.setOnClickListener { viewModel.setOrderBy(DATA.LOVES_COUNT) }
+        binding.favorites.setOnClickListener { viewModel.setFavoritesOnly(true) }
+
+        observeViewModel()
     }
 
-    private fun getData(orderBy: String?) {
-        val ref = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
-        ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                list!!.clear()
-                var i = 0
-                for (data in dataSnapshot.children) {
-                    val item = data.getValue(Song::class.java)!!
-                    if (item.id != null) if (item.editorsChoice == 0) {
-                        list!!.add(item)
-                        i++
-                    }
-                }
-                binding.toolbar.number.text = MessageFormat.format("( {0} )", i)
-                adapter!!.notifyDataSetChanged()
-                binding.progress.visibility = View.GONE
-                if (list!!.isNotEmpty()) {
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.songs.collectLatest { songs ->
+                binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
+                adapter!!.submitList(songs)
+                
+                if (songs.isNotEmpty()) {
                     binding.recyclerView.visibility = View.VISIBLE
                     binding.emptyText.visibility = View.GONE
                 } else {
                     binding.recyclerView.visibility = View.GONE
                     binding.emptyText.visibility = View.VISIBLE
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
-    }
-
-    private fun getFavorites(orderBy: String?) {
-        item = ArrayList()
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.FAVORITES)
-            .child(DATA.FirebaseUserUid)
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                (item as ArrayList<String?>).clear()
-                for (snapshot in dataSnapshot.children) {
-                    (item as ArrayList<String?>).add(snapshot.key)
-                }
-                getItems(orderBy)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
-    }
-
-    private fun getItems(orderBy: String?) {
-        val ref: Query = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
-        ref.orderByChild(orderBy!!).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                list!!.clear()
-                for (snapshot in dataSnapshot.children) {
-                    val song = snapshot.getValue(Song::class.java)
-                    for (id in item!!) {
-                        assert(song != null)
-                        if (song!!.id != null) if (song.id == id) if (song.editorsChoice == 0) list!!.add(
-                            song
-                        )
+                    if (!DATA.searchStatus) {
+                        Toast.makeText(this@EditorsChoiceAddActivity, "There is no songs!", Toast.LENGTH_SHORT).show()
                     }
                 }
-                binding.progress.visibility = View.GONE
-                if (list!!.isNotEmpty()) {
-                    binding.recyclerView.visibility = View.VISIBLE
-                    binding.emptyText.visibility = View.GONE
-                } else {
-                    binding.recyclerView.visibility = View.GONE
-                    binding.emptyText.visibility = View.VISIBLE
-                }
-                adapter!!.notifyDataSetChanged()
+                Timber.d("Songs updated: ${songs.size}")
             }
+        }
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+        lifecycleScope.launch {
+            viewModel.isLoading.collectLatest { isLoading ->
+                binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+        }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (DATA.searchStatus) {
             binding.toolbar.toolbar.visibility = View.VISIBLE
             binding.toolbar.toolbarSearch.visibility = View.GONE
             DATA.searchStatus = false
             binding.toolbar.textSearch.setText(DATA.EMPTY)
-        } else super.onBackPressed()
+            viewModel.setSearchQuery("")
+        } else {
+            super.onBackPressed()
+        }
     }
 }

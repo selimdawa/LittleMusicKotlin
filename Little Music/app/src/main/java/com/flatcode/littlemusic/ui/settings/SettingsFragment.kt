@@ -9,10 +9,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import android.app.Activity
 import com.flatcode.littlemusic.ui.profile.ProfileActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.glideImage
 import com.flatcode.littlemusic.utils.openActivity
+import com.flatcode.littlemusic.utils.dialogAboutApp
+import com.flatcode.littlemusic.utils.dialogLogout
+import com.flatcode.littlemusic.utils.rateApp
+import com.flatcode.littlemusic.utils.shareApp
 import com.flatcode.littlemusic.databinding.FragmentSettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -44,7 +49,16 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = SettingAdapter(context, ArrayList())
+        adapter = SettingAdapter { item ->
+            val context = context ?: return@SettingAdapter
+            when (item.id) {
+                "6" -> context.dialogAboutApp()
+                "7" -> context.dialogLogout()
+                "8" -> context.shareApp()
+                "9" -> context.rateApp()
+                else -> context.openActivity<Activity>(c = item.c)
+            }
+        }
         binding.recyclerView.adapter = adapter
     }
 
@@ -62,9 +76,7 @@ class SettingsFragment : Fragment() {
                 }
                 launch {
                     viewModel.settings.collect { settings ->
-                        adapter?.list?.clear()
-                        adapter?.list?.addAll(settings)
-                        adapter?.notifyDataSetChanged()
+                        adapter?.submitList(settings)
                     }
                 }
             }

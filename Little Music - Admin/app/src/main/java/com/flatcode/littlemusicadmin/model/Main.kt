@@ -1,19 +1,17 @@
 package com.flatcode.littlemusicadmin.model
 
-import android.content.Context
-
 class Main {
     var title: String? = null
     var image = 0
     var number = 0
-    var navigate: ((Context) -> Unit)? = null
+    var c: Class<*>? = null
 
     constructor()
 
-    constructor(image: Int, title: String?, number: Int, navigate: ((Context) -> Unit)?) {
+    constructor(image: Int, title: String?, number: Int, c: Class<*>?) {
         this.image = image
         this.number = number
         this.title = title
-        this.navigate = navigate
+        this.c = c
     }
 }

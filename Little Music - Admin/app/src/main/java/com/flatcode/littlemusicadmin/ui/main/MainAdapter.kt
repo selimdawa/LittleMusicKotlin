@@ -1,53 +1,59 @@
 package com.flatcode.littlemusicadmin.ui.main
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.flatcode.littlemusicadmin.model.Main
+import androidx.core.view.isVisible
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.DATA
 import com.flatcode.littlemusicadmin.databinding.ItemMainBinding
-import java.text.MessageFormat
+import com.flatcode.littlemusicadmin.model.Main
 
-class MainAdapter(private val context: Context, var list: List<Main>) :
-    RecyclerView.Adapter<MainAdapter.ViewHolder>() {
+class MainAdapter(private val onItemClick: (Main) -> Unit) :
+    ListAdapter<Main, MainAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemMainBinding.inflate(LayoutInflater.from(context), parent, false)
+        val binding = ItemMainBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val model = list[position]
-        val image = model.image
-        val number = model.number
-        val name = model.title
-        //String id = list.getId();
+        val model = getItem(position)
+        holder.bind(model, onItemClick)
+    }
 
-        if (image != 0) {
-            holder.binding.image.setImageResource(image)
-        } else {
-            holder.binding.image.setImageResource(R.drawable.ic_load)
-        }
+    class ViewHolder(private val binding: ItemMainBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(model: Main, onItemClick: (Main) -> Unit) {
+            val image = model.image
+            val number = model.number
+            val name = model.title
 
-        if (number != 0) {
-            holder.binding.number.visibility = View.VISIBLE
-            holder.binding.number.text = MessageFormat.format("{0}{1}", DATA.EMPTY, number)
-        } else {
-            holder.binding.number.visibility = View.GONE
-        }
+            if (image != 0) {
+                binding.image.setImageResource(image)
+            } else {
+                binding.image.setImageResource(R.drawable.ic_load)
+            }
 
-        holder.binding.name.text = name
-        holder.itemView.setOnClickListener {
-            model.navigate?.invoke(context)
+            binding.number.isVisible = number != 0
+            binding.number.text = "$number"
+
+            binding.name.text = name
+            itemView.setOnClickListener {
+                onItemClick(model)
+            }
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Main>() {
+            override fun areItemsTheSame(oldItem: Main, newItem: Main): Boolean =
+                oldItem.title == newItem.title
 
-    inner class ViewHolder(val binding: ItemMainBinding) : RecyclerView.ViewHolder(binding.root)
+            override fun areContentsTheSame(oldItem: Main, newItem: Main): Boolean =
+                oldItem.image == newItem.image &&
+                        oldItem.number == newItem.number &&
+                        oldItem.title == newItem.title
+        }
+    }
 }

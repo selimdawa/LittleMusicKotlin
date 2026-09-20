@@ -1,6 +1,7 @@
 package com.flatcode.littlemusicadmin.ui.main
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -63,7 +64,11 @@ class MainFragment : Fragment() {
         }
 
         list = ArrayList()
-        adapter = MainAdapter(mContext, list as ArrayList<Main>)
+        adapter = MainAdapter { model ->
+            if (model.c != null) {
+                mContext.startActivity(Intent(mContext, model.c))
+            }
+        }
         binding.recyclerView.adapter = adapter
 
         observeViewModel()
@@ -101,35 +106,22 @@ class MainFragment : Fragment() {
         users: Int, songs: Int, editorsChoice: Int, categories: Int, sliderShow: Int,
         albums: Int, artists: Int, favorites: Int,
     ) {
-        list!!.clear()
-        val item1 = Main(R.drawable.ic_person, "Users", users) { it.openActivity<UsersActivity>() }
-        val item2 = Main(R.drawable.ic_add, "Add Song", 0) { it.openActivity<SongAddActivity>() }
-        val item3 = Main(R.drawable.ic_music, "Songs", songs) { it.openActivity<SongsActivity>() }
-        val item4 = Main(R.drawable.ic_users, "Editors Choice", editorsChoice) { it.openActivity<EditorsChoiceActivity>() }
-        val item5 = Main(R.drawable.ic_add_category, "Add Category", 0) { it.openActivity<CategoryAddActivity>() }
-        val item6 = Main(R.drawable.ic_category_gray, "Categories", categories) { it.openActivity<CategoriesActivity>() }
-        val item7 = Main(R.drawable.ic_slider, "Slider Show", sliderShow) { it.openActivity<SliderShowActivity>() }
-        val item8 = Main(R.drawable.ic_adds, "Add Album", 0) { it.openActivity<AlbumAddActivity>() }
-        val item9 = Main(R.drawable.ic_album, "Albums", albums) { it.openActivity<AlbumsActivity>() }
-        val item10 = Main(R.drawable.ic__add, "Add Artist", 0) { it.openActivity<ArtistAddActivity>() }
-        val item11 = Main(R.drawable.ic_mic, "Artists", artists) { it.openActivity<ArtistsActivity>() }
-        val item12 = Main(R.drawable.ic_star_selected, "Favorites", favorites) { it.openActivity<FavoritesActivity>() }
-        val item13 = Main(R.drawable.ic_privacy_policy, "Privacy Policy", 0) { it.openActivity<PrivacyPolicyActivity>() }
-        
-        list!!.add(item1)
-        list!!.add(item2)
-        list!!.add(item3)
-        list!!.add(item4)
-        list!!.add(item5)
-        list!!.add(item6)
-        list!!.add(item7)
-        list!!.add(item8)
-        list!!.add(item9)
-        list!!.add(item10)
-        list!!.add(item11)
-        list!!.add(item12)
-        list!!.add(item13)
-        adapter!!.notifyDataSetChanged()
+        val list = mutableListOf<Main>()
+        list.add(Main(R.drawable.ic_person, "Users", users, UsersActivity::class.java))
+        list.add(Main(R.drawable.ic_add, "Add Song", 0, SongAddActivity::class.java))
+        list.add(Main(R.drawable.ic_music, "Songs", songs, SongsActivity::class.java))
+        list.add(Main(R.drawable.ic_users, "Editors Choice", editorsChoice, EditorsChoiceActivity::class.java))
+        list.add(Main(R.drawable.ic_add_category, "Add Category", 0, CategoryAddActivity::class.java))
+        list.add(Main(R.drawable.ic_category_gray, "Categories", categories, CategoriesActivity::class.java))
+        list.add(Main(R.drawable.ic_slider, "Slider Show", sliderShow, SliderShowActivity::class.java))
+        list.add(Main(R.drawable.ic_adds, "Add Album", 0, AlbumAddActivity::class.java))
+        list.add(Main(R.drawable.ic_album, "Albums", albums, AlbumsActivity::class.java))
+        list.add(Main(R.drawable.ic__add, "Add Artist", 0, ArtistAddActivity::class.java))
+        list.add(Main(R.drawable.ic_mic, "Artists", artists, ArtistsActivity::class.java))
+        list.add(Main(R.drawable.ic_star_selected, "Favorites", favorites, FavoritesActivity::class.java))
+        list.add(Main(R.drawable.ic_privacy_policy, "Privacy Policy", 0, PrivacyPolicyActivity::class.java))
+
+        adapter!!.submitList(list)
     }
 
     override fun onDestroyView() {

@@ -17,8 +17,15 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import android.widget.ImageView
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.ui.song.SongAdapter
+import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
+import com.flatcode.littlemusic.ui.category.CategorySongsActivity
+import com.flatcode.littlemusic.utils.checkFavorite
+import com.flatcode.littlemusic.utils.checkLove
+import com.flatcode.littlemusic.utils.openActivity
+import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.glideBlur
@@ -125,11 +132,24 @@ class AlbumSongsActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = SongAdapter(this, ArrayList()) { _, position ->
-            changeSelectedSong(position)
-            binding.player.jcPlayer.playAudio(jcAudios[position])
-            binding.player.jcPlayer.visibility = View.VISIBLE
-        }
+        adapter = SongAdapter(
+            onItemClick = { _, position ->
+                changeSelectedSong(position)
+                binding.player.jcPlayer.playAudio(jcAudios[position])
+                binding.player.jcPlayer.visibility = View.VISIBLE
+            },
+            onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
+            onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
+            onArtistClick = { id, name ->
+                openActivity<ArtistSongsActivity>(extras = arrayOf(DATA.ARTIST_ID to id, DATA.ARTIST_NAME to name))
+            },
+            onAlbumClick = { id, name, image ->
+                openActivity<AlbumSongsActivity>(extras = arrayOf(DATA.ALBUM_ID to id, DATA.ALBUM_NAME to name, DATA.ALBUM_IMAGE to image))
+            },
+            onCategoryClick = { id, name ->
+                openActivity<CategorySongsActivity>(extras = arrayOf(DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name))
+            }
+        )
         binding.recyclerView.adapter = adapter
     }
 
@@ -138,9 +158,7 @@ class AlbumSongsActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.songs.collect { songs ->
-                        adapter?.list?.clear()
-                        adapter?.list?.addAll(songs)
-                        adapter?.notifyDataSetChanged()
+                        adapter?.setList(songs)
                         binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
                         
                         jcAudios.clear()

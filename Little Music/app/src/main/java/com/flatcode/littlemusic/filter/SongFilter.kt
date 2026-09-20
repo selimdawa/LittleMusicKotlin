@@ -5,7 +5,7 @@ import com.flatcode.littlemusic.ui.song.SongAdapter
 import com.flatcode.littlemusic.model.Song
 import java.util.*
 
-class SongFilter(var list: ArrayList<Song?>, var adapter: SongAdapter) : Filter() {
+class SongFilter(var list: List<Song>, var adapter: SongAdapter) : Filter() {
     override fun performFiltering(constraint: CharSequence): FilterResults {
         var constraint: CharSequence? = constraint
         val results = FilterResults()
@@ -13,8 +13,8 @@ class SongFilter(var list: ArrayList<Song?>, var adapter: SongAdapter) : Filter(
             constraint = constraint.toString().uppercase(Locale.getDefault())
             val filter = ArrayList<Song>()
             for (i in list.indices) {
-                if (list[i]!!.name!!.uppercase(Locale.getDefault()).contains(constraint)) {
-                    filter.add(list[i]!!)
+                if (list[i].name!!.uppercase(Locale.getDefault()).contains(constraint)) {
+                    filter.add(list[i])
                 }
             }
             results.count = filter.size
@@ -27,7 +27,6 @@ class SongFilter(var list: ArrayList<Song?>, var adapter: SongAdapter) : Filter(
     }
 
     override fun publishResults(constraint: CharSequence, results: FilterResults) {
-        adapter.list = (results.values as ArrayList<Song?>)
-        adapter.notifyDataSetChanged()
+        adapter.submitList(results.values as ArrayList<Song>)
     }
 }

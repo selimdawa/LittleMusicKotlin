@@ -1,86 +1,56 @@
 package com.flatcode.littlemusicadmin.ui.album
 
-import android.app.Activity
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.flatcode.littlemusicadmin.ui.song.AlbumSongsActivity
-import com.flatcode.littlemusicadmin.filter.AlbumFilter
-import com.flatcode.littlemusicadmin.model.Album
-import com.flatcode.littlemusicadmin.utils.*
+import androidx.core.view.isVisible
 import com.flatcode.littlemusicadmin.databinding.ItemAlbumBinding
-import java.text.MessageFormat
+import com.flatcode.littlemusicadmin.model.Album
+import com.flatcode.littlemusicadmin.utils.glide
 
-class AlbumAdapter(private val activity: Activity, var list: ArrayList<Album?>) :
-    RecyclerView.Adapter<AlbumAdapter.ViewHolder>(), Filterable {
-
-    var filterList: ArrayList<Album?>
-    private var filter: AlbumFilter? = null
+class AlbumAdapter(
+    private val onItemClick: (Album) -> Unit,
+    private val onMoreClick: (Album) -> Unit
+) : ListAdapter<Album, AlbumAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemAlbumBinding.inflate(LayoutInflater.from(activity), parent, false)
+        val binding = ItemAlbumBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = DATA.EMPTY + item!!.id
-        val name = DATA.EMPTY + item.name
-        val image = DATA.EMPTY + item.image
-        val artistId = DATA.EMPTY + item.artistId
-        val categoryId = DATA.EMPTY + item.categoryId
-        val interestedCount = DATA.EMPTY + item.interestedCount
-        val songsCount = DATA.EMPTY + item.songsCount
+        val item = getItem(position) ?: return
+        holder.bind(item, onItemClick, onMoreClick)
+    }
 
-        holder.binding.image.glide(false, image)
+    class ViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Album, onItemClick: (Album) -> Unit, onMoreClick: (Album) -> Unit) {
+            binding.image.glide(false, item.image)
+            binding.name.isVisible = !item.name.isNullOrEmpty()
+            binding.name.text = item.name
 
-        if (name == DATA.EMPTY) {
-            holder.binding.name.visibility = View.GONE
-        } else {
-            holder.binding.name.visibility = View.VISIBLE
-            holder.binding.name.text = name
-        }
+            binding.numberInterested.text = "${item.interestedCount}"
+            binding.numberSongs.text = "${item.songsCount}"
 
-        if (interestedCount == DATA.EMPTY) holder.binding.numberInterested.text = MessageFormat.format(
-            "{0}{1}", DATA.EMPTY, DATA.ZERO
-        ) else holder.binding.numberInterested.text = interestedCount
-
-        if (songsCount == DATA.EMPTY) holder.binding.numberSongs.text =
-            MessageFormat.format("{0}{1}", DATA.EMPTY, DATA.ZERO) else holder.binding.numberSongs.text =
-            songsCount
-
-        holder.binding.more.setOnClickListener {
-            item.moreDelete(
-                activity, DATA.ARTISTS, artistId, DATA.ALBUMS_COUNT,
-                DATA.CATEGORIES, categoryId, DATA.ALBUMS_COUNT, DATA.NULL, DATA.NULL, DATA.NULL
-            )
-        }
-        holder.binding.item.setOnClickListener {
-            activity.openActivity<AlbumSongsActivity>(
-                extras = arrayOf(
-                    DATA.ALBUM_ID to id, DATA.ALBUM_NAME to name, DATA.ALBUM_IMAGE to image
-                )
-            )
+            binding.more.setOnClickListener { onMoreClick(item) }
+            binding.item.setOnClickListener { onItemClick(item) }
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Album>() {
+            override fun areItemsTheSame(oldItem: Album, newItem: Album): Boolean =
+                oldItem.id == newItem.id
 
-    override fun getFilter(): Filter {
-        if (filter == null) {
-            filter = AlbumFilter(filterList, this)
+            override fun areContentsTheSame(oldItem: Album, newItem: Album): Boolean =
+                oldItem.name == newItem.name &&
+                        oldItem.image == newItem.image &&
+                        oldItem.artistId == newItem.artistId &&
+                        oldItem.categoryId == newItem.categoryId &&
+                        oldItem.interestedCount == newItem.interestedCount &&
+                        oldItem.songsCount == newItem.songsCount
         }
-        return filter!!
-    }
-
-    inner class ViewHolder(val binding: ItemAlbumBinding) : RecyclerView.ViewHolder(binding.root)
-
-    init {
-        filterList = list
     }
 }

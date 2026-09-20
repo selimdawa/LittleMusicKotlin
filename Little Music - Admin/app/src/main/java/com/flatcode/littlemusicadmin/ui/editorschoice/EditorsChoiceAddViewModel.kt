@@ -1,9 +1,9 @@
-package com.flatcode.littlemusicadmin.ui.artist
+package com.flatcode.littlemusicadmin.ui.editorschoice
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flatcode.littlemusicadmin.model.Artist
-import com.flatcode.littlemusicadmin.repository.ArtistRepository
+import com.flatcode.littlemusicadmin.model.Song
+import com.flatcode.littlemusicadmin.repository.SongRepository
 import com.flatcode.littlemusicadmin.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,18 +17,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ArtistsViewModel @Inject constructor(
-    private val repository: ArtistRepository
+class EditorsChoiceAddViewModel @Inject constructor(
+    private val repository: SongRepository
 ) : ViewModel() {
 
-    private val _artists = MutableStateFlow<List<Artist>>(emptyList())
+    private val _songs = MutableStateFlow<List<Song>>(emptyList())
     private val _searchQuery = MutableStateFlow("")
 
-    val artists: StateFlow<List<Artist>> = combine(_artists, _searchQuery) { artists, query ->
+    val songs: StateFlow<List<Song>> = combine(_songs, _searchQuery) { songs, query ->
         if (query.isEmpty()) {
-            artists
+            songs
         } else {
-            artists.filter {
+            songs.filter {
                 it.name?.contains(query, ignoreCase = true) == true
             }
         }
@@ -38,18 +38,25 @@ class ArtistsViewModel @Inject constructor(
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     private val _orderBy = MutableStateFlow(DATA.TIMESTAMP)
-    val orderBy: StateFlow<String> = _orderBy.asStateFlow()
+    private val _isFavorites = MutableStateFlow(false)
 
     init {
-        fetchArtists()
+        fetchSongs()
     }
 
-    private fun fetchArtists() {
+    private fun fetchSongs() {
         viewModelScope.launch {
-            _orderBy.collectLatest { order ->
+            combine(_orderBy, _isFavorites) { order, isFav ->
+                Pair(order, isFav)
+            }.collectLatest { (order, isFav) ->
                 _isLoading.value = true
-                repository.getArtists(order).collectLatest {
-                    _artists.value = it
+                val flow = if (isFav) {
+                    repository.getFavoritesNotInEditorsChoice(order)
+                } else {
+                    repository.getSongsNotInEditorsChoice(order)
+                }
+                flow.collectLatest {
+                    _songs.value = it
                     _isLoading.value = false
                 }
             }
@@ -57,7 +64,12 @@ class ArtistsViewModel @Inject constructor(
     }
 
     fun setOrderBy(order: String) {
+        _isFavorites.value = false
         _orderBy.value = order
+    }
+
+    fun setFavoritesOnly(isFav: Boolean) {
+        _isFavorites.value = isFav
     }
 
     fun setSearchQuery(query: String) {

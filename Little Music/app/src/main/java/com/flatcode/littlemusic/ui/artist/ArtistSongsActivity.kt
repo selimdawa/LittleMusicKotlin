@@ -16,9 +16,17 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import android.widget.ImageView
+import androidx.activity.OnBackPressedCallback
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.ui.album.AlbumAdapter
+import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
+import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.ui.song.SongAdapter
+import com.flatcode.littlemusic.utils.checkFavorite
+import com.flatcode.littlemusic.utils.checkLove
+import com.flatcode.littlemusic.utils.openActivity
+import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.dialogAboutArtist
@@ -82,14 +90,27 @@ class ArtistSongsActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
+                } else {
+                    finish()
+                }
+            }
+        })
+
         binding.toolbar.nameSpace.text = artistName
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
             binding.toolbar.toolbarSearch.visibility = View.VISIBLE
             DATA.searchStatus = true
         }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -149,14 +170,34 @@ class ArtistSongsActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerViews() {
-        albumAdapter = AlbumAdapter(this, ArrayList())
+        albumAdapter = AlbumAdapter(
+            onItemClick = { album ->
+                this@ArtistSongsActivity.openActivity<AlbumSongsActivity>(
+                    extras = arrayOf(DATA.ALBUM_ID to album.id, DATA.ALBUM_NAME to album.name, DATA.ALBUM_IMAGE to album.image)
+                )
+            },
+            onInterestedClick = { album, view -> (view as? ImageView)?.checkInterested(DATA.ALBUMS, album.id) }
+        )
         binding.recyclerAlbums.adapter = albumAdapter
 
-        songAdapter = SongAdapter(this, ArrayList()) { _, position ->
-            changeSelectedSong(position)
-            binding.player.jcPlayer.playAudio(jcAudios[position])
-            binding.player.jcPlayer.visibility = View.VISIBLE
-        }
+        songAdapter = SongAdapter(
+            onItemClick = { _, position ->
+                changeSelectedSong(position)
+                binding.player.jcPlayer.playAudio(jcAudios[position])
+                binding.player.jcPlayer.visibility = View.VISIBLE
+            },
+            onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
+            onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
+            onArtistClick = { id, name ->
+                this@ArtistSongsActivity.openActivity<ArtistSongsActivity>(extras = arrayOf(DATA.ARTIST_ID to id, DATA.ARTIST_NAME to name))
+            },
+            onAlbumClick = { id, name, image ->
+                this@ArtistSongsActivity.openActivity<AlbumSongsActivity>(extras = arrayOf(DATA.ALBUM_ID to id, DATA.ALBUM_NAME to name, DATA.ALBUM_IMAGE to image))
+            },
+            onCategoryClick = { id, name ->
+                this@ArtistSongsActivity.openActivity<CategorySongsActivity>(extras = arrayOf(DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name))
+            }
+        )
         binding.recyclerSongs.adapter = songAdapter
     }
 
@@ -166,9 +207,7 @@ class ArtistSongsActivity : AppCompatActivity() {
                 launch {
                     viewModel.albums.collect { albums ->
                         if (isAlbum) {
-                            albumAdapter?.list?.clear()
-                            albumAdapter?.list?.addAll(albums)
-                            albumAdapter?.notifyDataSetChanged()
+                            albumAdapter?.setList(albums)
                             binding.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
                             binding.progress.visibility = View.GONE
                             if (albums.isNotEmpty()) {
@@ -184,9 +223,7 @@ class ArtistSongsActivity : AppCompatActivity() {
                 launch {
                     viewModel.songs.collect { songs ->
                         if (isSong) {
-                            songAdapter?.list?.clear()
-                            songAdapter?.list?.addAll(songs)
-                            songAdapter?.notifyDataSetChanged()
+                            songAdapter?.setList(songs)
                             binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
                             
                             jcAudios.clear()
@@ -223,15 +260,6 @@ class ArtistSongsActivity : AppCompatActivity() {
             it.notifyItemChanged(previousSelected)
             it.notifyItemChanged(index)
         }
-    }
-
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding.toolbar.toolbar.visibility = View.VISIBLE
-            binding.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding.toolbar.textSearch.setText(DATA.EMPTY)
-        } else super.onBackPressed()
     }
 
     override fun onPause() {

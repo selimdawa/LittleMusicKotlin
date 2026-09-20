@@ -1,6 +1,4 @@
 package com.flatcode.littlemusicadmin.ui.artist
-
-import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,23 +7,23 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemusicadmin.model.Artist
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.DATA
 import com.flatcode.littlemusicadmin.databinding.ActivityArtistsBinding
+import com.flatcode.littlemusicadmin.ui.song.ArtistSongsActivity
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.moreDelete
+import com.flatcode.littlemusicadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.text.MessageFormat
 import timber.log.Timber
+import java.text.MessageFormat
 
 @AndroidEntryPoint
 class ArtistsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityArtistsBinding
-    var activity: Activity = this@ArtistsActivity
-    var list: ArrayList<Artist?>? = null
-    var adapter: ArtistAdapter? = null
+    private var adapter: ArtistAdapter? = null
     private val viewModel: ArtistsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,8 +33,8 @@ class ArtistsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.artists)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { finish() }
+        binding.toolbar.close.setOnClickListener { finish() }
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -47,35 +45,38 @@ class ArtistsActivity : AppCompatActivity() {
         binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                try {
-                    adapter!!.filter.filter(s)
-                } catch (e: Exception) {
-                    Timber.e(e, "Error filtering artists")
-                }
+                viewModel.setSearchQuery(s.toString())
             }
 
             override fun afterTextChanged(s: Editable) {}
         })
 
-        list = ArrayList()
-        adapter = ArtistAdapter(activity, list!!)
+        adapter = ArtistAdapter(
+            onItemClick = { artist ->
+                openActivity<ArtistSongsActivity>(
+                    extras = arrayOf(
+                        DATA.ARTIST_ID to artist.id,
+                        DATA.ARTIST_NAME to artist.name,
+                        DATA.ARTIST_IMAGE to artist.image,
+                        DATA.ARTIST_ABOUT to artist.aboutTheArtist
+                    )
+                )
+            },
+            onMoreClick = { artist ->
+                artist.moreDelete(
+                    this, DATA.NULL, DATA.NULL, DATA.NULL,
+                    DATA.NULL, DATA.NULL, DATA.NULL,
+                    DATA.NULL, DATA.NULL, DATA.NULL
+                )
+            }
+        )
         binding.recyclerView.adapter = adapter
 
-        binding.switchBar.all.setOnClickListener {
-            viewModel.setOrderBy(DATA.TIMESTAMP)
-        }
-        binding.switchBar.mostSongs.setOnClickListener {
-            viewModel.setOrderBy(DATA.SONGS_COUNT)
-        }
-        binding.switchBar.mostAlbums.setOnClickListener {
-            viewModel.setOrderBy(DATA.ALBUMS_COUNT)
-        }
-        binding.switchBar.mostInterested.setOnClickListener {
-            viewModel.setOrderBy(DATA.INTERESTED_COUNT)
-        }
-        binding.switchBar.name.setOnClickListener {
-            viewModel.setOrderBy(DATA.NAME)
-        }
+        binding.switchBar.all.setOnClickListener { viewModel.setOrderBy(DATA.TIMESTAMP) }
+        binding.switchBar.mostSongs.setOnClickListener { viewModel.setOrderBy(DATA.SONGS_COUNT) }
+        binding.switchBar.mostAlbums.setOnClickListener { viewModel.setOrderBy(DATA.ALBUMS_COUNT) }
+        binding.switchBar.mostInterested.setOnClickListener { viewModel.setOrderBy(DATA.INTERESTED_COUNT) }
+        binding.switchBar.name.setOnClickListener { viewModel.setOrderBy(DATA.NAME) }
 
         observeViewModel()
     }
@@ -83,10 +84,8 @@ class ArtistsActivity : AppCompatActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.artists.collectLatest { artists ->
-                list!!.clear()
-                list!!.addAll(artists)
                 binding.toolbar.number.text = MessageFormat.format("( {0} )", artists.size)
-                adapter!!.notifyDataSetChanged()
+                adapter!!.submitList(artists)
 
                 if (artists.isNotEmpty()) {
                     binding.recyclerView.visibility = View.VISIBLE
@@ -112,17 +111,12 @@ class ArtistsActivity : AppCompatActivity() {
             binding.toolbar.toolbarSearch.visibility = View.GONE
             DATA.searchStatus = false
             binding.toolbar.textSearch.setText(DATA.EMPTY)
+            viewModel.setSearchQuery("")
         } else if (DATA.isChange) {
             onResume()
             DATA.isChange = false
-        } else super.onBackPressed()
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-    }
-
-    override fun onResume() {
-        super.onResume()
+        } else {
+            super.onBackPressed()
+        }
     }
 }

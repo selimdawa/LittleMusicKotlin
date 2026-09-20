@@ -28,7 +28,6 @@ class ArtistSongsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityArtistSongsBinding
     var activity: Activity = this@ArtistSongsActivity
-    var albumList: ArrayList<Album?>? = null
     var albumAdapter: AlbumAdapter? = null
     var songList: ArrayList<Song?>? = null
     var songAdapter: SongAdapter? = null
@@ -80,8 +79,7 @@ class ArtistSongsActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        albumList = ArrayList()
-        albumAdapter = AlbumAdapter(activity, albumList!!)
+        albumAdapter = AlbumAdapter(activity)
         binding.recyclerAlbums.adapter = albumAdapter
 
         initSongs()
@@ -144,9 +142,8 @@ class ArtistSongsActivity : AppCompatActivity() {
     }
 
     private fun initSongs() {
-        songList = ArrayList()
         jcAudios = ArrayList()
-        songAdapter = SongAdapter(activity, songList!!) { _, position: Int ->
+        songAdapter = SongAdapter(activity) { _, position: Int ->
             changeSelectedSong(position)
             binding.player.jcPlayer.playAudio(jcAudios!![position])
             binding.player.jcPlayer.visibility = View.VISIBLE
@@ -158,10 +155,8 @@ class ArtistSongsActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.albums.collectLatest { albums ->
                 if (isAlbum) {
-                    albumList!!.clear()
-                    albumList!!.addAll(albums)
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
-                    albumAdapter!!.notifyDataSetChanged()
+                    albumAdapter!!.submitFullList(albums)
                     updateVisibility()
                 }
             }
@@ -171,10 +166,8 @@ class ArtistSongsActivity : AppCompatActivity() {
             viewModel.songs.collectLatest { songs ->
                 if (isSong) {
                     changeSelectedSong(-1)
-                    songList!!.clear()
                     jcAudios!!.clear()
                     for (item in songs) {
-                        songList!!.add(item)
                         val name = item.name
                         val songLink = item.songLink
                         if (name != null && songLink != null) {
@@ -182,7 +175,7 @@ class ArtistSongsActivity : AppCompatActivity() {
                         }
                     }
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
-                    songAdapter!!.notifyDataSetChanged()
+                    songAdapter!!.submitFullList(songs)
                     if (songs.isNotEmpty()) {
                         binding.player.jcPlayer.initPlaylist(jcAudios!!, null)
                     }
@@ -201,7 +194,7 @@ class ArtistSongsActivity : AppCompatActivity() {
     private fun updateVisibility() {
         if (isAlbum) {
             binding.recyclerSongs.visibility = View.GONE
-            if (albumList!!.isNotEmpty()) {
+            if (albumAdapter!!.itemCount > 0) {
                 binding.recyclerAlbums.visibility = View.VISIBLE
                 binding.emptyText.visibility = View.GONE
             } else {
@@ -210,7 +203,7 @@ class ArtistSongsActivity : AppCompatActivity() {
             }
         } else {
             binding.recyclerAlbums.visibility = View.GONE
-            if (songList!!.isNotEmpty()) {
+            if (songAdapter!!.itemCount > 0) {
                 binding.recyclerSongs.visibility = View.VISIBLE
                 binding.emptyText.visibility = View.GONE
             } else {

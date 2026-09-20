@@ -1,6 +1,5 @@
 package com.flatcode.littlemusicadmin.ui.user
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,23 +8,22 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemusicadmin.model.User
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.DATA
 import com.flatcode.littlemusicadmin.databinding.ActivityUsersBinding
+import com.flatcode.littlemusicadmin.ui.profile.ProfileActivity
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.text.MessageFormat
 import timber.log.Timber
+import java.text.MessageFormat
 
 @AndroidEntryPoint
 class UsersActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUsersBinding
-    private val context: Context = this@UsersActivity
-    var list: ArrayList<User?>? = null
-    var adapter: UserAdapter? = null
+    private var adapter: UserAdapter? = null
     private val viewModel: UsersViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,8 +33,8 @@ class UsersActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.users)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { finish() }
+        binding.toolbar.close.setOnClickListener { finish() }
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -47,18 +45,15 @@ class UsersActivity : AppCompatActivity() {
         binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                try {
-                    adapter!!.filter.filter(s)
-                } catch (e: Exception) {
-                    Timber.e(e, "Error filtering users")
-                }
+                viewModel.setSearchQuery(s.toString())
             }
 
             override fun afterTextChanged(s: Editable) {}
         })
 
-        list = ArrayList()
-        adapter = UserAdapter(context, list!!)
+        adapter = UserAdapter { user ->
+            openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to user.id))
+        }
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener {
@@ -74,10 +69,8 @@ class UsersActivity : AppCompatActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.users.collectLatest { users ->
-                list!!.clear()
-                list!!.addAll(users)
                 binding.toolbar.number.text = MessageFormat.format("( {0} )", users.size)
-                adapter!!.notifyDataSetChanged()
+                adapter!!.submitList(users)
 
                 if (users.isNotEmpty()) {
                     binding.recyclerView.visibility = View.VISIBLE
@@ -97,20 +90,16 @@ class UsersActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (DATA.searchStatus) {
             binding.toolbar.toolbar.visibility = View.VISIBLE
             binding.toolbar.toolbarSearch.visibility = View.GONE
             DATA.searchStatus = false
             binding.toolbar.textSearch.setText(DATA.EMPTY)
-        } else super.onBackPressed()
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onRestart() {
-        super.onRestart()
+            viewModel.setSearchQuery("")
+        } else {
+            super.onBackPressed()
+        }
     }
 }

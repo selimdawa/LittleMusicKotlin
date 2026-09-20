@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemCategoryMainBinding
 import com.flatcode.littlemusic.model.Category
@@ -12,41 +14,47 @@ import com.flatcode.littlemusic.utils.glideBlur
 import com.flatcode.littlemusic.utils.glideImage
 import com.flatcode.littlemusic.utils.openActivity
 
-class CategoryMainAdapter(private val context: Context?, var list: ArrayList<Category?>) :
-    RecyclerView.Adapter<CategoryMainAdapter.ViewHolder>() {
+class CategoryMainAdapter(
+    private val onItemClick: (Category) -> Unit
+) : ListAdapter<Category, CategoryMainAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCategoryMainBinding.inflate(LayoutInflater.from(context), parent, false)
+        val binding = ItemCategoryMainBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = DATA.EMPTY + item!!.id
-        val name = DATA.EMPTY + item.name
-        val image = DATA.EMPTY + item.image
+        holder.bind(getItem(position))
+    }
 
-        val binding = holder.binding
-        binding.image.glideImage(image, false)
-        binding.imageBlur.glideBlur(image, 50, false)
+    inner class ViewHolder(private val binding: ItemCategoryMainBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Category) {
+            val name = item.name ?: ""
+            val image = item.image ?: ""
 
-        if (name == DATA.EMPTY) {
-            binding.name.visibility = View.GONE
-        } else {
-            binding.name.visibility = View.VISIBLE
-            binding.name.text = name
-        }
+            binding.image.glideImage(image, false)
+            binding.imageBlur.glideBlur(image, 50, false)
 
-        binding.card.setOnClickListener {
-            context?.openActivity<CategorySongsActivity>(
-                extras = arrayOf(DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name)
-            )
+            if (name.isEmpty()) {
+                binding.name.visibility = View.GONE
+            } else {
+                binding.name.visibility = View.VISIBLE
+                binding.name.text = name
+            }
+
+            binding.card.setOnClickListener { onItemClick(item) }
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    companion object {
+        private val DiffCallback = object : DiffUtil.ItemCallback<Category>() {
+            override fun areItemsTheSame(oldItem: Category, newItem: Category): Boolean {
+                return oldItem.id == newItem.id
+            }
 
-    inner class ViewHolder(val binding: ItemCategoryMainBinding) : RecyclerView.ViewHolder(binding.root)
+            override fun areContentsTheSame(oldItem: Category, newItem: Category): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
 }

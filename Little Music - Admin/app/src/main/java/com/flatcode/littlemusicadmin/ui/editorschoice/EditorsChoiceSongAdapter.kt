@@ -1,78 +1,57 @@
 package com.flatcode.littlemusicadmin.ui.editorschoice
 
-import android.app.Activity
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.flatcode.littlemusicadmin.model.Song
-import com.flatcode.littlemusicadmin.utils.*
+import androidx.core.view.isVisible
 import com.flatcode.littlemusicadmin.databinding.ItemEditorsChoiceBinding
+import com.flatcode.littlemusicadmin.model.Song
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.dataName
 
-class EditorsChoiceSongAdapter(
-    private val activity: Activity, var oldId: String?, var list: ArrayList<Song?>, number: Int,
-) : RecyclerView.Adapter<EditorsChoiceSongAdapter.ViewHolder>(), Filterable {
-
-    var filterList: ArrayList<Song?>
-    private var filter: EditorsChoiceFilter? = null
-    var number: Int
+class EditorsChoiceSongAdapter(private val onAddClick: (Song) -> Unit) :
+    ListAdapter<Song, EditorsChoiceSongAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemEditorsChoiceBinding.inflate(LayoutInflater.from(activity), parent, false)
+        val binding = ItemEditorsChoiceBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-        val id = DATA.EMPTY + item!!.id
-        val name = DATA.EMPTY + item.name
-        val nrViews = DATA.EMPTY + item.viewsCount
-        val nrLoves = DATA.EMPTY + item.lovesCount
-        val artistId = DATA.EMPTY + item.artistId
-        val albumId = DATA.EMPTY + item.albumId
-        val categoryId = DATA.EMPTY + item.categoryId
+        val item = getItem(position) ?: return
+        holder.bind(item, onAddClick)
+    }
 
-        if (name == DATA.EMPTY) {
-            holder.binding.name.visibility = View.GONE
-        } else {
-            holder.binding.name.visibility = View.VISIBLE
-            holder.binding.name.text = name
-        }
+    class ViewHolder(private val binding: ItemEditorsChoiceBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Song, onAddClick: (Song) -> Unit) {
+            binding.name.isVisible = !item.name.isNullOrEmpty()
+            binding.name.text = item.name
 
-        holder.binding.nrViews.text = nrViews
-        holder.binding.nrLoves.text = nrLoves
+            binding.nrViews.text = item.viewsCount.toString()
+            binding.nrLoves.text = item.lovesCount.toString()
 
-        holder.binding.artist.dataName(DATA.ARTISTS, artistId)
-        holder.binding.album.dataName(DATA.ALBUMS, albumId)
-        holder.binding.category.dataName(DATA.CATEGORIES, categoryId)
+            binding.artist.dataName(DATA.ARTISTS, item.artistId)
+            binding.album.dataName(DATA.ALBUMS, item.albumId)
+            binding.category.dataName(DATA.CATEGORIES, item.categoryId)
 
-        holder.binding.add.setOnClickListener {
-            if (oldId != null) {
-                activity.addToEditorsChoice(id, number)
-                activity.addToEditorsChoice(oldId, 0)
-            } else {
-                activity.addToEditorsChoice(id, number)
-            }
+            binding.add.setOnClickListener { onAddClick(item) }
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Song>() {
+            override fun areItemsTheSame(oldItem: Song, newItem: Song): Boolean =
+                oldItem.id == newItem.id
 
-    override fun getFilter(): Filter {
-        if (filter == null) {
-            filter = EditorsChoiceFilter(filterList, this)
+            override fun areContentsTheSame(oldItem: Song, newItem: Song): Boolean =
+                oldItem.name == newItem.name &&
+                        oldItem.viewsCount == newItem.viewsCount &&
+                        oldItem.lovesCount == newItem.lovesCount &&
+                        oldItem.artistId == newItem.artistId &&
+                        oldItem.albumId == newItem.albumId &&
+                        oldItem.categoryId == newItem.categoryId
         }
-        return filter!!
-    }
-
-    inner class ViewHolder(val binding: ItemEditorsChoiceBinding) : RecyclerView.ViewHolder(binding.root)
-
-    init {
-        filterList = list
-        this.number = number
     }
 }
