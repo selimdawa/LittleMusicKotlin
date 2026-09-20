@@ -47,7 +47,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.datastore.preferences)   //DataStore
+    implementation(libs.androidx.fragment.ktx)
     //Layout
     implementation(libs.material)
     implementation(libs.multicolors)
@@ -55,41 +55,30 @@ dependencies {
     implementation(libs.coil)                           //Coil Image
     implementation(libs.coil.network.okhttp)
     api(libs.android.image.cropper)                     //Image Crop
-    // Firebase
+    //Firebase
     implementation(platform(libs.firebase.bom)) //Firebase BOM
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
+    //Cloudinary
     implementation(libs.cloudinary.android)
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
-
-    // MVVM - Lifecycle
+    //MVVM
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     //Coroutines
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.core)
-
-    // Hilt
+    //Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-
-    // Room
+    //Room
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
-
-    // Navigation
+    //Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-
     //Other
     implementation(libs.material.ripple)                //Ripple Effect
     implementation(libs.jcplayer)                       //JcPlayer
     implementation(libs.multiwaveheader)                //Wave
     implementation(libs.timber)
-    //Test
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }
 
 ksp {
