@@ -18,9 +18,13 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
-import com.theartofdev.edmodo.cropper.CropImage
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import java.util.Objects
 
 class ProfileEditActivity : AppCompatActivity() {
@@ -30,6 +34,16 @@ class ProfileEditActivity : AppCompatActivity() {
     var context: Context = also { activity = it }
     private var imageUri: Uri? = null
     private var dialog: ProgressDialog? = null
+
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            imageUri = result.uriContent
+            binding.profileImage.setImageURI(imageUri)
+        } else {
+            val error = result.error
+            Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -44,7 +58,21 @@ class ProfileEditActivity : AppCompatActivity() {
         loadUserInfo()
         binding.toolbar.nameSpace.setText(R.string.edit_profile)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.image.setOnClickListener { activity?.cropImageSquare() }
+        binding.image.setOnClickListener { 
+            cropImage.launch(
+                CropImageContractOptions(
+                    uri = null,
+                    cropImageOptions = CropImageOptions(
+                        minCropResultWidth = DATA.MIX_SQUARE,
+                        minCropResultHeight = DATA.MIX_SQUARE,
+                        aspectRatioX = 1,
+                        aspectRatioY = 1,
+                        fixAspectRatio = true,
+                        cropShape = CropImageView.CropShape.OVAL
+                    )
+                )
+            )
+        }
         binding.go.setOnClickListener { validateData() }
     }
 
@@ -66,20 +94,32 @@ class ProfileEditActivity : AppCompatActivity() {
         dialog!!.setMessage("Uploading Image...")
         dialog!!.show()
         val filePathAndName = "Images/Profile/" + DATA.FirebaseUserUid
-        val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATA.DOT + imageUri!!.getFileExtension(context))
-        reference.putFile(imageUri!!)
-            .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
-                val uriTask = taskSnapshot.storage.downloadUrl
-                while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATA.EMPTY + uriTask.result
-                updateProfile(uploadedImageUrl)
-            }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(
-                    context, "Failed to upload image due to " + e.message, Toast.LENGTH_SHORT
-                ).show()
-            }
+
+        try {
+            MediaManager.get().upload(imageUri)
+                .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+                .option("public_id", filePathAndName)
+                .callback(object : UploadCallback {
+                    override fun onStart(requestId: String) {}
+                    override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
+                    override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                        val uploadedImageUrl = resultData["secure_url"]?.toString() ?: ""
+                        updateProfile(uploadedImageUrl)
+                    }
+                    override fun onError(requestId: String, error: ErrorInfo?) {
+                        dialog!!.dismiss()
+                        Toast.makeText(
+                            context, "Failed to upload image due to " + error?.description, Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    override fun onReschedule(requestId: String, error: ErrorInfo?) {
+                        dialog!!.dismiss()
+                    }
+                }).dispatch()
+        } catch (e: Exception) {
+            dialog!!.dismiss()
+            Toast.makeText(context, "Error: " + e.message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun updateProfile(imageUrl: String?) {
@@ -87,7 +127,7 @@ class ProfileEditActivity : AppCompatActivity() {
         dialog!!.show()
         val hashMap = HashMap<String?, Any>()
         hashMap[DATA.USER_NAME] = DATA.EMPTY + username
-        if (imageUri != null) {
+        if (imageUri != null && imageUrl!!.isNotEmpty()) {
             hashMap[DATA.PROFILE_IMAGE] = DATA.EMPTY + imageUrl
         }
         val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)
@@ -95,6 +135,7 @@ class ProfileEditActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 dialog!!.dismiss()
                 Toast.makeText(context, "Profile updated...", Toast.LENGTH_SHORT).show()
+                finish()
             }.addOnFailureListener { e: Exception ->
                 dialog!!.dismiss()
                 Toast.makeText(
@@ -116,28 +157,5 @@ class ProfileEditActivity : AppCompatActivity() {
 
                 override fun onCancelled(error: DatabaseError) {}
             })
-    }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
-            val uri = CropImage.getPickImageResultUri(context, data)
-            if (CropImage.isReadExternalStoragePermissionsRequired(context, uri)) {
-                imageUri = uri
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
-            } else {
-                activity?.cropImageSquare()
-            }
-        }
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == RESULT_OK) {
-                imageUri = result.uri
-                binding.profileImage.setImageURI(imageUri)
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                val error = result.error
-                Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 }

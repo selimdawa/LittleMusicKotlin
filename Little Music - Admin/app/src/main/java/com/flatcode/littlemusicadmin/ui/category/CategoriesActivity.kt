@@ -9,10 +9,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemusicadmin.model.Category
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.DATA
 import com.flatcode.littlemusicadmin.databinding.ActivityCategoriesBinding
+import com.flatcode.littlemusicadmin.ui.song.CategorySongsActivity
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.moreDelete
+import com.flatcode.littlemusicadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,9 +25,8 @@ import timber.log.Timber
 class CategoriesActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCategoriesBinding
-    var activity: Activity = this@CategoriesActivity
-    var list: ArrayList<Category?>? = null
-    var adapter: CategoryAdapter? = null
+    private val activity: Activity = this@CategoriesActivity
+    private lateinit var adapter: CategoryAdapter
     private val viewModel: CategoriesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,18 +48,26 @@ class CategoriesActivity : AppCompatActivity() {
         binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                try {
-                    adapter!!.filter.filter(s)
-                } catch (e: Exception) {
-                    Timber.e(e, "Error filtering categories")
-                }
+                viewModel.setSearchQuery(s.toString())
             }
-
             override fun afterTextChanged(s: Editable) {}
         })
 
-        list = ArrayList()
-        adapter = CategoryAdapter(activity, list!!)
+        adapter = CategoryAdapter(
+            onItemClick = { category ->
+                openActivity<CategorySongsActivity>(
+                    extras = arrayOf(
+                        DATA.CATEGORY_ID to category.id,
+                        DATA.CATEGORY_NAME to category.name
+                    )
+                )
+            },
+            onMoreClick = { category ->
+                category.moreDelete(
+                    activity, null, null, null, null, null, null, null, null, null
+                )
+            }
+        )
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener {
@@ -83,10 +92,8 @@ class CategoriesActivity : AppCompatActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.categories.collectLatest { categories ->
-                list!!.clear()
-                list!!.addAll(categories)
                 binding.toolbar.number.text = MessageFormat.format("( {0} )", categories.size)
-                adapter!!.notifyDataSetChanged()
+                adapter.submitList(categories)
 
                 if (categories.isNotEmpty()) {
                     binding.recyclerView.visibility = View.VISIBLE
@@ -112,17 +119,10 @@ class CategoriesActivity : AppCompatActivity() {
             binding.toolbar.toolbarSearch.visibility = View.GONE
             DATA.searchStatus = false
             binding.toolbar.textSearch.setText(DATA.EMPTY)
+            viewModel.setSearchQuery(DATA.EMPTY)
         } else if (DATA.isChange) {
             onResume()
             DATA.isChange = false
         } else super.onBackPressed()
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 }

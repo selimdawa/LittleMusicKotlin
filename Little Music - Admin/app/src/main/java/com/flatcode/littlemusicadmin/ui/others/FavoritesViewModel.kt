@@ -7,9 +7,12 @@ import com.flatcode.littlemusicadmin.repository.SongRepository
 import com.flatcode.littlemusicadmin.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +22,17 @@ class FavoritesViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _favorites = MutableStateFlow<List<Song>>(emptyList())
-    val favorites: StateFlow<List<Song>> = _favorites.asStateFlow()
+    private val _searchQuery = MutableStateFlow("")
+
+    val favorites: StateFlow<List<Song>> = combine(_favorites, _searchQuery) { favorites, query ->
+        if (query.isEmpty()) {
+            favorites
+        } else {
+            favorites.filter {
+                it.name?.contains(query, ignoreCase = true) == true
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -45,5 +58,9 @@ class FavoritesViewModel @Inject constructor(
 
     fun setOrderBy(order: String) {
         _orderBy.value = order
+    }
+
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
     }
 }

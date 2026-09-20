@@ -23,6 +23,7 @@ import com.flatcode.littlemusic.ui.showmore.ShowMoreActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.FragmentHomeBinding
+import com.flatcode.littlemusic.model.Song
 import dagger.hilt.android.AndroidEntryPoint
 import io.selimdawa.autoimageslider.SliderAnimations
 import io.selimdawa.autoimageslider.view.model.IndicatorAnimationType

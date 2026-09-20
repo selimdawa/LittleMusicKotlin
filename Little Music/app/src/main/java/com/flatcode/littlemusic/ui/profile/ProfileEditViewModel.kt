@@ -3,12 +3,14 @@ package com.flatcode.littlemusic.ui.profile
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.flatcode.littlemusic.repository.UserRepository
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.getFileExtension
 import com.flatcode.littlemusic.ui.BaseViewModel
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,8 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileEditViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val database: FirebaseDatabase,
-    private val storage: FirebaseStorage
+    private val database: FirebaseDatabase
 ) : BaseViewModel() {
 
     private val _username = MutableStateFlow("")
@@ -58,20 +59,29 @@ class ProfileEditViewModel @Inject constructor(
 
     private fun uploadImage(name: String, imageUri: Uri, context: Context) {
         _updateStatus.value = UpdateStatus.Loading("Uploading Image...")
-        val filePathAndName = "Images/Profile/" + DATA.FirebaseUserUid
-        val extension = imageUri.getFileExtension(context)
-        val reference = storage.getReference("$filePathAndName.$extension")
         
-        reference.putFile(imageUri)
-            .addOnSuccessListener { taskSnapshot ->
-                taskSnapshot.storage.downloadUrl.addOnSuccessListener { uri ->
-                    saveToDatabase(name, uri.toString())
-                }.addOnFailureListener { e ->
-                    _updateStatus.value = UpdateStatus.Error("Failed to get download URL: ${e.message}")
+        MediaManager.get().upload(imageUri)
+            .option("folder", "Images/Profile/")
+            .option("public_id", DATA.FirebaseUserUid)
+            .callback(object : UploadCallback {
+                override fun onStart(requestId: String) {
                 }
-            }.addOnFailureListener { e ->
-                _updateStatus.value = UpdateStatus.Error("Failed to upload image: ${e.message}")
-            }
+
+                override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
+                }
+
+                override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                    val imageUrl = resultData["secure_url"] as String
+                    saveToDatabase(name, imageUrl)
+                }
+
+                override fun onError(requestId: String, error: ErrorInfo) {
+                    _updateStatus.value = UpdateStatus.Error("Failed to upload image: ${error.description}")
+                }
+
+                override fun onReschedule(requestId: String, error: ErrorInfo) {
+                }
+            }).dispatch()
     }
 
     private fun saveToDatabase(name: String, imageUrl: String?) {

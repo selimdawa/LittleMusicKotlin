@@ -83,7 +83,7 @@ class RegisterActivity : AppCompatActivity() {
                         is RegisterViewModel.RegisterStatus.Success -> {
                             dialog!!.dismiss()
                             Toast.makeText(this@RegisterActivity, "Account created...", Toast.LENGTH_SHORT).show()
-                            this@RegisterActivity.openActivity<MainActivity>(true)
+                            this@RegisterActivity.openActivity<MainActivity>(clear = true)
                             finish()
                         }
                         is RegisterViewModel.RegisterStatus.Error -> {

@@ -95,3 +95,7 @@ dependencies {
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
+
+configurations.all {
+    exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
+}

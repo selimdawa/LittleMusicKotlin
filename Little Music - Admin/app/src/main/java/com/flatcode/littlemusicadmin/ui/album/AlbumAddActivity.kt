@@ -17,7 +17,10 @@ import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumAddBinding
 import com.flatcode.littlemusicadmin.utils.*
-import com.theartofdev.edmodo.cropper.CropImage
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -39,6 +42,16 @@ class AlbumAddActivity : AppCompatActivity() {
     private var selectedArtistId: String? = null
     private var selectedArtistTitle: String? = null
 
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            imageUri = result.uriContent
+            binding.image.setImageURI(imageUri)
+        } else {
+            val error = result.error
+            Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -57,7 +70,21 @@ class AlbumAddActivity : AppCompatActivity() {
     private fun initUI() {
         binding.toolbar.nameSpace.setText(R.string.add_new_album)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.image.setOnClickListener { activity?.cropImageSquare() }
+        binding.image.setOnClickListener { 
+            cropImage.launch(
+                CropImageContractOptions(
+                    uri = null,
+                    cropImageOptions = CropImageOptions(
+                        minCropResultWidth = DATA.MIX_SQUARE,
+                        minCropResultHeight = DATA.MIX_SQUARE,
+                        aspectRatioX = 1,
+                        aspectRatioY = 1,
+                        fixAspectRatio = true,
+                        cropShape = CropImageView.CropShape.OVAL
+                    )
+                )
+            )
+        }
         binding.category.setOnClickListener { categoryPickDialog() }
         binding.artist.setOnClickListener { artistPickDialog() }
         binding.toolbar.ok.setOnClickListener { validateData() }
@@ -148,28 +175,5 @@ class AlbumAddActivity : AppCompatActivity() {
                 selectedArtistId = artists[which].id
                 binding.artist.text = selectedArtistTitle
             }.show()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
-            val uri = CropImage.getPickImageResultUri(context, data)
-            if (CropImage.isReadExternalStoragePermissionsRequired(context, uri)) {
-                imageUri = uri
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
-            } else {
-                activity?.cropImageSquare()
-            }
-        }
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == RESULT_OK) {
-                imageUri = result.uri
-                binding.image.setImageURI(imageUri)
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                val error = result.error
-                Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 }

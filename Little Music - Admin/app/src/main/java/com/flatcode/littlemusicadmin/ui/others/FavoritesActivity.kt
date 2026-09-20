@@ -11,11 +11,19 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.jean.jcplayer.model.JcAudio
-import com.flatcode.littlemusicadmin.ui.song.SongAdapter
-import com.flatcode.littlemusicadmin.model.Song
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.DATA
 import com.flatcode.littlemusicadmin.databinding.ActivityPageSongSwitchBinding
+import com.flatcode.littlemusicadmin.model.Song
+import com.flatcode.littlemusicadmin.ui.song.AlbumSongsActivity
+import com.flatcode.littlemusicadmin.ui.song.ArtistSongsActivity
+import com.flatcode.littlemusicadmin.ui.song.CategorySongsActivity
+import com.flatcode.littlemusicadmin.ui.song.SongAdapter
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.checkFavorite
+import com.flatcode.littlemusicadmin.utils.checkLove
+import com.flatcode.littlemusicadmin.utils.incrementViewCount
+import com.flatcode.littlemusicadmin.utils.moreDelete
+import com.flatcode.littlemusicadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -50,11 +58,7 @@ class FavoritesActivity : AppCompatActivity() {
         binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                try {
-                    adapter!!.filter.filter(s)
-                } catch (e: Exception) {
-                    Timber.e(e, "Error filtering favorites")
-                }
+                viewModel.setSearchQuery(s.toString())
             }
 
             override fun afterTextChanged(s: Editable) {}
@@ -79,11 +83,42 @@ class FavoritesActivity : AppCompatActivity() {
 
     private fun init() {
         jcAudios = ArrayList()
-        adapter = SongAdapter(activity) { _, position: Int ->
-            changeSelectedSong(position)
-            binding.player.jcPlayer.playAudio(jcAudios!![position])
-            binding.player.jcPlayer.visibility = View.VISIBLE
-        }
+        adapter = SongAdapter(
+            onItemClick = { song, position ->
+                changeSelectedSong(position)
+                binding.player.jcPlayer.playAudio(jcAudios!![position])
+                binding.player.jcPlayer.visibility = View.VISIBLE
+                song.id.incrementViewCount()
+            },
+            onFavoriteClick = { song, view ->
+                view.checkFavorite(song.id)
+            },
+            onLoveClick = { song, view ->
+                view.checkLove(song.id)
+            },
+            onMoreClick = { song ->
+                song.moreDelete(
+                    activity, DATA.ARTISTS, song.artistId, DATA.SONGS_COUNT,
+                    DATA.CATEGORIES, song.categoryId, DATA.SONGS_COUNT,
+                    DATA.ALBUMS, song.albumId, DATA.SONGS_COUNT
+                )
+            },
+            onArtistClick = { artistId ->
+                activity.openActivity<ArtistSongsActivity>(
+                    extras = arrayOf(DATA.ARTIST_ID to artistId)
+                )
+            },
+            onAlbumClick = { albumId ->
+                activity.openActivity<AlbumSongsActivity>(
+                    extras = arrayOf(DATA.ALBUM_ID to albumId)
+                )
+            },
+            onCategoryClick = { categoryId ->
+                activity.openActivity<CategorySongsActivity>(
+                    extras = arrayOf(DATA.CATEGORY_ID to categoryId)
+                )
+            }
+        )
         binding.recyclerView.adapter = adapter
     }
 
@@ -100,7 +135,7 @@ class FavoritesActivity : AppCompatActivity() {
                     }
                 }
                 binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
-                adapter!!.submitFullList(songs)
+                adapter!!.submitList(songs)
 
                 if (songs.isNotEmpty()) {
                     binding.recyclerView.visibility = View.VISIBLE
@@ -137,6 +172,7 @@ class FavoritesActivity : AppCompatActivity() {
             binding.toolbar.toolbarSearch.visibility = View.GONE
             DATA.searchStatus = false
             binding.toolbar.textSearch.setText(DATA.EMPTY)
+            viewModel.setSearchQuery("")
         } else if (DATA.isChange) {
             onResume()
             DATA.isChange = false

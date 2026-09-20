@@ -18,10 +18,14 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
-import com.theartofdev.edmodo.cropper.CropImage
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import java.text.MessageFormat
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 
 class SliderShowActivity : AppCompatActivity() {
 
@@ -32,6 +36,35 @@ class SliderShowActivity : AppCompatActivity() {
     private var dialog: ProgressDialog? = null
     private var IMAGE_NUMBER = 0
     private var item = 0
+
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            imageUri = result.uriContent
+            uploadImage(DATA.EMPTY + IMAGE_NUMBER)
+        } else {
+            val error = result.error
+            Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun startSliderCrop(num: Int) {
+        IMAGE_NUMBER = num
+        cropImage.launch(
+            CropImageContractOptions(
+                uri = null,
+                cropImageOptions = CropImageOptions(
+                    minCropResultWidth = DATA.MIX_SLIDER_X,
+                    minCropResultHeight = DATA.MIX_SLIDER_Y,
+                    aspectRatioX = 16,
+                    aspectRatioY = 9,
+                    fixAspectRatio = true,
+                    cropShape = CropImageView.CropShape.OVAL,
+                    guidelines = CropImageView.Guidelines.ON,
+                    multiTouchEnabled = true
+                )
+            )
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -46,86 +79,27 @@ class SliderShowActivity : AppCompatActivity() {
         dialog!!.setTitle("Please wait...")
         dialog!!.setCanceledOnTouchOutside(false)
 
-        binding.addOne.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 1
-        }
-        binding.addTwo.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 2
-        }
-        binding.addThree.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 3
-        }
-        binding.addFour.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 4
-        }
-        binding.addFive.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 5
-        }
-        binding.addSix.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 6
-        }
-        binding.addSeven.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 7
-        }
-        binding.addEight.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 8
-        }
-        binding.addNine.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 9
-        }
-        binding.addTeen.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 10
-        }
-        binding.addEleven.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 11
-        }
-        binding.addTwelfth.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 12
-        }
-        binding.addThirteen.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 13
-        }
-        binding.addFourteenth.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 14
-        }
-        binding.addFifteenth.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 15
-        }
-        binding.addSixteen.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 16
-        }
-        binding.addSeventeen.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 17
-        }
-        binding.addEighteen.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 18
-        }
-        binding.addNineteen.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 19
-        }
-        binding.addTwenty.setOnClickListener {
-            activity?.cropImageSlider()
-            IMAGE_NUMBER = 20
-        }
+        binding.addOne.setOnClickListener { startSliderCrop(1) }
+        binding.addTwo.setOnClickListener { startSliderCrop(2) }
+        binding.addThree.setOnClickListener { startSliderCrop(3) }
+        binding.addFour.setOnClickListener { startSliderCrop(4) }
+        binding.addFive.setOnClickListener { startSliderCrop(5) }
+        binding.addSix.setOnClickListener { startSliderCrop(6) }
+        binding.addSeven.setOnClickListener { startSliderCrop(7) }
+        binding.addEight.setOnClickListener { startSliderCrop(8) }
+
+        binding.addNine.setOnClickListener { startSliderCrop(9) }
+        binding.addTeen.setOnClickListener { startSliderCrop(10) }
+        binding.addEleven.setOnClickListener { startSliderCrop(11) }
+        binding.addTwelfth.setOnClickListener { startSliderCrop(12) }
+        binding.addThirteen.setOnClickListener { startSliderCrop(13) }
+        binding.addFourteenth.setOnClickListener { startSliderCrop(14) }
+        binding.addFifteenth.setOnClickListener { startSliderCrop(15) }
+        binding.addSixteen.setOnClickListener { startSliderCrop(16) }
+        binding.addSeventeen.setOnClickListener { startSliderCrop(17) }
+        binding.addEighteen.setOnClickListener { startSliderCrop(18) }
+        binding.addNineteen.setOnClickListener { startSliderCrop(19) }
+        binding.addTwenty.setOnClickListener { startSliderCrop(20) }
 
         nrSliderShow
         sliderShow()
@@ -301,18 +275,30 @@ class SliderShowActivity : AppCompatActivity() {
         dialog!!.setMessage("Posting photo...")
         dialog!!.show()
         val filePathAndName = "Images/SliderShow/" + (DATA.EMPTY + name)
-        val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATA.DOT + imageUri!!.getFileExtension(context))
-        reference.putFile(imageUri!!)
-            .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
-                val uriTask = taskSnapshot.storage.downloadUrl
-                while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATA.EMPTY + uriTask.result
-                updateImage(uploadedImageUrl, DATA.EMPTY + name)
-            }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(context, "Error! " + e.message, Toast.LENGTH_SHORT).show()
-            }
+
+        try {
+            MediaManager.get().upload(imageUri)
+                .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+                .option("public_id", filePathAndName)
+                .callback(object : UploadCallback {
+                    override fun onStart(requestId: String) {}
+                    override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
+                    override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                        val uploadedImageUrl = resultData["secure_url"]?.toString() ?: ""
+                        updateImage(uploadedImageUrl, DATA.EMPTY + name)
+                    }
+                    override fun onError(requestId: String, error: ErrorInfo?) {
+                        dialog!!.dismiss()
+                        Toast.makeText(context, "Error! " + error?.description, Toast.LENGTH_SHORT).show()
+                    }
+                    override fun onReschedule(requestId: String, error: ErrorInfo?) {
+                        dialog!!.dismiss()
+                    }
+                }).dispatch()
+        } catch (e: Exception) {
+            dialog!!.dismiss()
+            Toast.makeText(context, "Error! " + e.message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun updateImage(imageUrl: String, name: String) {
@@ -329,29 +315,6 @@ class SliderShowActivity : AppCompatActivity() {
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()
             Toast.makeText(context, "Error! " + e.message, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
-            val uri = CropImage.getPickImageResultUri(context, data)
-            if (CropImage.isReadExternalStoragePermissionsRequired(context, uri)) {
-                imageUri = uri
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
-            } else {
-                activity?.cropImageSlider()
-            }
-        }
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == RESULT_OK) {
-                imageUri = result.uri
-                uploadImage(DATA.EMPTY + IMAGE_NUMBER)
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                val error = result.error
-                Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
-            }
         }
     }
 

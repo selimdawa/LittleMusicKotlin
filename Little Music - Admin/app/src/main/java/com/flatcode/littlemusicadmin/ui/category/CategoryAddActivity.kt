@@ -14,11 +14,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.utils.*
 import com.flatcode.littlemusicadmin.databinding.ActivityCategoryAddBinding
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
-import com.theartofdev.edmodo.cropper.CropImage
 
 class CategoryAddActivity : AppCompatActivity() {
 
@@ -27,6 +31,16 @@ class CategoryAddActivity : AppCompatActivity() {
     var context: Context = also { activity = it }
     private var imageUri: Uri? = null
     private var dialog: ProgressDialog? = null
+
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            imageUri = result.uriContent
+            binding.image.setImageURI(imageUri)
+        } else {
+            val error = result.error
+            Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -40,7 +54,21 @@ class CategoryAddActivity : AppCompatActivity() {
 
         binding.toolbar.nameSpace.setText(R.string.add_new_category)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.image.setOnClickListener { activity?.cropImageSquare() }
+        binding.image.setOnClickListener { 
+            cropImage.launch(
+                CropImageContractOptions(
+                    uri = null,
+                    cropImageOptions = CropImageOptions(
+                        minCropResultWidth = DATA.MIX_SQUARE,
+                        minCropResultHeight = DATA.MIX_SQUARE,
+                        aspectRatioX = 1,
+                        aspectRatioY = 1,
+                        fixAspectRatio = true,
+                        cropShape = CropImageView.CropShape.OVAL
+                    )
+                )
+            )
+        }
         binding.toolbar.ok.setOnClickListener { validateData() }
     }
 
@@ -65,20 +93,32 @@ class CategoryAddActivity : AppCompatActivity() {
         val ref = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         val id = ref.push().key
         val filePathAndName = "Images/Category/$id"
-        val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATA.DOT + imageUri!!.getFileExtension(context))
-        reference.putFile(imageUri!!)
-            .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
-                val uriTask = taskSnapshot.storage.downloadUrl
-                while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATA.EMPTY + uriTask.result
-                uploadInfoDB(uploadedImageUrl, id, ref)
-            }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(
-                    context, "Category upload failed due to : " + e.message, Toast.LENGTH_SHORT
-                ).show()
-            }
+
+        try {
+            MediaManager.get().upload(imageUri)
+                .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+                .option("public_id", filePathAndName)
+                .callback(object : UploadCallback {
+                    override fun onStart(requestId: String) {}
+                    override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
+                    override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                        val uploadedImageUrl = resultData["secure_url"]?.toString() ?: ""
+                        uploadInfoDB(uploadedImageUrl, id, ref)
+                    }
+                    override fun onError(requestId: String, error: ErrorInfo?) {
+                        dialog!!.dismiss()
+                        Toast.makeText(
+                            context, "Category upload failed due to : " + error?.description, Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    override fun onReschedule(requestId: String, error: ErrorInfo?) {
+                        dialog!!.dismiss()
+                    }
+                }).dispatch()
+        } catch (e: Exception) {
+            dialog!!.dismiss()
+            Toast.makeText(context, "Error: " + e.message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun uploadInfoDB(uploadedImageUrl: String, id: String?, ref: DatabaseReference) {
@@ -99,34 +139,12 @@ class CategoryAddActivity : AppCompatActivity() {
         ref.child(id!!).setValue(hashMap).addOnSuccessListener {
             dialog!!.dismiss()
             Toast.makeText(context, "Successfully uploaded...", Toast.LENGTH_SHORT).show()
+            finish()
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()
             Toast.makeText(
                 context, "Failure to upload to db due to : " + e.message, Toast.LENGTH_SHORT
             ).show()
-        }
-    }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
-            val uri = CropImage.getPickImageResultUri(context, data)
-            if (CropImage.isReadExternalStoragePermissionsRequired(context, uri)) {
-                imageUri = uri
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
-            } else {
-                activity?.cropImageSquare()
-            }
-        }
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == RESULT_OK) {
-                imageUri = result.uri
-                binding.image.setImageURI(imageUri)
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                val error = result.error
-                Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
-            }
         }
     }
 }

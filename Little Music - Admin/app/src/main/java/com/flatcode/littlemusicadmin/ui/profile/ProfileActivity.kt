@@ -36,7 +36,7 @@ class ProfileActivity : AppCompatActivity() {
         if (profileId == DATA.FirebaseUserUid) {
             binding.edit.visibility = View.VISIBLE
             binding.edit.setImageResource(R.drawable.ic_edit_white)
-            binding.edit.setOnClickListener { context.intent1(ProfileEditActivity::class.java) }
+            binding.edit.setOnClickListener { context.openActivity<ProfileEditActivity>() }
             getNrItems(DATA.ALBUMS, binding.numberAlbums)
             getNrItems(DATA.ARTISTS, binding.numberArtists)
             getNrItems(DATA.CATEGORIES, binding.numberCategories)

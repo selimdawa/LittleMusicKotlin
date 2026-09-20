@@ -20,15 +20,14 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageTask
-import com.google.firebase.storage.UploadTask
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 
 class SongAddActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySongAddBinding
     var activity: Activity = this@SongAddActivity
     var audioUri: Uri? = null
-    private var uploadsTask: StorageTask<*>? = null
     var metadataRetriever: MediaMetadataRetriever? = null
 
     //byte[] art;
@@ -130,12 +129,7 @@ class SongAddActivity : AppCompatActivity() {
         if (message == "No file Selected") {
             Toast.makeText(this, "Please selected an image!", Toast.LENGTH_SHORT).show()
         } else {
-            if (uploadsTask != null && uploadsTask!!.isInProgress) {
-                Toast.makeText(this, "Songs uploads in already progress!", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                uploadFile()
-            }
+            uploadFile()
         }
     }
 
@@ -146,22 +140,36 @@ class SongAddActivity : AppCompatActivity() {
         val ref = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         val id = ref.push().key
         val filePathAndName = "Songs/$selectedArtistTitle/$id"
-        val reference = FirebaseStorage.getInstance().getReference(filePathAndName)
-        reference.putFile(audioUri!!)
-            .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
-                val uriTask = taskSnapshot.storage.downloadUrl
-                while (!uriTask.isSuccessful);
-                val uploadedImageUrl = "" + uriTask.result
-                dialog!!.dismiss()
-                Toast.makeText(this, "Ok", Toast.LENGTH_SHORT).show()
-                uploadInfoToDB(uploadedImageUrl, id, ref)
-            }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(this, "Error ! " + e.message, Toast.LENGTH_SHORT).show()
-            }.addOnProgressListener { taskSnapshot: UploadTask.TaskSnapshot ->
-                val progress = 100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount
-                dialog!!.setMessage("uploaded " + progress.toInt() + "%.....")
-            }
+
+        try {
+            MediaManager.get().upload(audioUri)
+                .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+                .option("public_id", filePathAndName)
+                .option("resource_type", "video") // video handles audio files in Cloudinary
+                .callback(object : UploadCallback {
+                    override fun onStart(requestId: String) {}
+                    override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
+                        val progress = 100.0 * bytes / totalBytes
+                        dialog!!.setMessage("uploaded " + progress.toInt() + "%.....")
+                    }
+                    override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                        val uploadedSongUrl = resultData["secure_url"]?.toString() ?: ""
+                        dialog!!.dismiss()
+                        Toast.makeText(this@SongAddActivity, "Ok", Toast.LENGTH_SHORT).show()
+                        uploadInfoToDB(uploadedSongUrl, id, ref)
+                    }
+                    override fun onError(requestId: String, error: ErrorInfo?) {
+                        dialog!!.dismiss()
+                        Toast.makeText(this@SongAddActivity, "Error ! " + error?.description, Toast.LENGTH_SHORT).show()
+                    }
+                    override fun onReschedule(requestId: String, error: ErrorInfo?) {
+                        dialog!!.dismiss()
+                    }
+                }).dispatch()
+        } catch (e: Exception) {
+            dialog!!.dismiss()
+            Toast.makeText(this, "Error ! " + e.message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun uploadInfoToDB(uploadedSongUrl: String, id: String?, ref: DatabaseReference) {

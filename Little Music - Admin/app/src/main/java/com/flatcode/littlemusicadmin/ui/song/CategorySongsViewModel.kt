@@ -8,10 +8,7 @@ import com.flatcode.littlemusicadmin.repository.AlbumRepository
 import com.flatcode.littlemusicadmin.repository.SongRepository
 import com.flatcode.littlemusicadmin.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,11 +18,21 @@ class CategorySongsViewModel @Inject constructor(
     private val songRepository: SongRepository
 ) : ViewModel() {
 
-    private val _albums = MutableStateFlow<List<Album>>(emptyList())
-    val albums: StateFlow<List<Album>> = _albums.asStateFlow()
+    private val _allAlbums = MutableStateFlow<List<Album>>(emptyList())
+    private val _allSongs = MutableStateFlow<List<Song>>(emptyList())
 
-    private val _songs = MutableStateFlow<List<Song>>(emptyList())
-    val songs: StateFlow<List<Song>> = _songs.asStateFlow()
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+
+    val albums: Flow<List<Album>> = combine(_allAlbums, _searchQuery) { list, query ->
+        if (query.isEmpty()) list
+        else list.filter { it.name?.contains(query, ignoreCase = true) == true }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    val songs: Flow<List<Song>> = combine(_allSongs, _searchQuery) { list, query ->
+        if (query.isEmpty()) list
+        else list.filter { it.name?.contains(query, ignoreCase = true) == true }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -48,13 +55,13 @@ class CategorySongsViewModel @Inject constructor(
                     _isLoading.value = true
                     launch {
                         albumRepository.getAlbumsByCategory(id, order).collectLatest {
-                            _albums.value = it
+                            _allAlbums.value = it
                             _isLoading.value = false
                         }
                     }
                     launch {
                         songRepository.getSongsByCategory(id, order).collectLatest {
-                            _songs.value = it
+                            _allSongs.value = it
                             _isLoading.value = false
                         }
                     }
@@ -65,5 +72,9 @@ class CategorySongsViewModel @Inject constructor(
 
     fun setOrderBy(order: String) {
         _orderBy.value = order
+    }
+
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
     }
 }

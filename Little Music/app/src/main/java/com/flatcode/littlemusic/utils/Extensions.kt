@@ -36,8 +36,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
 import java.io.Serializable
 import java.text.MessageFormat
 
@@ -359,11 +357,6 @@ fun TextView.nrLoves(id: String?) {
 
         override fun onCancelled(databaseError: DatabaseError) {}
     })
-}
-
-fun Activity.cropImageSquare() {
-    CropImage.activity().setMinCropResultSize(DATA.MIX_SQUARE, DATA.MIX_SQUARE)
-        .setAspectRatio(1, 1).setCropShape(CropImageView.CropShape.OVAL).start(this)
 }
 
 fun String.incrementViewCount() {

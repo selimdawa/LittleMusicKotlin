@@ -6,31 +6,48 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.resume
 
 @Singleton
 class CommonRepository @Inject constructor(
-    private val database: FirebaseDatabase,
-    private val storage: FirebaseStorage
+    private val database: FirebaseDatabase
 ) {
 
     fun getNewKey(path: String): String? = database.getReference(path).push().key
 
-    suspend fun uploadImage(imageUri: Uri, path: String): String? {
-        return try {
-            val ref = storage.getReference(path)
-            val uploadTask = ref.putFile(imageUri).await()
-            uploadTask.storage.downloadUrl.await().toString()
+    suspend fun uploadImage(imageUri: Uri, path: String): String? = suspendCancellableCoroutine { continuation ->
+        try {
+            MediaManager.get().upload(imageUri)
+                .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+                .option("public_id", path)
+                .callback(object : UploadCallback {
+                    override fun onStart(requestId: String) {}
+                    override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
+                    override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                        val secureUrl = resultData["secure_url"]?.toString()
+                        if (continuation.isActive) continuation.resume(secureUrl)
+                    }
+                    override fun onError(requestId: String, error: ErrorInfo?) {
+                        Timber.e("Cloudinary upload error: ${error?.description}")
+                        if (continuation.isActive) continuation.resume(null)
+                    }
+                    override fun onReschedule(requestId: String, error: ErrorInfo?) {
+                        if (continuation.isActive) continuation.resume(null)
+                    }
+                }).dispatch()
         } catch (e: Exception) {
-            Timber.e(e, "Error uploading image to $path")
-            null
+            Timber.e(e, "Exception uploading image to Cloudinary")
+            if (continuation.isActive) continuation.resume(null)
         }
     }
 

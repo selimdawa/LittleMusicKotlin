@@ -83,4 +83,7 @@
     <string name="desc_remove">Remove</string>
     <string name="desc_change">Change</string>
     <string name="desc_add">Add</string>
+    <string name="close">Close</string>
+    <string name="done">Done</string>
+    <string name="crop_image">Crop Image</string>
 </resources>

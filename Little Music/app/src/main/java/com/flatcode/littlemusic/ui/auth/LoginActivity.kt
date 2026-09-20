@@ -77,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
                         }
                         is LoginViewModel.LoginStatus.Success -> {
                             dialog!!.dismiss()
-                            this@LoginActivity.openActivity<MainActivity>(true)
+                            this@LoginActivity.openActivity<MainActivity>(clear = true)
                         }
                         is LoginViewModel.LoginStatus.Error -> {
                             dialog!!.dismiss()

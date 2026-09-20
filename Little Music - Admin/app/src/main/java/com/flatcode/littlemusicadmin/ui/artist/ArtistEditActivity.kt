@@ -18,9 +18,13 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
-import com.theartofdev.edmodo.cropper.CropImage
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 
 class ArtistEditActivity : AppCompatActivity() {
 
@@ -29,6 +33,16 @@ class ArtistEditActivity : AppCompatActivity() {
     var artistId: String? = null
     private var imageUri: Uri? = null
     private var dialog: ProgressDialog? = null
+
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            imageUri = result.uriContent
+            binding.image.setImageURI(imageUri)
+        } else {
+            val error = result.error
+            Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -45,7 +59,21 @@ class ArtistEditActivity : AppCompatActivity() {
 
         binding.toolbar.nameSpace.setText(R.string.edit_artist)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.image.setOnClickListener { activity.cropImageSquare() }
+        binding.image.setOnClickListener { 
+            cropImage.launch(
+                CropImageContractOptions(
+                    uri = null,
+                    cropImageOptions = CropImageOptions(
+                        minCropResultWidth = DATA.MIX_SQUARE,
+                        minCropResultHeight = DATA.MIX_SQUARE,
+                        aspectRatioX = 1,
+                        aspectRatioY = 1,
+                        fixAspectRatio = true,
+                        cropShape = CropImageView.CropShape.OVAL
+                    )
+                )
+            )
+        }
         binding.toolbar.ok.setOnClickListener { validateData() }
     }
 
@@ -71,20 +99,32 @@ class ArtistEditActivity : AppCompatActivity() {
         dialog!!.setMessage("Updating Artist...")
         dialog!!.show()
         val filePathAndName = "Images/Artists/$artistId"
-        val reference = FirebaseStorage.getInstance()
-            .getReference(filePathAndName + DATA.DOT + imageUri!!.getFileExtension(activity))
-        reference.putFile(imageUri!!)
-            .addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot ->
-                val uriTask = taskSnapshot.storage.downloadUrl
-                while (!uriTask.isSuccessful);
-                val uploadedImageUrl = DATA.EMPTY + uriTask.result
-                update(uploadedImageUrl)
-            }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
-                Toast.makeText(
-                    activity, "Failed to upload image due to " + e.message, Toast.LENGTH_SHORT
-                ).show()
-            }
+
+        try {
+            MediaManager.get().upload(imageUri)
+                .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+                .option("public_id", filePathAndName)
+                .callback(object : UploadCallback {
+                    override fun onStart(requestId: String) {}
+                    override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
+                    override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                        val uploadedImageUrl = resultData["secure_url"]?.toString() ?: ""
+                        update(uploadedImageUrl)
+                    }
+                    override fun onError(requestId: String, error: ErrorInfo?) {
+                        dialog!!.dismiss()
+                        Toast.makeText(
+                            activity, "Failed to upload image due to " + error?.description, Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    override fun onReschedule(requestId: String, error: ErrorInfo?) {
+                        dialog!!.dismiss()
+                    }
+                }).dispatch()
+        } catch (e: Exception) {
+            dialog!!.dismiss()
+            Toast.makeText(activity, "Error: " + e.message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun update(imageUrl: String?) {
@@ -93,13 +133,14 @@ class ArtistEditActivity : AppCompatActivity() {
         val hashMap = HashMap<String?, Any>()
         hashMap[DATA.NAME] = DATA.EMPTY + name
         hashMap[DATA.ABOUT_THE_ARTIST] = DATA.EMPTY + aboutTheArtist
-        if (imageUri != null) {
+        if (imageUri != null && imageUrl!!.isNotEmpty()) {
             hashMap[DATA.IMAGE] = DATA.EMPTY + imageUrl
         }
         val reference = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS)
         reference.child(artistId!!).updateChildren(hashMap).addOnSuccessListener {
             dialog!!.dismiss()
             Toast.makeText(activity, "Artist updated...", Toast.LENGTH_SHORT).show()
+            finish()
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()
             Toast.makeText(activity, "Failed to update db duo to " + e.message, Toast.LENGTH_SHORT)
@@ -123,28 +164,5 @@ class ArtistEditActivity : AppCompatActivity() {
 
             override fun onCancelled(error: DatabaseError) {}
         })
-    }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
-            val uri = CropImage.getPickImageResultUri(activity, data)
-            if (CropImage.isReadExternalStoragePermissionsRequired(activity, uri)) {
-                imageUri = uri
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
-            } else {
-                activity.cropImageSquare()
-            }
-        }
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == RESULT_OK) {
-                imageUri = result.uri
-                binding.image.setImageURI(imageUri)
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                val error = result.error
-                Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 }

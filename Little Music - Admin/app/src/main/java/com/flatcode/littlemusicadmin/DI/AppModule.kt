@@ -1,7 +1,6 @@
 package com.flatcode.littlemusicadmin.di
 
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,8 +14,4 @@ object AppModule {
     @Provides
     @Singleton
     fun provideFirebaseDatabase(): FirebaseDatabase = FirebaseDatabase.getInstance()
-
-    @Provides
-    @Singleton
-    fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
 }

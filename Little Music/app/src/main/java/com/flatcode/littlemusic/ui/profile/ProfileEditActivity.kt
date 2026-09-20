@@ -20,13 +20,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.cropImageSquare
 import com.flatcode.littlemusic.utils.glideImage
 import com.flatcode.littlemusic.databinding.ActivityProfileEditBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import com.theartofdev.edmodo.cropper.CropImage
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 
 @AndroidEntryPoint
 class ProfileEditActivity : AppCompatActivity() {
@@ -35,6 +37,18 @@ class ProfileEditActivity : AppCompatActivity() {
     private val viewModel: ProfileEditViewModel by viewModels()
     private var imageUri: Uri? = null
     private var dialog: ProgressDialog? = null
+
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            imageUri = result.uriContent
+            binding.profileImage.setImageURI(imageUri)
+        } else {
+            val exception = result.error
+            if (exception != null) {
+                Toast.makeText(this, "Error! ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -63,7 +77,22 @@ class ProfileEditActivity : AppCompatActivity() {
 
         binding.toolbar.nameSpace.setText(R.string.edit_profile)
         binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.image.setOnClickListener { this.cropImageSquare() }
+        binding.image.setOnClickListener {
+            cropImage.launch(
+                CropImageContractOptions(
+                    uri = null,
+                    cropImageOptions = CropImageOptions(
+                        guidelines = CropImageView.Guidelines.ON,
+                        aspectRatioX = 1,
+                        aspectRatioY = 1,
+                        fixAspectRatio = true,
+                        cropShape = CropImageView.CropShape.OVAL,
+                        minCropResultWidth = DATA.MIX_SQUARE,
+                        minCropResultHeight = DATA.MIX_SQUARE
+                    )
+                )
+            )
+        }
         binding.go.setOnClickListener {
             viewModel.updateProfile(binding.nameEt.text.toString().trim(), imageUri, this)
         }
@@ -105,29 +134,6 @@ class ProfileEditActivity : AppCompatActivity() {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == RESULT_OK) {
-            val uri = CropImage.getPickImageResultUri(this, data)
-            if (CropImage.isReadExternalStoragePermissionsRequired(this, uri)) {
-                imageUri = uri
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
-            } else {
-                this.cropImageSquare()
-            }
-        }
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == RESULT_OK) {
-                imageUri = result.uri
-                binding!!.profileImage.setImageURI(imageUri)
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                val error = result.error
-                Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
             }
         }
     }

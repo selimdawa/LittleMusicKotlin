@@ -8,6 +8,7 @@ import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import dagger.hilt.android.HiltAndroidApp
 import io.selimdawa.multicolors.MultiColorManager
 import timber.log.Timber
+import com.cloudinary.android.MediaManager
 import com.flatcode.littlemusic.BuildConfig
 import com.flatcode.littlemusic.utils.DATA
 import java.util.Calendar
@@ -21,13 +22,13 @@ class Application : Application(), SingletonImageLoader.Factory {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-    }
 
-    // Cloudinary Initialization
-    val config = mapOf(
-        "cloud_name" to DATA.CLOUDINARY_CLOUD_NAME, "secure" to true
-    )
-    MediaManager.init(this, config)
+        // Cloudinary Initialization
+        val config = mapOf(
+            "cloud_name" to DATA.CLOUDINARY_CLOUD_NAME, "secure" to true
+        )
+        MediaManager.init(this, config)
+    }
 
     override fun newImageLoader(context: coil3.PlatformContext): ImageLoader {
         return ImageLoader.Builder(context)

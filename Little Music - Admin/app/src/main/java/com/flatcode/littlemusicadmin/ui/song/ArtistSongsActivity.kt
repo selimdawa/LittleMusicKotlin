@@ -68,18 +68,30 @@ class ArtistSongsActivity : AppCompatActivity() {
         binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                try {
-                    if (isAlbum) albumAdapter!!.filter.filter(s)
-                    else if (isSong) songAdapter!!.filter.filter(s)
-                } catch (e: Exception) {
-                    Timber.e(e, "Error filtering")
-                }
+                viewModel.setSearchQuery(s.toString())
             }
 
             override fun afterTextChanged(s: Editable) {}
         })
 
-        albumAdapter = AlbumAdapter(activity)
+        albumAdapter = AlbumAdapter(
+            onItemClick = { album ->
+                activity.openActivity<AlbumSongsActivity>(
+                    extras = arrayOf(
+                        DATA.ALBUM_ID to album.id,
+                        DATA.ALBUM_NAME to album.name,
+                        DATA.ALBUM_IMAGE to album.image
+                    )
+                )
+            },
+            onMoreClick = { album ->
+                album.moreDelete(
+                    activity, DATA.ARTISTS, album.artistId, DATA.ALBUMS_COUNT,
+                    DATA.CATEGORIES, album.categoryId, DATA.ALBUMS_COUNT,
+                    null, null, null
+                )
+            }
+        )
         binding.recyclerAlbums.adapter = albumAdapter
 
         initSongs()
@@ -143,11 +155,42 @@ class ArtistSongsActivity : AppCompatActivity() {
 
     private fun initSongs() {
         jcAudios = ArrayList()
-        songAdapter = SongAdapter(activity) { _, position: Int ->
-            changeSelectedSong(position)
-            binding.player.jcPlayer.playAudio(jcAudios!![position])
-            binding.player.jcPlayer.visibility = View.VISIBLE
-        }
+        songAdapter = SongAdapter(
+            onItemClick = { song, position ->
+                changeSelectedSong(position)
+                binding.player.jcPlayer.playAudio(jcAudios!![position])
+                binding.player.jcPlayer.visibility = View.VISIBLE
+                song.id.incrementViewCount()
+            },
+            onFavoriteClick = { song, view ->
+                view.checkFavorite(song.id)
+            },
+            onLoveClick = { song, view ->
+                view.checkLove(song.id)
+            },
+            onMoreClick = { song ->
+                song.moreDelete(
+                    activity, DATA.ARTISTS, song.artistId, DATA.SONGS_COUNT,
+                    DATA.CATEGORIES, song.categoryId, DATA.SONGS_COUNT,
+                    DATA.ALBUMS, song.albumId, DATA.SONGS_COUNT
+                )
+            },
+            onArtistClick = { artistId ->
+                activity.openActivity<ArtistSongsActivity>(
+                    extras = arrayOf(DATA.ARTIST_ID to artistId)
+                )
+            },
+            onAlbumClick = { albumId ->
+                activity.openActivity<AlbumSongsActivity>(
+                    extras = arrayOf(DATA.ALBUM_ID to albumId)
+                )
+            },
+            onCategoryClick = { categoryId ->
+                activity.openActivity<CategorySongsActivity>(
+                    extras = arrayOf(DATA.CATEGORY_ID to categoryId)
+                )
+            }
+        )
         binding.recyclerSongs.adapter = songAdapter
     }
 
@@ -156,7 +199,7 @@ class ArtistSongsActivity : AppCompatActivity() {
             viewModel.albums.collectLatest { albums ->
                 if (isAlbum) {
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
-                    albumAdapter!!.submitFullList(albums)
+                    albumAdapter!!.submitList(albums)
                     updateVisibility()
                 }
             }
@@ -175,7 +218,7 @@ class ArtistSongsActivity : AppCompatActivity() {
                         }
                     }
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
-                    songAdapter!!.submitFullList(songs)
+                    songAdapter!!.submitList(songs)
                     if (songs.isNotEmpty()) {
                         binding.player.jcPlayer.initPlaylist(jcAudios!!, null)
                     }
@@ -229,6 +272,7 @@ class ArtistSongsActivity : AppCompatActivity() {
             binding.toolbar.toolbarSearch.visibility = View.GONE
             DATA.searchStatus = false
             binding.toolbar.textSearch.setText(DATA.EMPTY)
+            viewModel.setSearchQuery("")
         } else if (DATA.isChange) {
             onResume()
             DATA.isChange = false

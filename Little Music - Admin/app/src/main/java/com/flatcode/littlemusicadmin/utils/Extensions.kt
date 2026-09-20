@@ -42,8 +42,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
+import com.canhub.cropper.CropImage
+import com.canhub.cropper.CropImageView
 import java.io.Serializable
 import java.text.MessageFormat
 import java.util.Locale
@@ -275,16 +275,7 @@ fun TextView.nrLoves(id: String?) {
     })
 }
 
-fun Activity.cropImageSquare() {
-    CropImage.activity().setMinCropResultSize(DATA.MIX_SQUARE, DATA.MIX_SQUARE).setAspectRatio(1, 1)
-        .setCropShape(CropImageView.CropShape.OVAL).start(this)
-}
-
-fun Activity.cropImageSlider() {
-    CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setMultiTouchEnabled(true)
-        .setMinCropResultSize(DATA.MIX_SLIDER_X, DATA.MIX_SLIDER_Y).setAspectRatio(16, 9)
-        .setCropShape(CropImageView.CropShape.OVAL).start(this)
-}
+// Crop Image functions moved to Activity Result API in activities
 
 fun Uri.getFileExtension(context: Context): String? {
     val cR = context.contentResolver
