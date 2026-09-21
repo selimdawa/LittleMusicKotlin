@@ -77,7 +77,7 @@ dependencies {
     //Other
     implementation(libs.material.ripple)                //Ripple Effect
     implementation(libs.jcplayer)                       //JcPlayer
-    implementation(libs.multiwaveheader)                //Wave
+    implementation(libs.multiwaveheader)                //MultiWave
     implementation(libs.timber)
 }
 

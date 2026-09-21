@@ -62,9 +62,9 @@ object DATA {
     var searchStatus = false
     var FB_ID = ""
     var WEB_SITE = ""
-    val AUTH = FirebaseAuth.getInstance()
-    val FIREBASE_USER = AUTH.currentUser
-    val FirebaseUserUid = FIREBASE_USER!!.uid
+    val AUTH: FirebaseAuth get() = FirebaseAuth.getInstance()
+    val FIREBASE_USER get() = AUTH.currentUser
+    val FirebaseUserUid get() = FIREBASE_USER?.uid ?: ""
 
     //Cloudinary
     const val CLOUDINARY_CLOUD_NAME = "j8jsphcf"

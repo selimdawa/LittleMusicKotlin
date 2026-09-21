@@ -1,14 +1,13 @@
 package com.flatcode.littlemusicadmin.ui.song
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import android.widget.ImageView
-import androidx.core.view.isVisible
 import com.flatcode.littlemusicadmin.databinding.ItemSongBinding
 import com.flatcode.littlemusicadmin.model.Song
 import com.flatcode.littlemusicadmin.utils.DATA
@@ -17,7 +16,7 @@ import com.flatcode.littlemusicadmin.utils.dataName
 import com.flatcode.littlemusicadmin.utils.isFavorite
 import com.flatcode.littlemusicadmin.utils.isLoves
 import com.flatcode.littlemusicadmin.utils.nrLoves
-import com.scwang.wave.MultiWaveHeader
+import io.selimdawa.multiwave.MultiWaveHeader
 
 class SongAdapter(
     private val onItemClick: (Song, Int) -> Unit,
@@ -84,7 +83,6 @@ class SongAdapter(
 
             binding.card.setOnClickListener {
                 onItemClick(item, position)
-                binding.wave.waveHeight = 40
             }
 
             binding.wave.isVisible = selectedPosition == position
@@ -96,13 +94,6 @@ class SongAdapter(
 
     companion object {
         fun open(wave: MultiWaveHeader) {
-            wave.velocity = 1f
-            wave.progress = 1f
-            wave.isRunning
-            wave.gradientAngle = 45
-            wave.waveHeight = 40
-            wave.startColor = Color.WHITE
-            wave.closeColor = Color.DKGRAY
             wave.visibility = View.VISIBLE
         }
 

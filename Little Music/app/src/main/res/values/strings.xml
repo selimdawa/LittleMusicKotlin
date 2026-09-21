@@ -1,16 +1,12 @@
 <resources>
     <string name="app_name">Little Music</string>
-    //Theme
-    <string name="basic_theme">Basic Theme</string>
-    <string name="sec_theme">Sec Theme</string>
-    //Needed
+
     <string name="new_user_signup">SignUp</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="forget_password">Forget Password?</string>
     <string name="register">Register</string>
-    <string name="space"> </string>
     <string name="welcome_to">Welcome to</string>
     <string name="email_example">abc@example.com</string>
     <string name="password_hint">********</string>
@@ -43,7 +39,6 @@
     <string name="categories">Categories</string>
     <string name="my_categories">My Categories</string>
     <string name="back">Back</string>
-    <string name="go">Go</string>
     <string name="save">Save</string>
     <string name="artists_count">Artists count</string>
     <string name="albums_count">Albums count</string>

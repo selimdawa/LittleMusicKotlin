@@ -1,29 +1,21 @@
 package com.flatcode.littlemusic.ui.song
 
-import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemSongBinding
 import com.flatcode.littlemusic.filter.SongFilter
 import com.flatcode.littlemusic.model.Song
-import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
-import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
-import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.checkFavorite
-import com.flatcode.littlemusic.utils.checkLove
 import com.flatcode.littlemusic.utils.convertDuration
 import com.flatcode.littlemusic.utils.dataName
 import com.flatcode.littlemusic.utils.incrementViewCount
-import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.utils.isFavorite
 import com.flatcode.littlemusic.utils.isLoves
 import com.flatcode.littlemusic.utils.nrLoves
@@ -31,7 +23,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.scwang.wave.MultiWaveHeader
+import io.selimdawa.multiwave.MultiWaveHeader
 
 class SongAdapter(
     private val onItemClick: (Song, Int) -> Unit,
@@ -71,7 +63,8 @@ class SongAdapter(
         submitList(list)
     }
 
-    inner class ViewHolder(private val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemSongBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Song) {
             val id = item.id ?: ""
             val name = item.name ?: ""
@@ -116,7 +109,7 @@ class SongAdapter(
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val name = snapshot.child(DATA.NAME).value?.toString() ?: ""
                     val image = snapshot.child(DATA.IMAGE).value?.toString() ?: ""
-                    
+
                     val textView = when (type) {
                         DATA.ARTIST -> binding.artist
                         DATA.ALBUM -> binding.album

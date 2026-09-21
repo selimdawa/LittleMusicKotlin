@@ -81,13 +81,12 @@
                             android:layout_width="50sp"
                             android:layout_height="50sp">
 
-                            <com.scwang.wave.MultiWaveHeader
+                            <io.selimdawa.multiwave.MultiWaveHeader
                                 android:id="@+id/wave"
                                 android:layout_width="50sp"
                                 android:layout_height="50sp"
                                 android:visibility="gone"
-                                android:scaleY="-1"
-                                app:mwhShape="Oval" />
+                                app:mwhShape="Oval"/>
 
                         </LinearLayout>
 
