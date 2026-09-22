@@ -33,8 +33,8 @@ class ArtistsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.artists)
-        binding.toolbar.back.setOnClickListener { finish() }
-        binding.toolbar.close.setOnClickListener { finish() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -105,6 +105,7 @@ class ArtistsActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (DATA.searchStatus) {
             binding.toolbar.toolbar.visibility = View.VISIBLE
@@ -116,6 +117,7 @@ class ArtistsActivity : AppCompatActivity() {
             onResume()
             DATA.isChange = false
         } else {
+            @Suppress("DEPRECATION")
             super.onBackPressed()
         }
     }

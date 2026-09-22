@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -73,7 +73,7 @@ class ProfileActivity : AppCompatActivity() {
                 }
                 launch {
                     viewModel.profileImage.collect { profileImage ->
-                        binding.profile.glideImage(profileImage, true)
+                        binding.profile.loadImage(profileImage, true)
                     }
                 }
                 launch {

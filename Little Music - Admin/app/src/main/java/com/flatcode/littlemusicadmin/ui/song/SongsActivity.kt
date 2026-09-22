@@ -169,6 +169,7 @@ class SongsActivity : AppCompatActivity() {
             onResume()
             DATA.isChange = false
         } else {
+            @Suppress("DEPRECATION")
             super.onBackPressed()
         }
     }

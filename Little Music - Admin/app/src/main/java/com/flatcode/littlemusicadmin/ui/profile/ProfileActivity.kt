@@ -45,7 +45,7 @@ class ProfileActivity : AppCompatActivity() {
             nrInterested(DATA.ARTISTS, binding.numberArtists)
             nrInterested(DATA.CATEGORIES, binding.numberCategories)
         }
-        binding.back.setOnClickListener { onBackPressed() }
+        binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
     private fun loadUserInfo() {
@@ -55,7 +55,7 @@ class ProfileActivity : AppCompatActivity() {
                 val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
                 val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
                 binding.username.text = username
-                binding.profile.glide(true, profileImage)
+                binding.profile.loadImage(true, profileImage)
             }
 
             override fun onCancelled(error: DatabaseError) {}

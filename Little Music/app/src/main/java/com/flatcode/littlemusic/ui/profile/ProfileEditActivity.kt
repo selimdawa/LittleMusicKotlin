@@ -24,7 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.databinding.ActivityProfileEditBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -152,7 +152,7 @@ class ProfileEditActivity : AppCompatActivity() {
                 }
                 launch {
                     viewModel.profileImage.collect { profileImage ->
-                        binding.profileImage.glideImage(profileImage, true)
+                        binding.profileImage.loadImage(profileImage, true)
                     }
                 }
                 launch {

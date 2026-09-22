@@ -11,8 +11,8 @@ import com.flatcode.littlemusic.databinding.ItemCategoryMainBinding
 import com.flatcode.littlemusic.model.Category
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.glideBlur
-import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.loadBlurImage
+import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.openActivity
 
 class CategoryMainAdapter(
@@ -33,8 +33,8 @@ class CategoryMainAdapter(
             val name = item.name ?: ""
             val image = item.image ?: ""
 
-            binding.image.glideImage(image, false)
-            binding.imageBlur.glideBlur(image, 50, false)
+            binding.image.loadImage(image, false)
+            binding.imageBlur.loadBlurImage(image, 50, false)
 
             if (name.isEmpty()) {
                 binding.name.visibility = View.GONE

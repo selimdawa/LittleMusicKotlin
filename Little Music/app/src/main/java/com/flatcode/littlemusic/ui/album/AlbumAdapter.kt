@@ -14,7 +14,7 @@ import com.flatcode.littlemusic.filter.AlbumFilter
 import com.flatcode.littlemusic.model.Album
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkInterested
-import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.utils.isInterested
 import java.text.MessageFormat
@@ -53,7 +53,7 @@ class AlbumAdapter(
             val interestedCount = item.interestedCount
             val songsCount = item.songsCount
 
-            binding.image.glideImage(image, false)
+            binding.image.loadImage(image, false)
 
             if (name.isEmpty()) {
                 binding.name.visibility = View.GONE

@@ -48,11 +48,11 @@ class AlbumSongsActivity : AppCompatActivity() {
         viewModel.init(albumId)
 
         binding.toolbar.nameSpace.text = albumName
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        binding.image.glide(false, albumImage)
-        binding.imageBlur.glideBlur(false, albumImage, 50)
+        binding.image.loadImage(false, albumImage)
+        binding.imageBlur.loadImageBlur(false, albumImage, 50)
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -181,7 +181,9 @@ class AlbumSongsActivity : AppCompatActivity() {
         } else if (DATA.isChange) {
             onResume()
             DATA.isChange = false
-        } else super.onBackPressed()
+        } else {
+            onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     override fun onPause() {

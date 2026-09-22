@@ -12,7 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import android.app.Activity
 import com.flatcode.littlemusic.ui.profile.ProfileActivity
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.utils.dialogAboutApp
 import com.flatcode.littlemusic.utils.dialogLogout
@@ -68,7 +68,7 @@ class SettingsFragment : Fragment() {
                 launch {
                     viewModel.user.collect { user ->
                         user?.let {
-                            binding.toolbar.imageProfile.glideImage(it.profileImage, true)
+                            binding.toolbar.imageProfile.loadImage(it.profileImage, true)
                             binding.toolbar.username.text = it.username
                             binding.toolbar.email.text = it.email
                         }

@@ -1,12 +1,12 @@
 package com.flatcode.littlemusicadmin.ui.auth
 
-import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Patterns
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.ui.main.MainActivity
 import com.flatcode.littlemusicadmin.utils.DATA
@@ -19,7 +19,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     var context: Context = this@LoginActivity
     private var auth: FirebaseAuth? = null
-    private var dialog: ProgressDialog? = null
+    private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -28,9 +28,10 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
-        dialog = ProgressDialog(this)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        dialog = AlertDialog.Builder(this).apply {
+            setTitle("Please wait...")
+            setCancelable(false)
+        }.create()
 
         binding.forget.setOnClickListener { context.openActivity<ForgetPasswordActivity>() }
         binding.loginBtn.setOnClickListener { validateDate() }

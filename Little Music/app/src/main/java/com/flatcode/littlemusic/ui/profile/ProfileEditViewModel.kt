@@ -8,7 +8,6 @@ import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.flatcode.littlemusic.repository.UserRepository
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.getFileExtension
 import com.flatcode.littlemusic.ui.BaseViewModel
 import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel

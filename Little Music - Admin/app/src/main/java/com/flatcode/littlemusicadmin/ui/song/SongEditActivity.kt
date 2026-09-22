@@ -1,7 +1,6 @@
 package com.flatcode.littlemusicadmin.ui.song
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.TextUtils
@@ -32,7 +31,7 @@ class SongEditActivity : AppCompatActivity() {
     private var artistId: ArrayList<String>? = null
     private var albumList: ArrayList<String>? = null
     private var albumId: ArrayList<String>? = null
-    private var dialog: ProgressDialog? = null
+    private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -45,9 +44,10 @@ class SongEditActivity : AppCompatActivity() {
         artist = intent.getStringExtra(DATA.ARTIST_ID)
         album = intent.getStringExtra(DATA.ALBUM_ID)
 
-        dialog = ProgressDialog(activity)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        dialog = AlertDialog.Builder(activity).apply {
+            setTitle("Please wait...")
+            setCancelable(false)
+        }.create()
 
         loadCategories()
         loadArtists()
@@ -55,7 +55,7 @@ class SongEditActivity : AppCompatActivity() {
         loadInfo()
 
         binding.toolbar.nameSpace.setText(R.string.edit_song)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.category.setOnClickListener { categoryPickDialog() }
         binding.artist.setOnClickListener { artistPickDialog() }
         binding.album.setOnClickListener { albumPickDialog() }

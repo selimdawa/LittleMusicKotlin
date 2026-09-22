@@ -1,7 +1,6 @@
 package com.flatcode.littlemusicadmin.ui.song
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.media.MediaMetadataRetriever
@@ -34,7 +33,7 @@ class SongAddActivity : AppCompatActivity() {
     var nameSong: String? = null
     var durations //album_art = "",;
             : String? = null
-    private var dialog: ProgressDialog? = null
+    private var dialog: AlertDialog? = null
     private var categoryId: ArrayList<String>? = null
     private var categoryList: ArrayList<String>? = null
     private var albumId: ArrayList<String>? = null
@@ -48,16 +47,17 @@ class SongAddActivity : AppCompatActivity() {
         binding = ActivitySongAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dialog = ProgressDialog(this)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        dialog = AlertDialog.Builder(this).apply {
+            setTitle("Please wait...")
+            setCancelable(false)
+        }.create()
 
         loadCategories()
         loadAlbums()
         loadArtists()
 
         binding.toolbar.nameSpace.setText(R.string.add_new_song)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.category.setOnClickListener { categoryPickDialog() }
         binding.album.setOnClickListener { albumPickDialog() }
         binding.artist.setOnClickListener { artistPickDialog() }

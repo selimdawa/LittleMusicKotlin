@@ -78,7 +78,7 @@ class MainFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.userInfo.collectLatest { user ->
                 user?.let {
-                    binding.toolbar.image.glide(true, it.profileImage)
+                    binding.toolbar.image.loadImage(true, it.profileImage)
                     Timber.d("User info updated: ${it.username}")
                 }
             }

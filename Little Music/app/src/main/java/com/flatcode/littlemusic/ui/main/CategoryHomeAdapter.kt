@@ -10,7 +10,7 @@ import com.flatcode.littlemusic.databinding.ItemCategoryHomeBinding
 import com.flatcode.littlemusic.model.Category
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.openActivity
 
 class CategoryHomeAdapter(
@@ -28,7 +28,7 @@ class CategoryHomeAdapter(
 
     inner class ViewHolder(private val binding: ItemCategoryHomeBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Category) {
-            binding.image.glideImage(item.image, false)
+            binding.image.loadImage(item.image, false)
             binding.image.setOnClickListener { onItemClick(item) }
         }
     }

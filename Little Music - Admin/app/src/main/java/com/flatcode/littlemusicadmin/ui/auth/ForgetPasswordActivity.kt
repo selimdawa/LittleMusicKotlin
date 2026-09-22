@@ -1,11 +1,11 @@
 package com.flatcode.littlemusicadmin.ui.auth
 
-import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.databinding.ActivityForgetPasswordBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -15,7 +15,7 @@ class ForgetPasswordActivity : AppCompatActivity() {
     private lateinit var binding: ActivityForgetPasswordBinding
     private val context: Context = this@ForgetPasswordActivity
     private var auth: FirebaseAuth? = null
-    private var dialog: ProgressDialog? = null
+    private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -24,12 +24,13 @@ class ForgetPasswordActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
-        dialog = ProgressDialog(this)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        dialog = AlertDialog.Builder(this).apply {
+            setTitle("Please wait...")
+            setCancelable(false)
+        }.create()
 
         binding.go.setOnClickListener { validateDate() }
-        binding.login.setOnClickListener { onBackPressed() }
+        binding.login.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
     private var email = ""

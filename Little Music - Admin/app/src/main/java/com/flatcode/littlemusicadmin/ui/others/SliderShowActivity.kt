@@ -2,7 +2,6 @@ package com.flatcode.littlemusicadmin.ui.others
 
 import android.Manifest
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -10,6 +9,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.utils.*
@@ -33,7 +33,7 @@ class SliderShowActivity : AppCompatActivity() {
     private var activity: Activity? = null
     private val context: Context = also { activity = it }
     private var imageUri: Uri? = null
-    private var dialog: ProgressDialog? = null
+    private var dialog: AlertDialog? = null
     private var IMAGE_NUMBER = 0
     private var item = 0
 
@@ -73,11 +73,12 @@ class SliderShowActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.slider_show)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        dialog = ProgressDialog(context)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        dialog = AlertDialog.Builder(context).apply {
+            setTitle("Please wait...")
+            setCancelable(false)
+        }.create()
 
         binding.addOne.setOnClickListener { startSliderCrop(1) }
         binding.addTwo.setOnClickListener { startSliderCrop(2) }
@@ -245,26 +246,26 @@ class SliderShowActivity : AppCompatActivity() {
                 val nineteen = DATA.EMPTY + dataSnapshot.child("19").value
                 val twenty = DATA.EMPTY + dataSnapshot.child("20").value
 
-                binding.imageOne.glide(false, one)
-                binding.imageTwo.glide(false, two)
-                binding.imageThree.glide(false, three)
-                binding.imageFour.glide(false, four)
-                binding.imageFive.glide(false, five)
-                binding.imageSix.glide(false, six)
-                binding.imageSeven.glide(false, seven)
-                binding.imageEight.glide(false, eight)
-                binding.imageNine.glide(false, nine)
-                binding.imageTeen.glide(false, teen)
-                binding.imageEleven.glide(false, eleven)
-                binding.imageTwelfth.glide(false, twelfth)
-                binding.imageThirteen.glide(false, thirteen)
-                binding.imageFourteenth.glide(false, fourteenth)
-                binding.imageFifteenth.glide(false, fifteenth)
-                binding.imageSixteen.glide(false, sixteen)
-                binding.imageSeventeen.glide(false, seventeen)
-                binding.imageEighteen.glide(false, eighteen)
-                binding.imageNineteen.glide(false, nineteen)
-                binding.imageTwenty.glide(false, twenty)
+                binding.imageOne.loadImage(false, one)
+                binding.imageTwo.loadImage(false, two)
+                binding.imageThree.loadImage(false, three)
+                binding.imageFour.loadImage(false, four)
+                binding.imageFive.loadImage(false, five)
+                binding.imageSix.loadImage(false, six)
+                binding.imageSeven.loadImage(false, seven)
+                binding.imageEight.loadImage(false, eight)
+                binding.imageNine.loadImage(false, nine)
+                binding.imageTeen.loadImage(false, teen)
+                binding.imageEleven.loadImage(false, eleven)
+                binding.imageTwelfth.loadImage(false, twelfth)
+                binding.imageThirteen.loadImage(false, thirteen)
+                binding.imageFourteenth.loadImage(false, fourteenth)
+                binding.imageFifteenth.loadImage(false, fifteenth)
+                binding.imageSixteen.loadImage(false, sixteen)
+                binding.imageSeventeen.loadImage(false, seventeen)
+                binding.imageEighteen.loadImage(false, eighteen)
+                binding.imageNineteen.loadImage(false, nineteen)
+                binding.imageTwenty.loadImage(false, twenty)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {}

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.core.view.isVisible
 import com.flatcode.littlemusicadmin.databinding.ItemUserBinding
 import com.flatcode.littlemusicadmin.model.User
-import com.flatcode.littlemusicadmin.utils.glide
+import com.flatcode.littlemusicadmin.utils.loadImage
 
 class UserAdapter(private val onItemClick: (User) -> Unit) :
     ListAdapter<User, UserAdapter.ViewHolder>(DIFF_CALLBACK) {
@@ -26,7 +26,7 @@ class UserAdapter(private val onItemClick: (User) -> Unit) :
 
     class ViewHolder(private val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: User, onItemClick: (User) -> Unit) {
-            binding.imageProfile.glide(true, item.profileImage)
+            binding.imageProfile.loadImage(true, item.profileImage)
             binding.username.isVisible = !item.username.isNullOrEmpty()
             binding.username.text = item.username
 

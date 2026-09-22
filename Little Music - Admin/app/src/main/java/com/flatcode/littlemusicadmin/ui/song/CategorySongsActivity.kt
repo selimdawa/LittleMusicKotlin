@@ -49,8 +49,8 @@ class CategorySongsActivity : AppCompatActivity() {
         viewModel.init(categoryId)
 
         binding.toolbar.nameSpace.text = categoryName
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
 
         binding.toolbar.search.setOnClickListener {
@@ -78,7 +78,7 @@ class CategorySongsActivity : AppCompatActivity() {
             isAlbum = false
             isSong = true
             updateVisibility()
-            if (DATA.searchStatus) onBackPressed()
+            if (DATA.searchStatus) onBackPressedDispatcher.onBackPressed()
         }
 
         // Albums filters
@@ -102,7 +102,7 @@ class CategorySongsActivity : AppCompatActivity() {
             isAlbum = true
             isSong = false
             updateVisibility()
-            if (DATA.searchStatus) onBackPressed()
+            if (DATA.searchStatus) onBackPressedDispatcher.onBackPressed()
         }
         binding.switchBarSongs.all.setOnClickListener {
             viewModel.setOrderBy(DATA.TIMESTAMP)
@@ -229,6 +229,7 @@ class CategorySongsActivity : AppCompatActivity() {
         songAdapter.notifyItemChanged(currentSong)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (DATA.searchStatus) {
             binding.toolbar.toolbar.visibility = View.VISIBLE
@@ -239,7 +240,10 @@ class CategorySongsActivity : AppCompatActivity() {
         } else if (DATA.isChange) {
             onResume()
             DATA.isChange = false
-        } else super.onBackPressed()
+        } else {
+            @Suppress("DEPRECATION")
+            super.onBackPressed()
+        }
     }
 
     override fun onPause() {

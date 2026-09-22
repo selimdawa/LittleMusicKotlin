@@ -2,7 +2,6 @@ package com.flatcode.littlemusicadmin.ui.category
 
 import android.Manifest
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -10,6 +9,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.utils.*
@@ -30,7 +30,7 @@ class CategoryAddActivity : AppCompatActivity() {
     var activity: Activity? = null
     var context: Context = also { activity = it }
     private var imageUri: Uri? = null
-    private var dialog: ProgressDialog? = null
+    private var dialog: AlertDialog? = null
 
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
@@ -48,12 +48,13 @@ class CategoryAddActivity : AppCompatActivity() {
         binding = ActivityCategoryAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dialog = ProgressDialog(context)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        dialog = AlertDialog.Builder(context).apply {
+            setTitle("Please wait...")
+            setCancelable(false)
+        }.create()
 
         binding.toolbar.nameSpace.setText(R.string.add_new_category)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.image.setOnClickListener { 
             cropImage.launch(
                 CropImageContractOptions(

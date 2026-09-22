@@ -28,7 +28,7 @@ import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.ui.profile.ProfileActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.closeApp
-import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.profileImage.collect { profileImage ->
                     profileImage?.let {
-                        binding.toolbar.image.glideImage(it, true)
+                        binding.toolbar.image.loadImage(it, true)
                     }
                 }
             }

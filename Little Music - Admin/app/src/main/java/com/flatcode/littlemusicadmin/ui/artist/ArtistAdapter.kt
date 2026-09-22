@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.core.view.isVisible
 import com.flatcode.littlemusicadmin.databinding.ItemArtistBinding
 import com.flatcode.littlemusicadmin.model.Artist
-import com.flatcode.littlemusicadmin.utils.glide
+import com.flatcode.littlemusicadmin.utils.loadImage
 
 class ArtistAdapter(
     private val onItemClick: (Artist) -> Unit,
@@ -27,7 +27,7 @@ class ArtistAdapter(
 
     class ViewHolder(private val binding: ItemArtistBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Artist, onItemClick: (Artist) -> Unit, onMoreClick: (Artist) -> Unit) {
-            binding.image.glide(true, item.image)
+            binding.image.loadImage(true, item.image)
             binding.name.isVisible = !item.name.isNullOrEmpty()
             binding.name.text = item.name
 

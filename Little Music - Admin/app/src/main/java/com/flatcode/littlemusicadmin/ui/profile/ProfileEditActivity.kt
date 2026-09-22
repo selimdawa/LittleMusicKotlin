@@ -2,7 +2,6 @@ package com.flatcode.littlemusicadmin.ui.profile
 
 import android.Manifest
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -10,6 +9,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.utils.*
@@ -33,7 +33,7 @@ class ProfileEditActivity : AppCompatActivity() {
     var activity: Activity? = null
     var context: Context = also { activity = it }
     private var imageUri: Uri? = null
-    private var dialog: ProgressDialog? = null
+    private var dialog: AlertDialog? = null
 
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
@@ -51,13 +51,14 @@ class ProfileEditActivity : AppCompatActivity() {
         binding = ActivityProfileEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dialog = ProgressDialog(context)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        dialog = AlertDialog.Builder(context).apply {
+            setTitle("Please wait...")
+            setCancelable(false)
+        }.create()
 
         loadUserInfo()
         binding.toolbar.nameSpace.setText(R.string.edit_profile)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.image.setOnClickListener { 
             cropImage.launch(
                 CropImageContractOptions(
@@ -151,7 +152,7 @@ class ProfileEditActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val username = DATA.EMPTY + snapshot.child(DATA.USER_NAME).value
                     val profileImage = DATA.EMPTY + snapshot.child(DATA.PROFILE_IMAGE).value
-                    binding.profileImage.glide(true, profileImage)
+                    binding.profileImage.loadImage(true, profileImage)
                     binding.nameEt.setText(username)
                 }
 

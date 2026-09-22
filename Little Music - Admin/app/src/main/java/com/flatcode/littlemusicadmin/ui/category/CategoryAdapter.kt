@@ -9,7 +9,7 @@ import com.flatcode.littlemusicadmin.databinding.ItemCategoryBinding
 import com.flatcode.littlemusicadmin.model.Category
 import com.flatcode.littlemusicadmin.utils.DATA
 
-import com.flatcode.littlemusicadmin.utils.glide
+import com.flatcode.littlemusicadmin.utils.loadImage
 
 class CategoryAdapter(
     private val onItemClick: (Category) -> Unit,
@@ -32,7 +32,7 @@ class CategoryAdapter(
             binding.numberSongs.text = item.songsCount.toString()
             binding.numberAlbums.text = item.albumsCount.toString()
             binding.numberInterested.text = item.interestedCount.toString()
-            binding.image.glide(false, item.image)
+            binding.image.loadImage(false, item.image)
 
             binding.root.setOnClickListener { onItemClick(item) }
             binding.more.setOnClickListener { onMoreClick(item) }

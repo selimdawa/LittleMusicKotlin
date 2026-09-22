@@ -34,8 +34,8 @@ class AlbumsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.albums)
-        binding.toolbar.back.setOnClickListener { finish() }
-        binding.toolbar.close.setOnClickListener { finish() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -116,6 +116,7 @@ class AlbumsActivity : AppCompatActivity() {
             onResume()
             DATA.isChange = false
         } else {
+            @Suppress("DEPRECATION")
             super.onBackPressed()
         }
     }

@@ -36,8 +36,8 @@ class CategoriesActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.categories)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -113,6 +113,7 @@ class CategoriesActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (DATA.searchStatus) {
             binding.toolbar.toolbar.visibility = View.VISIBLE
@@ -123,6 +124,9 @@ class CategoriesActivity : AppCompatActivity() {
         } else if (DATA.isChange) {
             onResume()
             DATA.isChange = false
-        } else super.onBackPressed()
+        } else {
+            @Suppress("DEPRECATION")
+            super.onBackPressed()
+        }
     }
 }

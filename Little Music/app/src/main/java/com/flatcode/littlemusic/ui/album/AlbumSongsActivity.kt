@@ -28,8 +28,8 @@ import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkInterested
-import com.flatcode.littlemusic.utils.glideBlur
-import com.flatcode.littlemusic.utils.glideImage
+import com.flatcode.littlemusic.utils.loadBlurImage
+import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.isInterested
 import com.flatcode.littlemusic.databinding.ActivityAlbumSongsBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -95,8 +95,8 @@ class AlbumSongsActivity : AppCompatActivity() {
             }
         })
 
-        binding.image.glideImage(albumImage, false)
-        binding.imageBlur.glideBlur(albumImage, 50, false)
+        binding.image.loadImage(albumImage, false)
+        binding.imageBlur.loadBlurImage(albumImage, 50, false)
 
         binding.toolbar.nameSpace.text = albumName
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }

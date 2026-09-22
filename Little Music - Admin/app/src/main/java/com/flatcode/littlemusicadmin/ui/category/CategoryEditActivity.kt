@@ -2,13 +2,13 @@ package com.flatcode.littlemusicadmin.ui.category
 
 import android.Manifest
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.model.Category
 import com.flatcode.littlemusicadmin.R
@@ -32,7 +32,7 @@ class CategoryEditActivity : AppCompatActivity() {
     var activity: Activity = this@CategoryEditActivity
     var categoryId: String? = null
     private var imageUri: Uri? = null
-    private var dialog: ProgressDialog? = null
+    private var dialog: AlertDialog? = null
 
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
@@ -51,13 +51,14 @@ class CategoryEditActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         categoryId = intent.getStringExtra(DATA.CATEGORY_ID)
-        dialog = ProgressDialog(activity)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        dialog = AlertDialog.Builder(activity).apply {
+            setTitle("Please wait...")
+            setCancelable(false)
+        }.create()
         loadCategoryInfo()
 
         binding.toolbar.nameSpace.setText(R.string.edit_category)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.image.setOnClickListener { 
             cropImage.launch(
                 CropImageContractOptions(
@@ -152,7 +153,7 @@ class CategoryEditActivity : AppCompatActivity() {
                 val name = item.name
                 val image = item.image
 
-                binding.image.glide(true, image)
+                binding.image.loadImage(true, image)
                 binding.nameEt.setText(name)
             }
 

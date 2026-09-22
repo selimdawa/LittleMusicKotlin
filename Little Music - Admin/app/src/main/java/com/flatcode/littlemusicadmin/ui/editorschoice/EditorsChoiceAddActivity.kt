@@ -38,8 +38,8 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
         oldId = intent.getStringExtra(DATA.OLD_ID)
 
         binding.toolbar.nameSpace.setText(R.string.editors_choice)
-        binding.toolbar.back.setOnClickListener { finish() }
-        binding.toolbar.close.setOnClickListener { finish() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -102,7 +102,6 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
         }
     }
 
-    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (DATA.searchStatus) {
             binding.toolbar.toolbar.visibility = View.VISIBLE

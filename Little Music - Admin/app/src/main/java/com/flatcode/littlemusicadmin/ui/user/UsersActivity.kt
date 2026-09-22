@@ -99,6 +99,7 @@ class UsersActivity : AppCompatActivity() {
             binding.toolbar.textSearch.setText(DATA.EMPTY)
             viewModel.setSearchQuery("")
         } else {
+            @Suppress("DEPRECATION")
             super.onBackPressed()
         }
     }

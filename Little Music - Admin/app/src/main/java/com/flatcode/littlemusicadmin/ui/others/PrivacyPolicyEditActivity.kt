@@ -26,7 +26,7 @@ class PrivacyPolicyEditActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.toolbar.nameSpace.setText(R.string.privacy_policy)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.go.setOnClickListener { validateData() }
 
         privacyPolicy()

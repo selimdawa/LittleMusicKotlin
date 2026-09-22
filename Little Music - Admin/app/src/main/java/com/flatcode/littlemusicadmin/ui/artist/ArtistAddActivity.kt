@@ -2,13 +2,13 @@ package com.flatcode.littlemusicadmin.ui.artist
 
 import android.Manifest
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.utils.*
@@ -28,7 +28,7 @@ class ArtistAddActivity : AppCompatActivity() {
     private lateinit var binding: ActivityArtistAddBinding
     var activity: Activity = this@ArtistAddActivity
     private var imageUri: Uri? = null
-    private var dialog: ProgressDialog? = null
+    private var dialog: AlertDialog? = null
 
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
@@ -46,12 +46,13 @@ class ArtistAddActivity : AppCompatActivity() {
         binding = ActivityArtistAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dialog = ProgressDialog(activity)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        dialog = AlertDialog.Builder(activity).apply {
+            setTitle("Please wait...")
+            setCancelable(false)
+        }.create()
 
         binding.toolbar.nameSpace.setText(R.string.add_new_artist)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.image.setOnClickListener { 
             cropImage.launch(
                 CropImageContractOptions(

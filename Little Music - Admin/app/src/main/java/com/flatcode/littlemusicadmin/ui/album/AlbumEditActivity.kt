@@ -2,7 +2,6 @@ package com.flatcode.littlemusicadmin.ui.album
 
 import android.Manifest
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -37,7 +36,7 @@ class AlbumEditActivity : AppCompatActivity() {
     private var context: Context = this@AlbumEditActivity
     private var albumId: String? = null
     private var imageUri: Uri? = null
-    private var dialog: ProgressDialog? = null
+    private var dialog: AlertDialog? = null
 
     private var selectedCategoryId: String? = null
     private var selectedCategoryTitle: String? = null
@@ -63,9 +62,10 @@ class AlbumEditActivity : AppCompatActivity() {
 
         albumId = intent.getStringExtra(DATA.ALBUM_ID)
 
-        dialog = ProgressDialog(context)
-        dialog!!.setTitle("Please wait...")
-        dialog!!.setCanceledOnTouchOutside(false)
+        dialog = AlertDialog.Builder(context).apply {
+            setTitle("Please wait...")
+            setCancelable(false)
+        }.create()
 
         initUI()
         observeViewModel()
@@ -75,7 +75,7 @@ class AlbumEditActivity : AppCompatActivity() {
 
     private fun initUI() {
         binding.toolbar.nameSpace.setText(R.string.edit_album)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.image.setOnClickListener { 
             cropImage.launch(
                 CropImageContractOptions(
