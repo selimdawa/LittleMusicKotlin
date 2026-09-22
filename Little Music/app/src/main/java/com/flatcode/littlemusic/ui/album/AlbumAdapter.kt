@@ -1,6 +1,5 @@
 package com.flatcode.littlemusic.ui.album
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,14 +9,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemAlbumBinding
-import com.flatcode.littlemusic.filter.AlbumFilter
 import com.flatcode.littlemusic.model.Album
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.loadImage
-import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.utils.isInterested
-import java.text.MessageFormat
+import java.util.*
 
 class AlbumAdapter(
     private val onItemClick: (Album) -> Unit,
@@ -25,7 +21,6 @@ class AlbumAdapter(
 ) : ListAdapter<Album, AlbumAdapter.ViewHolder>(DiffCallback), Filterable {
 
     var fullList: List<Album> = emptyList()
-    private var filter: AlbumFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemAlbumBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -37,7 +32,25 @@ class AlbumAdapter(
     }
 
     override fun getFilter(): Filter {
-        return filter ?: AlbumFilter(fullList, this).also { filter = it }
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val results = FilterResults()
+                val query = constraint?.toString()?.uppercase(Locale.getDefault()) ?: ""
+                val filteredList = if (query.isEmpty()) {
+                    fullList
+                } else {
+                    fullList.filter { it.name?.uppercase(Locale.getDefault())?.contains(query) == true }
+                }
+                results.count = filteredList.size
+                results.values = filteredList
+                return results
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                submitList(results?.values as? List<Album> ?: emptyList())
+            }
+        }
     }
 
     fun setList(list: List<Album>) {

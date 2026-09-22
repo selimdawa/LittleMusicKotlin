@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemSongBinding
-import com.flatcode.littlemusic.filter.SongFilter
 import com.flatcode.littlemusic.model.Song
+import java.util.*
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.convertDuration
 import com.flatcode.littlemusic.utils.dataName
@@ -43,7 +43,6 @@ class SongAdapter(
         }
 
     var fullList: List<Song> = emptyList()
-    private var filter: SongFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -55,7 +54,25 @@ class SongAdapter(
     }
 
     override fun getFilter(): Filter {
-        return filter ?: SongFilter(fullList, this).also { filter = it }
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val results = FilterResults()
+                val query = constraint?.toString()?.uppercase(Locale.getDefault()) ?: ""
+                val filteredList = if (query.isEmpty()) {
+                    fullList
+                } else {
+                    fullList.filter { it.name?.uppercase(Locale.getDefault())?.contains(query) == true }
+                }
+                results.count = filteredList.size
+                results.values = filteredList
+                return results
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                submitList(results?.values as? List<Song> ?: emptyList())
+            }
+        }
     }
 
     fun setList(list: List<Song>) {

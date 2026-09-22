@@ -1,6 +1,5 @@
 package com.flatcode.littlemusic.ui.category
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,14 +9,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemCategoryBinding
-import com.flatcode.littlemusic.filter.CategoryFilter
 import com.flatcode.littlemusic.model.Category
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.loadImage
-import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.utils.isInterested
-import java.text.MessageFormat
+import java.util.*
 
 class CategoryAdapter(
     private val onItemClick: (Category) -> Unit,
@@ -25,7 +21,6 @@ class CategoryAdapter(
 ) : ListAdapter<Category, CategoryAdapter.ViewHolder>(DiffCallback), Filterable {
 
     var fullList: List<Category> = emptyList()
-    private var filter: CategoryFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -37,7 +32,25 @@ class CategoryAdapter(
     }
 
     override fun getFilter(): Filter {
-        return filter ?: CategoryFilter(fullList, this).also { filter = it }
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val results = FilterResults()
+                val query = constraint?.toString()?.uppercase(Locale.getDefault()) ?: ""
+                val filteredList = if (query.isEmpty()) {
+                    fullList
+                } else {
+                    fullList.filter { it.name?.uppercase(Locale.getDefault())?.contains(query) == true }
+                }
+                results.count = filteredList.size
+                results.values = filteredList
+                return results
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                submitList(results?.values as? List<Category> ?: emptyList())
+            }
+        }
     }
 
     fun setList(list: List<Category>) {

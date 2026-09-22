@@ -1,28 +1,19 @@
 package com.flatcode.littlemusic.ui.main
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemSongHomeBinding
-import com.flatcode.littlemusic.filter.SongMainFilter
 import com.flatcode.littlemusic.model.Song
-import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
-import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
-import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.checkFavorite
-import com.flatcode.littlemusic.utils.checkLove
 import com.flatcode.littlemusic.utils.convertDuration
 import com.flatcode.littlemusic.utils.dataName
 import com.flatcode.littlemusic.utils.incrementViewCount
-import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.utils.isFavorite
 import com.flatcode.littlemusic.utils.isLoves
 import com.flatcode.littlemusic.utils.nrLoves
@@ -30,6 +21,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.util.*
 
 class SongMainAdapter(
     private val onPlayClick: (Song, Int) -> Unit,
@@ -50,7 +42,6 @@ class SongMainAdapter(
         }
 
     var fullList: List<Song> = emptyList()
-    private var filter: SongMainFilter? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemSongHomeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -62,7 +53,25 @@ class SongMainAdapter(
     }
 
     override fun getFilter(): Filter {
-        return filter ?: SongMainFilter(fullList, this).also { filter = it }
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val results = FilterResults()
+                val query = constraint?.toString()?.uppercase(Locale.getDefault()) ?: ""
+                val filteredList = if (query.isEmpty()) {
+                    fullList
+                } else {
+                    fullList.filter { it.name?.uppercase(Locale.getDefault())?.contains(query) == true }
+                }
+                results.count = filteredList.size
+                results.values = filteredList
+                return results
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                submitList(results?.values as? List<Song> ?: emptyList())
+            }
+        }
     }
 
     fun setList(list: List<Song>) {
