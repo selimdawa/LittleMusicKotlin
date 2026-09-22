@@ -8,8 +8,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity(tableName = "albums")
 data class Album(
-    @PrimaryKey
-    var id: String = "",
+    @PrimaryKey var id: String = "",
     var name: String? = null,
     var image: String? = null,
     var artistId: String? = null,
@@ -18,6 +17,4 @@ data class Album(
     var interestedCount: Int = 0,
     var songsCount: Int = 0,
     var timestamp: Long = 0
-) : Parcelable {
-    constructor() : this("", null, null, null, null, null, 0, 0, 0)
-}
+) : Parcelable

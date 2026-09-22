@@ -199,7 +199,6 @@ fun Activity.deleteDb(
         )
         DATA.isChange = true
         (this as? ComponentActivity)?.onBackPressedDispatcher?.onBackPressed()
-            ?: @Suppress("DEPRECATION") this.onBackPressed()
         dialog.dismiss()
         Toast.makeText(this, "$name Deleted Successfully...", Toast.LENGTH_SHORT).show()
         dialogDelete.dismiss()
