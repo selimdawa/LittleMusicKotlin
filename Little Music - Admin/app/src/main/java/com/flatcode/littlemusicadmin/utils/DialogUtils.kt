@@ -11,7 +11,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
-import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.DialogAboutArtistBinding
 import com.flatcode.littlemusicadmin.databinding.DialogLogoutBinding
 import com.flatcode.littlemusicadmin.model.Album

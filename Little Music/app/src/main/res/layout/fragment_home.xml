@@ -42,7 +42,7 @@
                     app:sliderIndicatorOrientation="horizontal"
                     app:sliderIndicatorPadding="8dp"
                     app:sliderIndicatorRadius="1.5dp"
-                    app:sliderIndicatorSelectedColor="?mc_tick"
+                    app:sliderIndicatorSelectedColor="?mc_track"
                     app:sliderIndicatorUnselectedColor="@color/white"
                     app:sliderScrollTimeInSec="3" />
 
