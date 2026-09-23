@@ -13,7 +13,8 @@ class ForgetPasswordViewModel @Inject constructor(
     private val auth: FirebaseAuth
 ) : BaseViewModel() {
 
-    private val _forgetPasswordStatus = MutableStateFlow<ForgetPasswordStatus>(ForgetPasswordStatus.Idle)
+    private val _forgetPasswordStatus =
+        MutableStateFlow<ForgetPasswordStatus>(ForgetPasswordStatus.Idle)
     val forgetPasswordStatus: StateFlow<ForgetPasswordStatus> = _forgetPasswordStatus
 
     fun recoverPassword(email: String) {
@@ -26,17 +27,20 @@ class ForgetPasswordViewModel @Inject constructor(
             return
         }
 
-        _forgetPasswordStatus.value = ForgetPasswordStatus.Loading("Sending password recovery instructions to $email")
-        auth.sendPasswordResetEmail(email)
-            .addOnCompleteListener { task ->
+        _forgetPasswordStatus.value =
+            ForgetPasswordStatus.Loading("Sending password recovery instructions to $email")
+        auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _forgetPasswordStatus.value = ForgetPasswordStatus.Success("Instructions to reset password sent to $email")
+                    _forgetPasswordStatus.value =
+                        ForgetPasswordStatus.Success("Instructions to reset password sent to $email")
                 } else {
-                    _forgetPasswordStatus.value = ForgetPasswordStatus.Error(task.exception?.message ?: "Failed to send reset email")
+                    _forgetPasswordStatus.value = ForgetPasswordStatus.Error(
+                        task.exception?.message ?: "Failed to send reset email"
+                    )
                 }
-            }
-            .addOnFailureListener { e ->
-                _forgetPasswordStatus.value = ForgetPasswordStatus.Error(e.message ?: "Error occurred")
+            }.addOnFailureListener { e ->
+                _forgetPasswordStatus.value =
+                    ForgetPasswordStatus.Error(e.message ?: "Error occurred")
             }
     }
 

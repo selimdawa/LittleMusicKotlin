@@ -2,8 +2,8 @@ package com.flatcode.littlemusic.ui.main
 
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemusic.repository.UserRepository
-import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.ui.BaseViewModel
+import com.flatcode.littlemusic.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

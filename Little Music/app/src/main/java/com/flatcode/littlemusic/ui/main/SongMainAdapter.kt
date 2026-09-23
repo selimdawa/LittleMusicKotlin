@@ -21,7 +21,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.util.*
+import java.util.Locale
 
 class SongMainAdapter(
     private val onPlayClick: (Song, Int) -> Unit,
@@ -44,7 +44,8 @@ class SongMainAdapter(
     var fullList: List<Song> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemSongHomeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemSongHomeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -60,7 +61,9 @@ class SongMainAdapter(
                 val filteredList = if (query.isEmpty()) {
                     fullList
                 } else {
-                    fullList.filter { it.name?.uppercase(Locale.getDefault())?.contains(query) == true }
+                    fullList.filter {
+                        it.name?.uppercase(Locale.getDefault())?.contains(query) == true
+                    }
                 }
                 results.count = filteredList.size
                 results.values = filteredList
@@ -79,7 +82,8 @@ class SongMainAdapter(
         submitList(list)
     }
 
-    inner class ViewHolder(private val binding: ItemSongHomeBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemSongHomeBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Song) {
             val id = item.id
             val name = item.name ?: ""
@@ -107,14 +111,18 @@ class SongMainAdapter(
             setupIntentData(DATA.CATEGORIES, categoryId, DATA.CATEGORY)
 
             binding.play.setOnClickListener {
-                onPlayClick(item, adapterPosition)
-                id.incrementViewCount()
+                if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                    onPlayClick(item, bindingAdapterPosition)
+                    id.incrementViewCount()
+                }
             }
             binding.pause.setOnClickListener {
-                onPauseClick(item, adapterPosition)
+                if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                    onPauseClick(item, bindingAdapterPosition)
+                }
             }
 
-            if (adapterPosition == selectedPosition) {
+            if (bindingAdapterPosition == selectedPosition) {
                 binding.play.visibility = View.GONE
                 binding.pause.visibility = View.VISIBLE
             } else {

@@ -1,26 +1,24 @@
 package com.flatcode.littlemusic.ui.profile
 
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.flatcode.littlemusic.repository.UserRepository
-import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.ui.BaseViewModel
+import com.flatcode.littlemusic.utils.DATA
 import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.util.Objects
 import javax.inject.Inject
+import kotlin.collections.get
 
 @HiltViewModel
 class ProfileEditViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val database: FirebaseDatabase
+    private val userRepository: UserRepository, private val database: FirebaseDatabase
 ) : BaseViewModel() {
 
     private val _username = MutableStateFlow("")
@@ -43,7 +41,7 @@ class ProfileEditViewModel @Inject constructor(
         }
     }
 
-    fun updateProfile(name: String, imageUri: Uri?, context: Context) {
+    fun updateProfile(name: String, imageUri: Uri?) {
         if (name.isBlank()) {
             _updateStatus.value = UpdateStatus.Error("Enter name...")
             return
@@ -52,17 +50,15 @@ class ProfileEditViewModel @Inject constructor(
         if (imageUri == null) {
             saveToDatabase(name, null)
         } else {
-            uploadImage(name, imageUri, context)
+            uploadImage(name, imageUri)
         }
     }
 
-    private fun uploadImage(name: String, imageUri: Uri, context: Context) {
+    private fun uploadImage(name: String, imageUri: Uri) {
         _updateStatus.value = UpdateStatus.Loading("Uploading Image...")
-        
-        MediaManager.get().upload(imageUri)
-            .option("folder", "Images/Profile/")
-            .option("public_id", DATA.FirebaseUserUid)
-            .callback(object : UploadCallback {
+
+        MediaManager.get().upload(imageUri).option("folder", "Images/Profile/")
+            .option("public_id", DATA.FirebaseUserUid).callback(object : UploadCallback {
                 override fun onStart(requestId: String) {
                 }
 
@@ -75,7 +71,8 @@ class ProfileEditViewModel @Inject constructor(
                 }
 
                 override fun onError(requestId: String, error: ErrorInfo) {
-                    _updateStatus.value = UpdateStatus.Error("Failed to upload image: ${error.description}")
+                    _updateStatus.value =
+                        UpdateStatus.Error("Failed to upload image: ${error.description}")
                 }
 
                 override fun onReschedule(requestId: String, error: ErrorInfo) {
@@ -90,10 +87,9 @@ class ProfileEditViewModel @Inject constructor(
         if (imageUrl != null) {
             hashMap[DATA.PROFILE_IMAGE] = imageUrl
         }
-        
+
         val reference = database.getReference(DATA.USERS)
-        reference.child(Objects.requireNonNull(DATA.FirebaseUserUid)).updateChildren(hashMap)
-            .addOnSuccessListener {
+        reference.child(DATA.FirebaseUserUid).updateChildren(hashMap).addOnSuccessListener {
                 _updateStatus.value = UpdateStatus.Success("Profile updated...")
             }.addOnFailureListener { e ->
                 _updateStatus.value = UpdateStatus.Error("Failed to update database: ${e.message}")

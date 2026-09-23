@@ -5,6 +5,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -15,15 +17,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
+import com.flatcode.littlemusic.databinding.ActivityArtistsBinding
 import com.flatcode.littlemusic.utils.DATA
-import android.widget.ImageView
 import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.openActivity
-import com.flatcode.littlemusic.databinding.ActivityArtistsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.MessageFormat
+
 
 @AndroidEntryPoint
 class ArtistsActivity : AppCompatActivity() {
@@ -52,13 +53,27 @@ class ArtistsActivity : AppCompatActivity() {
         setupSwitchBar()
         observeViewModel()
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+
         viewModel.getData()
     }
 
     private fun setupToolbar() {
         binding.toolbar.nameSpace.setText(R.string.artists)
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -70,28 +85,30 @@ class ArtistsActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
                     adapter!!.filter.filter(s)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     //None
                 }
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
     }
 
     private fun setupRecyclerView() {
-        adapter = ArtistAdapter(
-            onItemClick = { artist ->
-                openActivity<ArtistSongsActivity>(
-                    extras = arrayOf(
-                        DATA.ARTIST_ID to artist.id,
-                        DATA.ARTIST_NAME to artist.name,
-                        DATA.ARTIST_IMAGE to artist.image,
-                        DATA.ARTIST_ABOUT to artist.aboutTheArtist
-                    )
+        adapter = ArtistAdapter(onItemClick = { artist ->
+            openActivity<ArtistSongsActivity>(
+                extras = arrayOf(
+                    DATA.ARTIST_ID to artist.id,
+                    DATA.ARTIST_NAME to artist.name,
+                    DATA.ARTIST_IMAGE to artist.image,
+                    DATA.ARTIST_ABOUT to artist.aboutTheArtist
                 )
-            },
-            onInterestedClick = { artist, view -> (view as? ImageView)?.checkInterested(DATA.ARTISTS, artist.id) }
-        )
+            )
+        }, onInterestedClick = { artist, view ->
+            (view as? ImageView)?.checkInterested(
+                DATA.ARTISTS, artist.id
+            )
+        })
         binding.recyclerView.adapter = adapter
     }
 
@@ -109,8 +126,8 @@ class ArtistsActivity : AppCompatActivity() {
                 launch {
                     viewModel.artists.collect { artists ->
                         adapter?.setList(artists)
-                        binding.toolbar.number.text = MessageFormat.format("( {0} )", artists.size)
-                        
+                        binding.toolbar.number.text = getString(R.string.count_format, artists.size)
+
                         if (artists.isNotEmpty()) {
                             binding.recyclerView.visibility = View.VISIBLE
                             binding.emptyText.visibility = View.GONE
@@ -129,14 +146,6 @@ class ArtistsActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding.toolbar.toolbar.visibility = View.VISIBLE
-            binding.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding.toolbar.textSearch.setText(DATA.EMPTY)
-        } else super.onBackPressed()
-    }
 
     override fun onResume() {
         super.onResume()

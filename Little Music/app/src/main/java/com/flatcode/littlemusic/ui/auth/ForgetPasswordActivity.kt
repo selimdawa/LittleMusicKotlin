@@ -1,6 +1,5 @@
 package com.flatcode.littlemusic.ui.auth
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +14,9 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityForgetPasswordBinding
+import com.flatcode.littlemusic.utils.ProgressDialog
+import com.flatcode.littlemusic.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -77,14 +77,21 @@ class ForgetPasswordActivity : AppCompatActivity() {
                             dialog!!.setMessage(status.message)
                             dialog!!.show()
                         }
+
                         is ForgetPasswordViewModel.ForgetPasswordStatus.Success -> {
                             dialog!!.dismiss()
-                            Toast.makeText(this@ForgetPasswordActivity, status.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@ForgetPasswordActivity, status.message, Toast.LENGTH_SHORT
+                            ).show()
                         }
+
                         is ForgetPasswordViewModel.ForgetPasswordStatus.Error -> {
                             dialog!!.dismiss()
-                            Toast.makeText(this@ForgetPasswordActivity, status.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@ForgetPasswordActivity, status.message, Toast.LENGTH_SHORT
+                            ).show()
                         }
+
                         ForgetPasswordViewModel.ForgetPasswordStatus.Idle -> {}
                     }
                 }

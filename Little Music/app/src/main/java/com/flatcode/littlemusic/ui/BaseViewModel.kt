@@ -9,7 +9,6 @@ open class BaseViewModel : ViewModel() {
     }
 
     override fun onCleared() {
-        super.onCleared()
         Timber.d("ViewModel Cleared: ${this.javaClass.simpleName}")
     }
 }

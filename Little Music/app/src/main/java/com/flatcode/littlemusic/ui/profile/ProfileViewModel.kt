@@ -2,8 +2,8 @@ package com.flatcode.littlemusic.ui.profile
 
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemusic.repository.UserRepository
-import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.ui.BaseViewModel
+import com.flatcode.littlemusic.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,10 +46,22 @@ class ProfileViewModel @Inject constructor(
 
     fun loadCounts(profileId: String) {
         viewModelScope.launch {
-            launch { userRepository.getCount(profileId, DATA.FAVORITES).collect { _favoritesCount.value = it } }
-            launch { userRepository.getInterestedCount(profileId, DATA.ALBUMS).collect { _albumsCount.value = it } }
-            launch { userRepository.getInterestedCount(profileId, DATA.ARTISTS).collect { _artistsCount.value = it } }
-            launch { userRepository.getInterestedCount(profileId, DATA.CATEGORIES).collect { _categoriesCount.value = it } }
+            launch {
+                userRepository.getCount(profileId, DATA.FAVORITES)
+                    .collect { _favoritesCount.value = it }
+            }
+            launch {
+                userRepository.getInterestedCount(profileId, DATA.ALBUMS)
+                    .collect { _albumsCount.value = it }
+            }
+            launch {
+                userRepository.getInterestedCount(profileId, DATA.ARTISTS)
+                    .collect { _artistsCount.value = it }
+            }
+            launch {
+                userRepository.getInterestedCount(profileId, DATA.CATEGORIES)
+                    .collect { _categoriesCount.value = it }
+            }
         }
     }
 }

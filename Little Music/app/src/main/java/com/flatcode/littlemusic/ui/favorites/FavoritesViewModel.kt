@@ -3,8 +3,8 @@ package com.flatcode.littlemusic.ui.favorites
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.repository.MusicRepository
-import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.ui.BaseViewModel
+import com.flatcode.littlemusic.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

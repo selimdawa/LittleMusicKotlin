@@ -21,7 +21,6 @@ import com.flatcode.littlemusic.databinding.ActivityProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.MessageFormat
 
 @AndroidEntryPoint
 class ProfileActivity : AppCompatActivity() {
@@ -58,7 +57,7 @@ class ProfileActivity : AppCompatActivity() {
             binding.edit.setImageResource(R.drawable.ic_edit_white)
             binding.edit.setOnClickListener { this.openActivity<ProfileEditActivity>() }
         }
-        binding.back.setOnClickListener { onBackPressed() }
+        binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         observeViewModel()
     }
@@ -78,22 +77,22 @@ class ProfileActivity : AppCompatActivity() {
                 }
                 launch {
                     viewModel.favoritesCount.collect { count ->
-                        binding.numberFavorites.text = MessageFormat.format("{0}", count)
+                        binding.numberFavorites.text = "$count"
                     }
                 }
                 launch {
                     viewModel.albumsCount.collect { count ->
-                        binding.numberAlbums.text = MessageFormat.format("{0}", count)
+                        binding.numberAlbums.text = "$count"
                     }
                 }
                 launch {
                     viewModel.artistsCount.collect { count ->
-                        binding.numberArtists.text = MessageFormat.format("{0}", count)
+                        binding.numberArtists.text = "$count"
                     }
                 }
                 launch {
                     viewModel.categoriesCount.collect { count ->
-                        binding.numberCategories.text = MessageFormat.format("{0}", count)
+                        binding.numberCategories.text = "$count"
                     }
                 }
             }

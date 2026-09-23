@@ -1,5 +1,6 @@
 package com.flatcode.littlemusic.ui.main
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,13 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.flatcode.littlemusic.databinding.ActivitySplashBinding
 import com.flatcode.littlemusic.ui.auth.AuthActivity
 import com.flatcode.littlemusic.utils.openActivity
-import com.flatcode.littlemusic.databinding.ActivitySplashBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+@SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
 

@@ -1,18 +1,15 @@
 package com.flatcode.littlemusic
 
 import android.app.Application
-import android.text.format.DateFormat
 import coil3.ImageLoader
+import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import com.cloudinary.android.MediaManager
+import com.flatcode.littlemusic.utils.DATA
 import dagger.hilt.android.HiltAndroidApp
 import io.selimdawa.multicolors.MultiColorManager
 import timber.log.Timber
-import com.cloudinary.android.MediaManager
-import com.flatcode.littlemusic.BuildConfig
-import com.flatcode.littlemusic.utils.DATA
-import java.util.Calendar
-import java.util.Locale
 
 @HiltAndroidApp
 class Application : Application(), SingletonImageLoader.Factory {
@@ -30,19 +27,9 @@ class Application : Application(), SingletonImageLoader.Factory {
         MediaManager.init(this, config)
     }
 
-    override fun newImageLoader(context: coil3.PlatformContext): ImageLoader {
-        return ImageLoader.Builder(context)
-            .components {
-                add(OkHttpNetworkFetcherFactory())
-            }
-            .build()
-    }
-
-    companion object {
-        fun formatTimestamp(timestamp: Long): String {
-            val calendar = Calendar.getInstance(Locale.ENGLISH)
-            calendar.timeInMillis = timestamp
-            return DateFormat.format("dd/MM/yyyy", calendar).toString()
-        }
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
+        return ImageLoader.Builder(context).components {
+            add(OkHttpNetworkFetcherFactory())
+        }.build()
     }
 }

@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemCategoryBinding
 import com.flatcode.littlemusic.model.Category
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.isInterested
-import java.util.*
+import com.flatcode.littlemusic.utils.loadImage
+import java.util.Locale
 
 class CategoryAdapter(
     private val onItemClick: (Category) -> Unit,
@@ -23,7 +23,8 @@ class CategoryAdapter(
     var fullList: List<Category> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -39,7 +40,9 @@ class CategoryAdapter(
                 val filteredList = if (query.isEmpty()) {
                     fullList
                 } else {
-                    fullList.filter { it.name?.uppercase(Locale.getDefault())?.contains(query) == true }
+                    fullList.filter {
+                        it.name?.uppercase(Locale.getDefault())?.contains(query) == true
+                    }
                 }
                 results.count = filteredList.size
                 results.values = filteredList
@@ -58,7 +61,8 @@ class CategoryAdapter(
         submitList(list)
     }
 
-    inner class ViewHolder(private val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemCategoryBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Category) {
             val id = item.id
             val name = item.name ?: ""

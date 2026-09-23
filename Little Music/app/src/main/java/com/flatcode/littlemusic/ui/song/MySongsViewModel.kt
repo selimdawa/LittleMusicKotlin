@@ -3,8 +3,8 @@ package com.flatcode.littlemusic.ui.song
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.repository.MusicRepository
-import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.ui.BaseViewModel
+import com.flatcode.littlemusic.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,21 +40,22 @@ class MySongsViewModel @Inject constructor(
             _isLoading.value = true
             val typeDB = _currentDB.value
             val orderBy = _currentType.value
-            
-            musicRepository.getInterestedIds(DATA.FirebaseUserUid, typeDB).collect { interestedIds ->
-                musicRepository.getSongs(orderBy).collect { allSongs ->
-                    val filtered = allSongs.filter { song ->
-                        when (typeDB) {
-                            DATA.ARTISTS -> song.artistId in interestedIds
-                            DATA.ALBUMS -> song.albumId in interestedIds
-                            DATA.CATEGORIES -> song.categoryId in interestedIds
-                            else -> false
+
+            musicRepository.getInterestedIds(DATA.FirebaseUserUid, typeDB)
+                .collect { interestedIds ->
+                    musicRepository.getSongs(orderBy).collect { allSongs ->
+                        val filtered = allSongs.filter { song ->
+                            when (typeDB) {
+                                DATA.ARTISTS -> song.artistId in interestedIds
+                                DATA.ALBUMS -> song.albumId in interestedIds
+                                DATA.CATEGORIES -> song.categoryId in interestedIds
+                                else -> false
+                            }
                         }
+                        _songs.value = filtered
+                        _isLoading.value = false
                     }
-                    _songs.value = filtered
-                    _isLoading.value = false
                 }
-            }
         }
     }
 }

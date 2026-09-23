@@ -5,7 +5,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -16,40 +18,38 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import android.widget.ImageView
-import androidx.activity.OnBackPressedCallback
 import com.example.jean.jcplayer.model.JcAudio
+import com.flatcode.littlemusic.R
+import com.flatcode.littlemusic.databinding.ActivityArtistSongsBinding
 import com.flatcode.littlemusic.ui.album.AlbumAdapter
 import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.ui.song.SongAdapter
-import com.flatcode.littlemusic.utils.checkFavorite
-import com.flatcode.littlemusic.utils.checkLove
-import com.flatcode.littlemusic.utils.openActivity
-import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.checkFavorite
 import com.flatcode.littlemusic.utils.checkInterested
+import com.flatcode.littlemusic.utils.checkLove
 import com.flatcode.littlemusic.utils.dialogAboutArtist
 import com.flatcode.littlemusic.utils.isInterested
-import com.flatcode.littlemusic.databinding.ActivityArtistSongsBinding
+import com.flatcode.littlemusic.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.MessageFormat
+
 
 @AndroidEntryPoint
 class ArtistSongsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityArtistSongsBinding
     private val viewModel: ArtistSongsViewModel by viewModels()
-    
+
     private var albumAdapter: AlbumAdapter? = null
     private var songAdapter: SongAdapter? = null
     private val jcAudios = ArrayList<JcAudio>()
-    
+
     private var isAlbum = true
     private var isSong = false
-    
+
     private var artistId: String? = null
     private var artistName: String? = null
     private var artistImage: String? = null
@@ -116,21 +116,33 @@ class ArtistSongsActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
-                    if (isAlbum) albumAdapter!!.filter.filter(s) else if (isSong) songAdapter!!.filter.filter(s)
-                } catch (e: Exception) {}
+                    if (isAlbum) albumAdapter!!.filter.filter(s) else if (isSong) songAdapter!!.filter.filter(
+                        s
+                    )
+                } catch (_: Exception) {
+                }
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
     }
 
     private fun setupSwitchBars() {
         binding.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
-        
+
         binding.switchBarSongs.interest.isInterested(artistId, DATA.ARTISTS)
-        binding.switchBarSongs.add.setOnClickListener { binding.switchBarSongs.interest.checkInterested(DATA.ARTISTS, artistId) }
+        binding.switchBarSongs.add.setOnClickListener {
+            binding.switchBarSongs.interest.checkInterested(
+                DATA.ARTISTS, artistId
+            )
+        }
 
         binding.switchBarAlbums.interest.isInterested(artistId, DATA.ARTISTS)
-        binding.switchBarAlbums.add.setOnClickListener { binding.switchBarAlbums.interest.checkInterested(DATA.ARTISTS, artistId) }
+        binding.switchBarAlbums.add.setOnClickListener {
+            binding.switchBarAlbums.interest.checkInterested(
+                DATA.ARTISTS, artistId
+            )
+        }
 
         binding.switchBarAlbums.songs.setOnClickListener {
             isAlbum = false
@@ -140,14 +152,22 @@ class ArtistSongsActivity : AppCompatActivity() {
             binding.player.jcPlayer.pause()
             binding.player.jcPlayer.visibility = View.GONE
             viewModel.getSongs(artistId)
-            if (DATA.searchStatus) onBackPressed()
+            if (DATA.searchStatus) onBackPressedDispatcher.onBackPressed()
         }
-        
+
         binding.switchBarAlbums.apply {
-            aboutTheArtist.setOnClickListener { this@ArtistSongsActivity.dialogAboutArtist(artistImage, artistName, artistAbout) }
+            aboutTheArtist.setOnClickListener {
+                this@ArtistSongsActivity.dialogAboutArtist(
+                    artistImage, artistName, artistAbout
+                )
+            }
             all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP, artistId!!, true) }
             mostSongs.setOnClickListener { viewModel.setType(DATA.SONGS_COUNT, artistId!!, true) }
-            mostInterested.setOnClickListener { viewModel.setType(DATA.INTERESTED_COUNT, artistId!!, true) }
+            mostInterested.setOnClickListener {
+                viewModel.setType(
+                    DATA.INTERESTED_COUNT, artistId!!, true
+                )
+            }
             name.setOnClickListener { viewModel.setType(DATA.NAME, artistId!!, true) }
         }
 
@@ -157,11 +177,15 @@ class ArtistSongsActivity : AppCompatActivity() {
             binding.switchBarSongs.scrollSwitch.visibility = View.GONE
             binding.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
             viewModel.getAlbums(artistId)
-            if (DATA.searchStatus) onBackPressed()
+            if (DATA.searchStatus) onBackPressedDispatcher.onBackPressed()
         }
-        
+
         binding.switchBarSongs.apply {
-            aboutTheArtist.setOnClickListener { this@ArtistSongsActivity.dialogAboutArtist(artistImage, artistName, artistAbout) }
+            aboutTheArtist.setOnClickListener {
+                this@ArtistSongsActivity.dialogAboutArtist(
+                    artistImage, artistName, artistAbout
+                )
+            }
             all.setOnClickListener { viewModel.setType(DATA.TIMESTAMP, artistId!!, false) }
             mostViews.setOnClickListener { viewModel.setType(DATA.VIEWS_COUNT, artistId!!, false) }
             mostLoves.setOnClickListener { viewModel.setType(DATA.LOVES_COUNT, artistId!!, false) }
@@ -170,34 +194,50 @@ class ArtistSongsActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerViews() {
-        albumAdapter = AlbumAdapter(
-            onItemClick = { album ->
-                this@ArtistSongsActivity.openActivity<AlbumSongsActivity>(
-                    extras = arrayOf(DATA.ALBUM_ID to album.id, DATA.ALBUM_NAME to album.name, DATA.ALBUM_IMAGE to album.image)
+        albumAdapter = AlbumAdapter(onItemClick = { album ->
+            this@ArtistSongsActivity.openActivity<AlbumSongsActivity>(
+                extras = arrayOf(
+                    DATA.ALBUM_ID to album.id,
+                    DATA.ALBUM_NAME to album.name,
+                    DATA.ALBUM_IMAGE to album.image
                 )
-            },
-            onInterestedClick = { album, view -> (view as? ImageView)?.checkInterested(DATA.ALBUMS, album.id) }
-        )
+            )
+        }, onInterestedClick = { album, view ->
+            (view as? ImageView)?.checkInterested(
+                DATA.ALBUMS, album.id
+            )
+        })
         binding.recyclerAlbums.adapter = albumAdapter
 
         songAdapter = SongAdapter(
             onItemClick = { _, position ->
-                changeSelectedSong(position)
-                binding.player.jcPlayer.playAudio(jcAudios[position])
-                binding.player.jcPlayer.visibility = View.VISIBLE
-            },
+            changeSelectedSong(position)
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+            binding.player.jcPlayer.visibility = View.VISIBLE
+        },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name ->
-                this@ArtistSongsActivity.openActivity<ArtistSongsActivity>(extras = arrayOf(DATA.ARTIST_ID to id, DATA.ARTIST_NAME to name))
+                this@ArtistSongsActivity.openActivity<ArtistSongsActivity>(
+                    extras = arrayOf(
+                        DATA.ARTIST_ID to id, DATA.ARTIST_NAME to name
+                    )
+                )
             },
             onAlbumClick = { id, name, image ->
-                this@ArtistSongsActivity.openActivity<AlbumSongsActivity>(extras = arrayOf(DATA.ALBUM_ID to id, DATA.ALBUM_NAME to name, DATA.ALBUM_IMAGE to image))
+                this@ArtistSongsActivity.openActivity<AlbumSongsActivity>(
+                    extras = arrayOf(
+                        DATA.ALBUM_ID to id, DATA.ALBUM_NAME to name, DATA.ALBUM_IMAGE to image
+                    )
+                )
             },
             onCategoryClick = { id, name ->
-                this@ArtistSongsActivity.openActivity<CategorySongsActivity>(extras = arrayOf(DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name))
-            }
-        )
+                this@ArtistSongsActivity.openActivity<CategorySongsActivity>(
+                    extras = arrayOf(
+                        DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name
+                    )
+                )
+            })
         binding.recyclerSongs.adapter = songAdapter
     }
 
@@ -208,7 +248,8 @@ class ArtistSongsActivity : AppCompatActivity() {
                     viewModel.albums.collect { albums ->
                         if (isAlbum) {
                             albumAdapter?.setList(albums)
-                            binding.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
+                            binding.toolbar.number.text =
+                                getString(R.string.count_format, albums.size)
                             binding.progress.visibility = View.GONE
                             if (albums.isNotEmpty()) {
                                 binding.recyclerAlbums.visibility = View.VISIBLE
@@ -224,13 +265,18 @@ class ArtistSongsActivity : AppCompatActivity() {
                     viewModel.songs.collect { songs ->
                         if (isSong) {
                             songAdapter?.setList(songs)
-                            binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
-                            
+                            binding.toolbar.number.text =
+                                getString(R.string.count_format, songs.size)
+
                             jcAudios.clear()
                             songs.forEach { song ->
-                                jcAudios.add(JcAudio.createFromURL(song.name ?: "", song.songLink ?: ""))
+                                jcAudios.add(
+                                    JcAudio.createFromURL(
+                                        song.name ?: "", song.songLink ?: ""
+                                    )
+                                )
                             }
-                            
+
                             binding.progress.visibility = View.GONE
                             if (songs.isNotEmpty()) {
                                 binding.recyclerSongs.visibility = View.VISIBLE
@@ -239,7 +285,11 @@ class ArtistSongsActivity : AppCompatActivity() {
                             } else {
                                 binding.recyclerSongs.visibility = View.GONE
                                 binding.emptyText.visibility = View.VISIBLE
-                                Toast.makeText(this@ArtistSongsActivity, "There are no songs!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this@ArtistSongsActivity,
+                                    "There are no songs!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     }

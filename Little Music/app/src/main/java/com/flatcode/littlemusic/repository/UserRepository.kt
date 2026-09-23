@@ -2,7 +2,6 @@ package com.flatcode.littlemusic.repository
 
 import com.flatcode.littlemusic.model.User
 import com.flatcode.littlemusic.utils.DATA
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -17,7 +16,6 @@ import javax.inject.Singleton
 @Singleton
 class UserRepository @Inject constructor() {
 
-    private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
 
     fun getUserInfo(userId: String): Flow<User?> = callbackFlow {

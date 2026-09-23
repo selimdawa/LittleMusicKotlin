@@ -5,9 +5,8 @@ import com.flatcode.littlemusic.model.Category
 import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.repository.MusicRepository
 import com.flatcode.littlemusic.repository.ToolsRepository
-import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.ui.BaseViewModel
-import dagger.hilt.android.AndroidEntryPoint
+import com.flatcode.littlemusic.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,8 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val musicRepository: MusicRepository,
-    private val toolsRepository: ToolsRepository
+    private val musicRepository: MusicRepository, private val toolsRepository: ToolsRepository
 ) : BaseViewModel() {
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())

@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -25,12 +26,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.flatcode.littlemusic.R
+import com.flatcode.littlemusic.databinding.ActivityMainBinding
 import com.flatcode.littlemusic.ui.profile.ProfileActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.closeApp
 import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.openActivity
-import com.flatcode.littlemusic.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import io.selimdawa.bubblebottom.BubbleBottomNavigation
 import io.selimdawa.bubblebottom.Model
@@ -51,7 +52,9 @@ class MainActivity : AppCompatActivity() {
     ) { permissions ->
         val granted = permissions.entries.all { it.value }
         if (!granted) {
-            Toast.makeText(this, "Permissions are required for better experience", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this, "Permissions are required for better experience", Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -102,7 +105,8 @@ class MainActivity : AppCompatActivity() {
 
         checkPermissions()
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         val navController = navHostFragment.navController
 
         bottomNavigation = binding.bottomNavigation
@@ -119,21 +123,26 @@ class MainActivity : AppCompatActivity() {
                 else -> R.id.homeFragment
             }
 
-            binding.toolbar.card.visibility = if (destinationId == R.id.homeFragment) View.VISIBLE else View.GONE
+            binding.toolbar.card.visibility =
+                if (destinationId == R.id.homeFragment) View.VISIBLE else View.GONE
 
             if (navController.currentDestination?.id != destinationId) {
-                val navOptions = NavOptions.Builder()
-                    .setPopUpTo(navController.graph.startDestinationId, false)
-                    .setLaunchSingleTop(true)
-                    .build()
+                val navOptions =
+                    NavOptions.Builder().setPopUpTo(navController.graph.startDestinationId, false)
+                        .setLaunchSingleTop(true).build()
                 navController.navigate(destinationId, null, navOptions)
             }
         }
 
-        //bottomNavigation.setCount(3, numberSongs);
         bottomNavigation!!.show(2, true)
 
-            context.openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to DATA.FirebaseUserUid))
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                context.closeApp(activity)
+            }
+        })
+
+        context.openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to DATA.FirebaseUserUid))
 
         observeViewModel()
         viewModel.loadUserInfo()
@@ -151,9 +160,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        context.closeApp(activity)
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

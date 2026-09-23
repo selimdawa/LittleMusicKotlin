@@ -11,13 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemAlbumBinding
 import com.flatcode.littlemusic.model.Album
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.isInterested
-import java.util.*
+import com.flatcode.littlemusic.utils.loadImage
+import java.util.Locale
 
 class AlbumAdapter(
-    private val onItemClick: (Album) -> Unit,
-    private val onInterestedClick: (Album, View) -> Unit
+    private val onItemClick: (Album) -> Unit, private val onInterestedClick: (Album, View) -> Unit
 ) : ListAdapter<Album, AlbumAdapter.ViewHolder>(DiffCallback), Filterable {
 
     var fullList: List<Album> = emptyList()
@@ -39,7 +38,9 @@ class AlbumAdapter(
                 val filteredList = if (query.isEmpty()) {
                     fullList
                 } else {
-                    fullList.filter { it.name?.uppercase(Locale.getDefault())?.contains(query) == true }
+                    fullList.filter {
+                        it.name?.uppercase(Locale.getDefault())?.contains(query) == true
+                    }
                 }
                 results.count = filteredList.size
                 results.values = filteredList
@@ -58,7 +59,8 @@ class AlbumAdapter(
         submitList(list)
     }
 
-    inner class ViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemAlbumBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Album) {
             val id = item.id
             val name = item.name ?: ""
@@ -80,7 +82,7 @@ class AlbumAdapter(
 
             binding.add.isInterested(id, DATA.ALBUMS)
             binding.add.setOnClickListener { onInterestedClick(item, it) }
-            
+
             binding.item.setOnClickListener { onItemClick(item) }
         }
     }

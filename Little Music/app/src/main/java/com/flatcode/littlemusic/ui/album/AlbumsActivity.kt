@@ -5,6 +5,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -15,15 +17,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
+import com.flatcode.littlemusic.databinding.ActivityAlbumsBinding
 import com.flatcode.littlemusic.utils.DATA
-import android.widget.ImageView
 import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.openActivity
-import com.flatcode.littlemusic.databinding.ActivityAlbumsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.MessageFormat
+
 
 @AndroidEntryPoint
 class AlbumsActivity : AppCompatActivity() {
@@ -52,13 +53,27 @@ class AlbumsActivity : AppCompatActivity() {
         setupSwitchBar()
         observeViewModel()
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+
         viewModel.getData()
     }
 
     private fun setupToolbar() {
         binding.toolbar.nameSpace.setText(R.string.albums)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -66,31 +81,33 @@ class AlbumsActivity : AppCompatActivity() {
             DATA.searchStatus = true
         }
         binding.toolbar.textSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 try {
                     adapter!!.filter.filter(s)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     //None
                 }
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
     }
 
     private fun setupRecyclerView() {
-        adapter = AlbumAdapter(
-            onItemClick = { album ->
-                openActivity<AlbumSongsActivity>(
-                    extras = arrayOf(
-                        DATA.ALBUM_ID to album.id,
-                        DATA.ALBUM_NAME to album.name,
-                        DATA.ALBUM_IMAGE to album.image
-                    )
+        adapter = AlbumAdapter(onItemClick = { album ->
+            openActivity<AlbumSongsActivity>(
+                extras = arrayOf(
+                    DATA.ALBUM_ID to album.id,
+                    DATA.ALBUM_NAME to album.name,
+                    DATA.ALBUM_IMAGE to album.image
                 )
-            },
-            onInterestedClick = { album, view -> (view as? ImageView)?.checkInterested(DATA.ALBUMS, album.id) }
-        )
+            )
+        }, onInterestedClick = { album, view ->
+            (view as? ImageView)?.checkInterested(
+                DATA.ALBUMS, album.id
+            )
+        })
         binding.recyclerView.adapter = adapter
     }
 
@@ -107,8 +124,8 @@ class AlbumsActivity : AppCompatActivity() {
                 launch {
                     viewModel.albums.collect { albums ->
                         adapter?.setList(albums)
-                        binding.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
-                        
+                        binding.toolbar.number.text = getString(R.string.count_format, albums.size)
+
                         if (albums.isNotEmpty()) {
                             binding.recyclerView.visibility = View.VISIBLE
                             binding.emptyText.visibility = View.GONE
@@ -127,14 +144,6 @@ class AlbumsActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding.toolbar.toolbar.visibility = View.VISIBLE
-            binding.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding.toolbar.textSearch.setText(DATA.EMPTY)
-        } else super.onBackPressed()
-    }
 
     override fun onResume() {
         super.onResume()

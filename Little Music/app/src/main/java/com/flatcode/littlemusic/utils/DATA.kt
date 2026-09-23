@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection", "unused")
+
 package com.flatcode.littlemusic.utils
 
 import com.google.firebase.auth.FirebaseAuth
@@ -34,12 +36,10 @@ object DATA {
     var LOVES_COUNT = "lovesCount"
     var EDITORS_CHOICE = "editorsChoice"
     var NAME = "name"
-    var DOT = "."
     var CURRENT_VERSION = 1
 
     //Shared
     var PROFILE_ID = "profileId"
-    var COLOR_OPTION = "color_option"
     var CATEGORY_ID = "categoryId"
     var ARTIST_ID = "artistId"
     var ARTIST_ABOUT = "artistAbout"
@@ -55,9 +55,7 @@ object DATA {
 
     //Other
     var EMPTY = ""
-    var SPACE = " "
     var MIX_SQUARE = 500
-    var ZERO = 0
     var ORDER_MAIN = 5 // Here Max Item Show
     var searchStatus = false
     var FB_ID = ""

@@ -1,8 +1,6 @@
 package com.flatcode.littlemusic.ui.profile
 
 import android.Manifest
-import android.app.ProgressDialog
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -22,17 +20,18 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemusic.R
-import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.loadImage
-import com.flatcode.littlemusic.databinding.ActivityProfileEditBinding
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
+import com.flatcode.littlemusic.R
+import com.flatcode.littlemusic.databinding.ActivityProfileEditBinding
+import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.ProgressDialog
+import com.flatcode.littlemusic.utils.loadImage
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ProfileEditActivity : AppCompatActivity() {
@@ -90,8 +89,7 @@ class ProfileEditActivity : AppCompatActivity() {
     private fun launchImagePicker() {
         cropImage.launch(
             CropImageContractOptions(
-                uri = null,
-                cropImageOptions = CropImageOptions(
+                uri = null, cropImageOptions = CropImageOptions(
                     guidelines = CropImageView.Guidelines.ON,
                     aspectRatioX = 1,
                     aspectRatioY = 1,
@@ -130,12 +128,12 @@ class ProfileEditActivity : AppCompatActivity() {
         dialog!!.setCanceledOnTouchOutside(false)
 
         binding.toolbar.nameSpace.setText(R.string.edit_profile)
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.image.setOnClickListener {
             checkStoragePermission()
         }
         binding.go.setOnClickListener {
-            viewModel.updateProfile(binding.nameEt.text.toString().trim(), imageUri, this)
+            viewModel.updateProfile(binding.nameEt.text.toString().trim(), imageUri)
         }
 
         observeViewModel()
@@ -162,15 +160,22 @@ class ProfileEditActivity : AppCompatActivity() {
                                 dialog!!.setMessage(status.message)
                                 dialog!!.show()
                             }
+
                             is ProfileEditViewModel.UpdateStatus.Success -> {
                                 dialog!!.dismiss()
-                                Toast.makeText(this@ProfileEditActivity, status.message, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this@ProfileEditActivity, status.message, Toast.LENGTH_SHORT
+                                ).show()
                                 finish()
                             }
+
                             is ProfileEditViewModel.UpdateStatus.Error -> {
                                 dialog!!.dismiss()
-                                Toast.makeText(this@ProfileEditActivity, status.message, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this@ProfileEditActivity, status.message, Toast.LENGTH_SHORT
+                                ).show()
                             }
+
                             ProfileEditViewModel.UpdateStatus.Idle -> {}
                         }
                     }

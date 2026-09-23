@@ -5,7 +5,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -17,21 +19,21 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
-import android.widget.ImageView
 import com.example.jean.jcplayer.model.JcAudio
+import com.flatcode.littlemusic.R
+import com.flatcode.littlemusic.databinding.ActivityShowMoreBinding
 import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
 import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.ui.song.SongAdapter
+import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkFavorite
 import com.flatcode.littlemusic.utils.checkLove
 import com.flatcode.littlemusic.utils.openActivity
-import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.databinding.ActivityShowMoreBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.MessageFormat
+
 
 @AndroidEntryPoint
 class ShowMoreActivity : AppCompatActivity() {
@@ -40,7 +42,7 @@ class ShowMoreActivity : AppCompatActivity() {
     private val viewModel: ShowMoreViewModel by viewModels()
     private var adapter: SongAdapter? = null
     private val jcAudios = ArrayList<JcAudio>()
-    
+
     private var type: String? = null
     private var name: String? = null
     private var isReverse: String? = null
@@ -75,13 +77,27 @@ class ShowMoreActivity : AppCompatActivity() {
         setupRecyclerView()
         observeViewModel()
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+
         viewModel.getData(type)
     }
 
     private fun setupToolbar() {
         binding.toolbar.nameSpace.text = name
-        binding.toolbar.back.setOnClickListener { onBackPressed() }
-        binding.toolbar.close.setOnClickListener { onBackPressed() }
+        binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -94,19 +110,21 @@ class ShowMoreActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
                     adapter!!.filter.filter(s)
-                } catch (e: Exception) {}
+                } catch (_: Exception) {
+                }
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
     }
 
     private fun setupRecyclerView() {
-        if (isReverse == "true") {
-            recyclerView = binding.recyclerViewReverse
+        recyclerView = if (isReverse == "true") {
+            binding.recyclerViewReverse
         } else {
-            recyclerView = binding.recyclerView
+            binding.recyclerView
         }
-        
+
         adapter = SongAdapter(
             onItemClick = { _, position ->
                 changeSelectedSong(position)
@@ -116,15 +134,26 @@ class ShowMoreActivity : AppCompatActivity() {
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name ->
-                openActivity<ArtistSongsActivity>(extras = arrayOf(DATA.ARTIST_ID to id, DATA.ARTIST_NAME to name))
+                openActivity<ArtistSongsActivity>(
+                    extras = arrayOf(
+                        DATA.ARTIST_ID to id, DATA.ARTIST_NAME to name
+                    )
+                )
             },
             onAlbumClick = { id, name, image ->
-                openActivity<AlbumSongsActivity>(extras = arrayOf(DATA.ALBUM_ID to id, DATA.ALBUM_NAME to name, DATA.ALBUM_IMAGE to image))
+                openActivity<AlbumSongsActivity>(
+                    extras = arrayOf(
+                        DATA.ALBUM_ID to id, DATA.ALBUM_NAME to name, DATA.ALBUM_IMAGE to image
+                    )
+                )
             },
             onCategoryClick = { id, name ->
-                openActivity<CategorySongsActivity>(extras = arrayOf(DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name))
-            }
-        )
+                openActivity<CategorySongsActivity>(
+                    extras = arrayOf(
+                        DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name
+                    )
+                )
+            })
         recyclerView!!.adapter = adapter
     }
 
@@ -134,11 +163,15 @@ class ShowMoreActivity : AppCompatActivity() {
                 launch {
                     viewModel.songs.collect { songs ->
                         adapter?.setList(songs)
-                        binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
-                        
+                        binding.toolbar.number.text = getString(R.string.count_format, songs.size)
+
                         jcAudios.clear()
                         songs.forEach { song ->
-                            jcAudios.add(JcAudio.createFromURL(song.name ?: "", song.songLink ?: ""))
+                            jcAudios.add(
+                                JcAudio.createFromURL(
+                                    song.name ?: "", song.songLink ?: ""
+                                )
+                            )
                         }
 
                         if (songs.isNotEmpty()) {
@@ -148,7 +181,9 @@ class ShowMoreActivity : AppCompatActivity() {
                         } else {
                             recyclerView!!.visibility = View.GONE
                             binding.emptyText.visibility = View.VISIBLE
-                            Toast.makeText(this@ShowMoreActivity, "There are no songs!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@ShowMoreActivity, "There are no songs!", Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -170,22 +205,14 @@ class ShowMoreActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding!!.toolbar.toolbar.visibility = View.VISIBLE
-            binding!!.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding!!.toolbar.textSearch.setText(DATA.EMPTY)
-        } else super.onBackPressed()
-    }
 
     override fun onPause() {
-        binding!!.player.jcPlayer.pause()
+        binding.player.jcPlayer.pause()
         super.onPause()
     }
 
     override fun onStop() {
-        binding!!.player.jcPlayer.pause()
+        binding.player.jcPlayer.pause()
         super.onStop()
     }
 

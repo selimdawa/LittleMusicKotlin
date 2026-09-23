@@ -1,6 +1,5 @@
 package com.flatcode.littlemusic.ui.category
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,17 +8,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemCategoryMainBinding
 import com.flatcode.littlemusic.model.Category
-import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.loadBlurImage
 import com.flatcode.littlemusic.utils.loadImage
-import com.flatcode.littlemusic.utils.openActivity
 
 class CategoryMainAdapter(
     private val onItemClick: (Category) -> Unit
 ) : ListAdapter<Category, CategoryMainAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCategoryMainBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemCategoryMainBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -27,7 +25,8 @@ class CategoryMainAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class ViewHolder(private val binding: ItemCategoryMainBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemCategoryMainBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Category) {
             val name = item.name ?: ""
             val image = item.image ?: ""

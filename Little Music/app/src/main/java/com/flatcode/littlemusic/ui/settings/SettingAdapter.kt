@@ -1,7 +1,5 @@
 package com.flatcode.littlemusic.ui.settings
 
-import android.app.Activity
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +8,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemSettingBinding
 import com.flatcode.littlemusic.model.Setting
-import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.dialogAboutApp
-import com.flatcode.littlemusic.utils.dialogLogout
-import com.flatcode.littlemusic.utils.openActivity
-import com.flatcode.littlemusic.utils.rateApp
-import com.flatcode.littlemusic.utils.shareApp
-import java.text.MessageFormat
 
 class SettingAdapter(
     private val onItemClick: (Setting) -> Unit
@@ -31,7 +22,8 @@ class SettingAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class ViewHolder(private val binding: ItemSettingBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemSettingBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Setting) {
             val name = item.name ?: ""
             val image = item.image

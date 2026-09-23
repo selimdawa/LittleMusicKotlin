@@ -5,10 +5,10 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.widget.ImageView
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
+import androidx.core.net.toUri
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.placeholder
@@ -17,6 +17,7 @@ import coil3.size.Size
 import coil3.transform.Transformation
 import com.flatcode.littlemusic.R
 import java.io.Serializable
+import java.util.Locale
 
 inline fun <reified T : Activity> Context.openActivity(
     c: Class<*>? = null, clear: Boolean = false, vararg extras: Pair<String, Any?>
@@ -82,13 +83,13 @@ fun Context.shareApp() {
     shareIntent.putExtra(Intent.EXTRA_SUBJECT, "share app")
     shareIntent.putExtra(
         Intent.EXTRA_TEXT,
-        " Download the app now from Google Play  https://play.google.com/store/apps/details?id=" + this.packageName
+        " Download the app now from Google Play  https://play.google.com/store/apps/details?id=${this.packageName}"
     )
     this.startActivity(Intent.createChooser(shareIntent, "Choose how to share"))
 }
 
 fun Context.rateApp() {
-    val uri = Uri.parse("market://details?id=" + this.packageName)
+    val uri = "market://details?id=${this.packageName}".toUri()
     val goToMarket = Intent(Intent.ACTION_VIEW, uri)
     try {
         this.startActivity(goToMarket)
@@ -96,7 +97,7 @@ fun Context.rateApp() {
         this.startActivity(
             Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("http://play.google.com/store/apps/details?id=" + this.packageName)
+                "http://play.google.com/store/apps/details?id=${this.packageName}".toUri()
             )
         )
     }
@@ -104,8 +105,8 @@ fun Context.rateApp() {
 
 fun Long.convertDuration(): String {
     val minutes = this / 1000 / 60
-    val seconds = this / 1000 % 60
-    return String.format("%d:%02d", minutes, seconds)
+    val seconds = (this / 1000) % 60
+    return String.format(Locale.getDefault(), "%d:%02d", minutes, seconds)
 }
 
 class SimpleBlurTransformation(private val radius: Float) : Transformation() {

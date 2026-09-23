@@ -1,8 +1,8 @@
 package com.flatcode.littlemusic.ui.auth
 
 import android.util.Patterns
-import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.ui.BaseViewModel
+import com.flatcode.littlemusic.utils.DATA
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -70,7 +70,8 @@ class RegisterViewModel @Inject constructor(
                 _registerStatus.value = RegisterStatus.Success
             }
             .addOnFailureListener { e ->
-                _registerStatus.value = RegisterStatus.Error(e.message ?: "Failed to save user info")
+                _registerStatus.value =
+                    RegisterStatus.Error(e.message ?: "Failed to save user info")
             }
     }
 

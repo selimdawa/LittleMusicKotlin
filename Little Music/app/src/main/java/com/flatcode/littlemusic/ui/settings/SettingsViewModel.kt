@@ -5,13 +5,13 @@ import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.model.Setting
 import com.flatcode.littlemusic.model.User
 import com.flatcode.littlemusic.repository.UserRepository
+import com.flatcode.littlemusic.ui.BaseViewModel
 import com.flatcode.littlemusic.ui.album.MyAlbumsActivity
 import com.flatcode.littlemusic.ui.artist.MyArtistsActivity
 import com.flatcode.littlemusic.ui.category.MyCategoriesActivity
 import com.flatcode.littlemusic.ui.favorites.FavoritesActivity
 import com.flatcode.littlemusic.ui.profile.ProfileEditActivity
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -45,7 +45,12 @@ class SettingsViewModel @Inject constructor(
                     userRepository.getInterestedCount(uid, DATA.ARTISTS).collect { art ->
                         userRepository.getInterestedCount(uid, DATA.CATEGORIES).collect { cat ->
                             userRepository.getCount(uid, DATA.FAVORITES).collect { fav ->
-                                buildSettingsList(alb.toInt(), art.toInt(), cat.toInt(), fav.toInt())
+                                buildSettingsList(
+                                    alb.toInt(),
+                                    art.toInt(),
+                                    cat.toInt(),
+                                    fav.toInt()
+                                )
                             }
                         }
                     }
@@ -56,16 +61,48 @@ class SettingsViewModel @Inject constructor(
 
     private fun buildSettingsList(alb: Int, art: Int, cat: Int, fav: Int) {
         val list = mutableListOf<Setting>()
-        list.add(Setting("1", "Edit Profile", R.drawable.ic_edit_white, 0, ProfileEditActivity::class.java))
+        list.add(
+            Setting(
+                "1",
+                "Edit Profile",
+                R.drawable.ic_edit_white,
+                0,
+                ProfileEditActivity::class.java
+            )
+        )
         list.add(Setting("2", "My Albums", R.drawable.ic_album, alb, MyAlbumsActivity::class.java))
         list.add(Setting("3", "My Artists", R.drawable.ic_mic, art, MyArtistsActivity::class.java))
-        list.add(Setting("4", "My Categories", R.drawable.ic_category_gray, cat, MyCategoriesActivity::class.java))
-        list.add(Setting("5", "Favorites", R.drawable.ic_star_selected, fav, FavoritesActivity::class.java))
+        list.add(
+            Setting(
+                "4",
+                "My Categories",
+                R.drawable.ic_category_gray,
+                cat,
+                MyCategoriesActivity::class.java
+            )
+        )
+        list.add(
+            Setting(
+                "5",
+                "Favorites",
+                R.drawable.ic_star_selected,
+                fav,
+                FavoritesActivity::class.java
+            )
+        )
         list.add(Setting("6", "About App", R.drawable.ic_info, 0, null))
         list.add(Setting("7", "Logout", R.drawable.ic_logout_white, 0, null))
         list.add(Setting("8", "Share App", R.drawable.ic_share, 0, null))
         list.add(Setting("9", "Rate APP", R.drawable.ic_heart_selected, 0, null))
-        list.add(Setting("10", "Privacy Policy", R.drawable.ic_privacy_policy, 0, PrivacyPolicyActivity::class.java))
+        list.add(
+            Setting(
+                "10",
+                "Privacy Policy",
+                R.drawable.ic_privacy_policy,
+                0,
+                PrivacyPolicyActivity::class.java
+            )
+        )
         _settings.value = list
     }
 }

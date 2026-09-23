@@ -1,5 +1,6 @@
 package com.flatcode.littlemusic.ui.settings
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,16 +10,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import android.app.Activity
+import com.flatcode.littlemusic.databinding.FragmentSettingsBinding
 import com.flatcode.littlemusic.ui.profile.ProfileActivity
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.loadImage
-import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.utils.dialogAboutApp
 import com.flatcode.littlemusic.utils.dialogLogout
+import com.flatcode.littlemusic.utils.loadImage
+import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.utils.rateApp
 import com.flatcode.littlemusic.utils.shareApp
-import com.flatcode.littlemusic.databinding.FragmentSettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -45,7 +45,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupToolbar() {
-            context?.openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to DATA.FirebaseUserUid))
+        context?.openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to DATA.FirebaseUserUid))
     }
 
     private fun setupRecyclerView() {

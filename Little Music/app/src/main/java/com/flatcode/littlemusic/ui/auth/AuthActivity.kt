@@ -3,8 +3,8 @@ package com.flatcode.littlemusic.ui.auth
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityAuthBinding
+import com.flatcode.littlemusic.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 

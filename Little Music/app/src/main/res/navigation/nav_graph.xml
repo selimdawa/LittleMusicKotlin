@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/mySongsFragment"
-        android:name="com.flatcode.littlemusic.ui.song.mySongsFragment"
+        android:name="com.flatcode.littlemusic.ui.song.MySongsFragment"
         android:label="@string/my_songs"
         tools:layout="@layout/fragment_my_songs" />
 

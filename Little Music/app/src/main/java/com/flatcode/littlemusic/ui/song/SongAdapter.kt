@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemSongBinding
 import com.flatcode.littlemusic.model.Song
-import java.util.*
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.convertDuration
 import com.flatcode.littlemusic.utils.dataName
@@ -24,6 +23,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import io.selimdawa.multiwave.MultiWaveHeader
+import java.util.Locale
 
 class SongAdapter(
     private val onItemClick: (Song, Int) -> Unit,
@@ -61,7 +61,9 @@ class SongAdapter(
                 val filteredList = if (query.isEmpty()) {
                     fullList
                 } else {
-                    fullList.filter { it.name?.uppercase(Locale.getDefault())?.contains(query) == true }
+                    fullList.filter {
+                        it.name?.uppercase(Locale.getDefault())?.contains(query) == true
+                    }
                 }
                 results.count = filteredList.size
                 results.values = filteredList
@@ -83,12 +85,12 @@ class SongAdapter(
     inner class ViewHolder(private val binding: ItemSongBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Song) {
-            val id = item.id ?: ""
+            val id = item.id
             val name = item.name ?: ""
             val artistId = item.artistId ?: ""
             val albumId = item.albumId ?: ""
             val categoryId = item.categoryId ?: ""
-            val nrLovesCount = item.lovesCount ?: "0"
+            val nrLovesCount = item.lovesCount
 
             binding.name.text = name
             binding.artist.dataName(DATA.ARTISTS, artistId)
@@ -109,11 +111,13 @@ class SongAdapter(
             setupIntentData(DATA.CATEGORIES, categoryId, DATA.CATEGORY)
 
             binding.card.setOnClickListener {
-                onItemClick(item, adapterPosition)
-                id.incrementViewCount()
+                if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                    onItemClick(item, bindingAdapterPosition)
+                    id.incrementViewCount()
+                }
             }
 
-            if (selectedPosition == adapterPosition) {
+            if (selectedPosition == bindingAdapterPosition) {
                 open(binding.wave)
             } else {
                 binding.wave.visibility = View.GONE

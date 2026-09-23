@@ -56,4 +56,5 @@
     <string name="about_the_artist">About The Artist</string>
     <string name="crop_image">Crop Image</string>
     <string name="zero">0</string>
+    <string name="count_format">( %d )</string>
 </resources>

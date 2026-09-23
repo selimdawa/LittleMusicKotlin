@@ -8,7 +8,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.text.MessageFormat
+
 
 fun ImageView.isFavorite(id: String?, userId: String?) {
     val reference: DatabaseReference =
@@ -142,7 +142,7 @@ fun TextView.nrLoves(id: String?) {
         FirebaseDatabase.getInstance().reference.child(DATA.LOVES).child(id!!)
     reference.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            this@nrLoves.text = MessageFormat.format(" {0} ", dataSnapshot.childrenCount)
+            this@nrLoves.text = dataSnapshot.childrenCount.toString()
         }
 
         override fun onCancelled(databaseError: DatabaseError) {}
@@ -210,8 +210,8 @@ fun TextView.dataName(database: String?, dataId: String?) {
     val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference(database!!)
     reference.child(dataId!!).addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
-            val name = DATA.EMPTY + snapshot.child(DATA.NAME).value
-            this@dataName.text = MessageFormat.format("{0}{1}", DATA.EMPTY, name)
+            val name = snapshot.child(DATA.NAME).value?.toString() ?: ""
+            this@dataName.text = name
         }
 
         override fun onCancelled(error: DatabaseError) {}

@@ -11,13 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusic.databinding.ItemArtistBinding
 import com.flatcode.littlemusic.model.Artist
 import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.isInterested
-import java.util.*
+import com.flatcode.littlemusic.utils.loadImage
+import java.util.Locale
 
 class ArtistAdapter(
-    private val onItemClick: (Artist) -> Unit,
-    private val onInterestedClick: (Artist, View) -> Unit
+    private val onItemClick: (Artist) -> Unit, private val onInterestedClick: (Artist, View) -> Unit
 ) : ListAdapter<Artist, ArtistAdapter.ViewHolder>(DiffCallback), Filterable {
 
     var fullList: List<Artist> = emptyList()
@@ -39,7 +38,9 @@ class ArtistAdapter(
                 val filteredList = if (query.isEmpty()) {
                     fullList
                 } else {
-                    fullList.filter { it.name?.uppercase(Locale.getDefault())?.contains(query) == true }
+                    fullList.filter {
+                        it.name?.uppercase(Locale.getDefault())?.contains(query) == true
+                    }
                 }
                 results.count = filteredList.size
                 results.values = filteredList
@@ -58,7 +59,8 @@ class ArtistAdapter(
         submitList(list)
     }
 
-    inner class ViewHolder(private val binding: ItemArtistBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemArtistBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Artist) {
             val id = item.id
             val name = item.name ?: ""

@@ -4,29 +4,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import android.widget.ImageView
 import com.example.jean.jcplayer.model.JcAudio
+import com.flatcode.littlemusic.databinding.FragmentMySongsBinding
 import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
 import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
+import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkFavorite
 import com.flatcode.littlemusic.utils.checkLove
 import com.flatcode.littlemusic.utils.openActivity
-import com.flatcode.littlemusic.model.Song
-import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.databinding.FragmentMySongsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class mySongsFragment : Fragment() {
+class MySongsFragment : Fragment() {
 
     private var _binding: FragmentMySongsBinding? = null
     private val binding get() = _binding!!
@@ -38,7 +37,7 @@ class mySongsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMySongsBinding.inflate(inflater, container, false)
-        Timber.d("mySongsFragment Created")
+        Timber.d("MySongsFragment Created")
 
         setupSwitchBar()
         setupRecyclerView()
@@ -55,7 +54,7 @@ class mySongsFragment : Fragment() {
             mostViews.setOnClickListener { viewModel.setType(DATA.VIEWS_COUNT) }
             mostLoves.setOnClickListener { viewModel.setType(DATA.LOVES_COUNT) }
             name.setOnClickListener { viewModel.setType(DATA.NAME) }
-            
+
             artists.setOnClickListener { viewModel.setDB(DATA.ARTISTS) }
             albums.setOnClickListener { viewModel.setDB(DATA.ALBUMS) }
             categories.setOnClickListener { viewModel.setDB(DATA.CATEGORIES) }
@@ -65,22 +64,33 @@ class mySongsFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = SongAdapter(
             onItemClick = { _, position ->
-                changeSelectedSong(position)
-                binding.player.jcPlayer.playAudio(jcAudios[position])
-                binding.player.jcPlayer.visibility = View.VISIBLE
-            },
+            changeSelectedSong(position)
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+            binding.player.jcPlayer.visibility = View.VISIBLE
+        },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name ->
-                context?.openActivity<ArtistSongsActivity>(extras = arrayOf(DATA.ARTIST_ID to id, DATA.ARTIST_NAME to name))
+                context?.openActivity<ArtistSongsActivity>(
+                    extras = arrayOf(
+                        DATA.ARTIST_ID to id, DATA.ARTIST_NAME to name
+                    )
+                )
             },
             onAlbumClick = { id, name, image ->
-                context?.openActivity<AlbumSongsActivity>(extras = arrayOf(DATA.ALBUM_ID to id, DATA.ALBUM_NAME to name, DATA.ALBUM_IMAGE to image))
+                context?.openActivity<AlbumSongsActivity>(
+                    extras = arrayOf(
+                        DATA.ALBUM_ID to id, DATA.ALBUM_NAME to name, DATA.ALBUM_IMAGE to image
+                    )
+                )
             },
             onCategoryClick = { id, name ->
-                context?.openActivity<CategorySongsActivity>(extras = arrayOf(DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name))
-            }
-        )
+                context?.openActivity<CategorySongsActivity>(
+                    extras = arrayOf(
+                        DATA.CATEGORY_ID to id, DATA.CATEGORY_NAME to name
+                    )
+                )
+            })
         binding.recyclerView.adapter = adapter
     }
 
@@ -90,10 +100,14 @@ class mySongsFragment : Fragment() {
                 launch {
                     viewModel.songs.collect { songs ->
                         adapter?.setList(songs)
-                        
+
                         jcAudios.clear()
                         songs.forEach { song ->
-                            jcAudios.add(JcAudio.createFromURL(song.name ?: "", song.songLink ?: ""))
+                            jcAudios.add(
+                                JcAudio.createFromURL(
+                                    song.name ?: "", song.songLink ?: ""
+                                )
+                            )
                         }
 
                         if (songs.isNotEmpty()) {
@@ -103,7 +117,8 @@ class mySongsFragment : Fragment() {
                         } else {
                             binding.recyclerView.visibility = View.GONE
                             binding.emptyText.visibility = View.VISIBLE
-                            Toast.makeText(context, "There are no songs!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "There are no songs!", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 }

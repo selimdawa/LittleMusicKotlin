@@ -1,6 +1,5 @@
 package com.flatcode.littlemusic.ui.auth
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -15,10 +14,10 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flatcode.littlemusic.ui.main.MainActivity
-import com.flatcode.littlemusic.utils.DATA
-import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityRegisterBinding
+import com.flatcode.littlemusic.ui.main.MainActivity
+import com.flatcode.littlemusic.utils.ProgressDialog
+import com.flatcode.littlemusic.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -80,16 +79,23 @@ class RegisterActivity : AppCompatActivity() {
                             dialog!!.setMessage(status.message)
                             dialog!!.show()
                         }
+
                         is RegisterViewModel.RegisterStatus.Success -> {
                             dialog!!.dismiss()
-                            Toast.makeText(this@RegisterActivity, "Account created...", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@RegisterActivity, "Account created...", Toast.LENGTH_SHORT
+                            ).show()
                             this@RegisterActivity.openActivity<MainActivity>(clear = true)
                             finish()
                         }
+
                         is RegisterViewModel.RegisterStatus.Error -> {
                             dialog!!.dismiss()
-                            Toast.makeText(this@RegisterActivity, status.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@RegisterActivity, status.message, Toast.LENGTH_SHORT
+                            ).show()
                         }
+
                         RegisterViewModel.RegisterStatus.Idle -> {}
                     }
                 }

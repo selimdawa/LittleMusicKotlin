@@ -14,16 +14,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jean.jcplayer.model.JcAudio
+import com.flatcode.littlemusic.databinding.FragmentHomeBinding
+import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
 import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
-import com.flatcode.littlemusic.utils.checkFavorite
-import com.flatcode.littlemusic.utils.checkLove
 import com.flatcode.littlemusic.ui.showmore.ShowMoreActivity
 import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.checkFavorite
+import com.flatcode.littlemusic.utils.checkLove
 import com.flatcode.littlemusic.utils.openActivity
-import com.flatcode.littlemusic.databinding.FragmentHomeBinding
-import com.flatcode.littlemusic.model.Song
 import dagger.hilt.android.AndroidEntryPoint
 import io.selimdawa.autoimageslider.SliderAnimations
 import io.selimdawa.autoimageslider.view.model.IndicatorAnimationType
@@ -72,59 +72,72 @@ class HomeFragment : Fragment() {
         categoryAdapter = CategoryHomeAdapter { category ->
             context?.openActivity<CategorySongsActivity>(
                 extras = arrayOf(
-                    DATA.CATEGORY_ID to category.id,
-                    DATA.CATEGORY_NAME to category.name
+                    DATA.CATEGORY_ID to category.id, DATA.CATEGORY_NAME to category.name
                 )
             )
         }
         binding.recyclerCategory.adapter = categoryAdapter
 
         adapter = SongMainAdapter(
-            onPlayClick = { _, position -> playSong(position, adapter, adapter2, adapter3, adapter4) },
+            onPlayClick = { _, position ->
+            playSong(
+                position, adapter, adapter2, adapter3, adapter4
+            )
+        },
             onPauseClick = { _, _ -> binding.player.jcPlayer.pause() },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name -> openArtistSongs(id, name) },
             onAlbumClick = { id, name, image -> openAlbumSongs(id, name, image) },
-            onCategoryClick = { id, name -> openCategorySongs(id, name) }
-        )
+            onCategoryClick = { id, name -> openCategorySongs(id, name) })
         binding.recyclerView.adapter = adapter
 
         adapter2 = SongMainAdapter(
-            onPlayClick = { _, position -> playSong(position, adapter2, adapter, adapter3, adapter4) },
+            onPlayClick = { _, position ->
+            playSong(
+                position, adapter2, adapter, adapter3, adapter4
+            )
+        },
             onPauseClick = { _, _ -> binding.player.jcPlayer.pause() },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name -> openArtistSongs(id, name) },
             onAlbumClick = { id, name, image -> openAlbumSongs(id, name, image) },
-            onCategoryClick = { id, name -> openCategorySongs(id, name) }
-        )
+            onCategoryClick = { id, name -> openCategorySongs(id, name) })
         binding.recyclerView2.adapter = adapter2
 
         adapter3 = SongMainAdapter(
-            onPlayClick = { _, position -> playSong(position, adapter3, adapter, adapter2, adapter4) },
+            onPlayClick = { _, position ->
+            playSong(
+                position, adapter3, adapter, adapter2, adapter4
+            )
+        },
             onPauseClick = { _, _ -> binding.player.jcPlayer.pause() },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name -> openArtistSongs(id, name) },
             onAlbumClick = { id, name, image -> openAlbumSongs(id, name, image) },
-            onCategoryClick = { id, name -> openCategorySongs(id, name) }
-        )
+            onCategoryClick = { id, name -> openCategorySongs(id, name) })
         binding.recyclerView3.adapter = adapter3
 
         adapter4 = SongMainAdapter(
-            onPlayClick = { _, position -> playSong(position, adapter4, adapter, adapter2, adapter3) },
+            onPlayClick = { _, position ->
+            playSong(
+                position, adapter4, adapter, adapter2, adapter3
+            )
+        },
             onPauseClick = { _, _ -> binding.player.jcPlayer.pause() },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name -> openArtistSongs(id, name) },
             onAlbumClick = { id, name, image -> openAlbumSongs(id, name, image) },
-            onCategoryClick = { id, name -> openCategorySongs(id, name) }
-        )
+            onCategoryClick = { id, name -> openCategorySongs(id, name) })
         binding.recyclerView4.adapter = adapter4
     }
 
-    private fun playSong(position: Int, current: SongMainAdapter?, vararg others: SongMainAdapter?) {
+    private fun playSong(
+        position: Int, current: SongMainAdapter?, vararg others: SongMainAdapter?
+    ) {
         changeSelectedSong(position, current)
         others.forEach { changeSelectedSong(-1, it) }
         binding.player.jcPlayer.playAudio(jcAudios[position])
@@ -138,7 +151,9 @@ class HomeFragment : Fragment() {
 
     private fun openAlbumSongs(id: String, name: String, image: String) {
         context?.openActivity<AlbumSongsActivity>(
-            extras = arrayOf(DATA.ALBUM_ID to id, DATA.ALBUM_NAME to name, DATA.ALBUM_IMAGE to image)
+            extras = arrayOf(
+                DATA.ALBUM_ID to id, DATA.ALBUM_NAME to name, DATA.ALBUM_IMAGE to image
+            )
         )
     }
 
@@ -213,22 +228,30 @@ class HomeFragment : Fragment() {
                 }
                 launch {
                     viewModel.editorsChoiceSongs.collect { songs ->
-                        updateSongList(songs, adapter, binding.bar, binding.recyclerView, binding.empty)
+                        updateSongList(
+                            songs, adapter, binding.bar, binding.recyclerView, binding.empty
+                        )
                     }
                 }
                 launch {
                     viewModel.mostViewedSongs.collect { songs ->
-                        updateSongList(songs, adapter2, binding.bar2, binding.recyclerView2, binding.empty2)
+                        updateSongList(
+                            songs, adapter2, binding.bar2, binding.recyclerView2, binding.empty2
+                        )
                     }
                 }
                 launch {
                     viewModel.mostLovedSongs.collect { songs ->
-                        updateSongList(songs, adapter3, binding.bar3, binding.recyclerView3, binding.empty3)
+                        updateSongList(
+                            songs, adapter3, binding.bar3, binding.recyclerView3, binding.empty3
+                        )
                     }
                 }
                 launch {
                     viewModel.latestSongs.collect { songs ->
-                        updateSongList(songs, adapter4, binding.bar4, binding.recyclerView4, binding.empty4)
+                        updateSongList(
+                            songs, adapter4, binding.bar4, binding.recyclerView4, binding.empty4
+                        )
                     }
                 }
             }
