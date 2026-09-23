@@ -20,8 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ArtistSongsViewModel @Inject constructor(
-    private val albumRepository: AlbumRepository,
-    private val songRepository: SongRepository
+    private val albumRepository: AlbumRepository, private val songRepository: SongRepository
 ) : ViewModel() {
 
     private val _albums = MutableStateFlow<List<Album>>(emptyList())

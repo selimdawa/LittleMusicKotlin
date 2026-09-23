@@ -1,17 +1,19 @@
 package com.flatcode.littlemusicadmin.ui.song
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusicadmin.model.Song
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.*
 import com.flatcode.littlemusicadmin.databinding.ActivitySongEditBinding
+import com.flatcode.littlemusicadmin.model.Song
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.convertDuration
+import com.flatcode.littlemusicadmin.utils.incrementItemCount
+import com.flatcode.littlemusicadmin.utils.incrementItemRemoveCount
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -244,7 +246,7 @@ class SongEditActivity : AppCompatActivity() {
         }
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Pick Category")
-            .setItems(categories) { dialog: DialogInterface?, which: Int ->
+            .setItems(categories) { _, which ->
                 selectedCategoryTitle = categoryList!![which]
                 selectedCategoryId = categoryId!![which]
                 binding.category.text = selectedCategoryTitle
@@ -257,7 +259,7 @@ class SongEditActivity : AppCompatActivity() {
             artists[i] = artistList!![i]
         }
         val builder = AlertDialog.Builder(activity)
-        builder.setTitle("Pick Artist").setItems(artists) { dialog: DialogInterface?, which: Int ->
+        builder.setTitle("Pick Artist").setItems(artists) { _, which ->
             selectedArtistTitle = artistList!![which]
             selectedArtistId = artistId!![which]
             binding.artist.text = selectedArtistTitle
@@ -270,7 +272,7 @@ class SongEditActivity : AppCompatActivity() {
             albums[i] = albumList!![i]
         }
         val builder = AlertDialog.Builder(activity)
-        builder.setTitle("Pick Album").setItems(albums) { dialog: DialogInterface?, which: Int ->
+        builder.setTitle("Pick Album").setItems(albums) { _, which ->
             selectedAlbumTitle = albumList!![which]
             selectedAlbumId = albumId!![which]
             binding.album.text = selectedAlbumTitle

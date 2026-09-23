@@ -1,7 +1,6 @@
 package com.flatcode.littlemusicadmin.ui.song
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.net.Uri
@@ -9,19 +8,22 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.*
 import com.flatcode.littlemusicadmin.databinding.ActivitySongAddBinding
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.convertDuration
+import com.flatcode.littlemusicadmin.utils.incrementItemCount
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.cloudinary.android.MediaManager
-import com.cloudinary.android.callback.ErrorInfo
-import com.cloudinary.android.callback.UploadCallback
 
 class SongAddActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySongAddBinding
@@ -88,17 +90,17 @@ class SongAddActivity : AppCompatActivity() {
     }
 
     fun openAudioFiles() {
-        val intent_upload = Intent()
-        intent_upload.type = "audio/*"
-        intent_upload.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(intent_upload, 101)
+        val intentUpload = Intent()
+        intentUpload.type = "audio/*"
+        intentUpload.action = Intent.ACTION_GET_CONTENT
+        pickAudioLauncher.launch(intentUpload)
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            if (data!!.data != null) {
-                if (requestCode == 101) {
+    private val pickAudioLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data
+                if (data?.data != null) {
                     try {
                         audioUri = data.data
                         metadataRetriever!!.setDataSource(this, audioUri)
@@ -112,17 +114,16 @@ class SongAddActivity : AppCompatActivity() {
                         if (TextUtils.isEmpty(name)) binding.nameEt.setText(nameSong)
                         binding.duration.text = durations!!.toLong().convertDuration()
                         name = nameSong!!
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         Toast.makeText(activity, "Error!", Toast.LENGTH_SHORT).show()
                         audioUri = null
                     }
+                } else {
+                    Toast.makeText(this, "Error ! ", Toast.LENGTH_SHORT).show()
+                    audioUri = null
                 }
-            } else {
-                Toast.makeText(this, "Error ! ", Toast.LENGTH_SHORT).show()
-                audioUri = null
             }
         }
-    }
 
     fun uploadFileToDB() {
         val message = binding.choose.text.toString()
@@ -142,8 +143,7 @@ class SongAddActivity : AppCompatActivity() {
         val filePathAndName = "Songs/$selectedArtistTitle/$id"
 
         try {
-            MediaManager.get().upload(audioUri)
-                .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+            MediaManager.get().upload(audioUri).unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
                 .option("public_id", filePathAndName)
                 .option("resource_type", "video") // video handles audio files in Cloudinary
                 .callback(object : UploadCallback {
@@ -152,16 +152,23 @@ class SongAddActivity : AppCompatActivity() {
                         val progress = 100.0 * bytes / totalBytes
                         dialog!!.setMessage("uploaded " + progress.toInt() + "%.....")
                     }
+
                     override fun onSuccess(requestId: String, resultData: Map<*, *>) {
                         val uploadedSongUrl = resultData["secure_url"]?.toString() ?: ""
                         dialog!!.dismiss()
                         Toast.makeText(this@SongAddActivity, "Ok", Toast.LENGTH_SHORT).show()
                         uploadInfoToDB(uploadedSongUrl, id, ref)
                     }
+
                     override fun onError(requestId: String, error: ErrorInfo?) {
                         dialog!!.dismiss()
-                        Toast.makeText(this@SongAddActivity, "Error ! " + error?.description, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@SongAddActivity,
+                            "Error ! " + error?.description,
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
+
                     override fun onReschedule(requestId: String, error: ErrorInfo?) {
                         dialog!!.dismiss()
                     }
@@ -193,25 +200,20 @@ class SongAddActivity : AppCompatActivity() {
         assert(id != null)
         ref.child(id!!).setValue(hashMap).addOnSuccessListener {
             if (selectedArtistId != null) selectedArtistId!!.incrementItemCount(
-                DATA.ARTISTS,
-                DATA.SONGS_COUNT
+                DATA.ARTISTS, DATA.SONGS_COUNT
             )
             if (selectedCategoryId != null) selectedCategoryId!!.incrementItemCount(
-                DATA.CATEGORIES,
-                DATA.SONGS_COUNT
+                DATA.CATEGORIES, DATA.SONGS_COUNT
             )
             if (selectedAlbumId != null) selectedAlbumId!!.incrementItemCount(
-                DATA.ALBUMS,
-                DATA.SONGS_COUNT
+                DATA.ALBUMS, DATA.SONGS_COUNT
             )
             dialog!!.dismiss()
             Toast.makeText(activity, "Successfully uploaded...", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener { e: Exception ->
             dialog!!.dismiss()
             Toast.makeText(
-                activity,
-                "Failure to upload to db due to :" + e.message,
-                Toast.LENGTH_SHORT
+                activity, "Failure to upload to db due to :" + e.message, Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -284,12 +286,11 @@ class SongAddActivity : AppCompatActivity() {
             categories[i] = categoryList!![i]
         }
         val builder = AlertDialog.Builder(activity)
-        builder.setTitle("Pick Category")
-            .setItems(categories) { dialog: DialogInterface?, which: Int ->
-                selectedCategoryTitle = categoryList!![which]
-                selectedCategoryId = categoryId!![which]
-                binding.category.text = selectedCategoryTitle
-            }.show()
+        builder.setTitle("Pick Category").setItems(categories) { _, which ->
+            selectedCategoryTitle = categoryList!![which]
+            selectedCategoryId = categoryId!![which]
+            binding.category.text = selectedCategoryTitle
+        }.show()
     }
 
     private var selectedAlbumId: String? = null
@@ -300,7 +301,7 @@ class SongAddActivity : AppCompatActivity() {
             albums[i] = albumList!![i]
         }
         val builder = AlertDialog.Builder(activity)
-        builder.setTitle("Pick Album").setItems(albums) { dialog: DialogInterface?, which: Int ->
+        builder.setTitle("Pick Album").setItems(albums) { _, which ->
             selectedAlbumTitle = albumList!![which]
             selectedAlbumId = albumId!![which]
             binding.album.text = selectedAlbumTitle
@@ -315,7 +316,7 @@ class SongAddActivity : AppCompatActivity() {
             artists[i] = artistList!![i]
         }
         val builder = AlertDialog.Builder(activity)
-        builder.setTitle("Pick Artist").setItems(artists) { dialog: DialogInterface?, which: Int ->
+        builder.setTitle("Pick Artist").setItems(artists) { _, which ->
             selectedArtistTitle = artistList!![which]
             selectedArtistId = artistId!![which]
             binding.artist.text = selectedArtistTitle

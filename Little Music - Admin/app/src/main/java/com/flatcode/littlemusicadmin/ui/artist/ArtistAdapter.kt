@@ -2,17 +2,16 @@ package com.flatcode.littlemusicadmin.ui.artist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.core.view.isVisible
 import com.flatcode.littlemusicadmin.databinding.ItemArtistBinding
 import com.flatcode.littlemusicadmin.model.Artist
 import com.flatcode.littlemusicadmin.utils.loadImage
 
 class ArtistAdapter(
-    private val onItemClick: (Artist) -> Unit,
-    private val onMoreClick: (Artist) -> Unit
+    private val onItemClick: (Artist) -> Unit, private val onMoreClick: (Artist) -> Unit
 ) : ListAdapter<Artist, ArtistAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,7 +24,8 @@ class ArtistAdapter(
         holder.bind(item, onItemClick, onMoreClick)
     }
 
-    class ViewHolder(private val binding: ItemArtistBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemArtistBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Artist, onItemClick: (Artist) -> Unit, onMoreClick: (Artist) -> Unit) {
             binding.image.loadImage(true, item.image)
             binding.name.isVisible = !item.name.isNullOrEmpty()
@@ -45,11 +45,7 @@ class ArtistAdapter(
                 oldItem.id == newItem.id
 
             override fun areContentsTheSame(oldItem: Artist, newItem: Artist): Boolean =
-                oldItem.name == newItem.name &&
-                        oldItem.image == newItem.image &&
-                        oldItem.aboutTheArtist == newItem.aboutTheArtist &&
-                        oldItem.albumsCount == newItem.albumsCount &&
-                        oldItem.songsCount == newItem.songsCount
+                oldItem.name == newItem.name && oldItem.image == newItem.image && oldItem.aboutTheArtist == newItem.aboutTheArtist && oldItem.albumsCount == newItem.albumsCount && oldItem.songsCount == newItem.songsCount
         }
     }
 }

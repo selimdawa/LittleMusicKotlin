@@ -6,10 +6,12 @@ import android.view.View
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusicadmin.model.Category
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.*
 import com.flatcode.littlemusicadmin.databinding.ActivityProfileBinding
+import com.flatcode.littlemusicadmin.model.Category
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.loadImage
+import com.flatcode.littlemusicadmin.utils.openActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -63,8 +65,9 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun nrInterested(database: String?, text: TextView) {
-        val reference = FirebaseDatabase.getInstance().getReference(DATA.INTERESTED)
-            .child(profileId!!).child(database!!)
+        val reference =
+            FirebaseDatabase.getInstance().getReference(DATA.INTERESTED).child(profileId!!)
+                .child(database!!)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 text.text = MessageFormat.format("{0}", dataSnapshot.childrenCount)

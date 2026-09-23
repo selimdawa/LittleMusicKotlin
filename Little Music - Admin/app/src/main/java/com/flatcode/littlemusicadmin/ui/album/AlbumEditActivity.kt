@@ -1,9 +1,7 @@
 package com.flatcode.littlemusicadmin.ui.album
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -14,13 +12,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import coil3.load
-import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.databinding.ActivityAlbumAddBinding
-import com.flatcode.littlemusicadmin.utils.*
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
+import com.flatcode.littlemusicadmin.R
+import com.flatcode.littlemusicadmin.databinding.ActivityAlbumAddBinding
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.getFileExtension
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -76,7 +75,7 @@ class AlbumEditActivity : AppCompatActivity() {
     private fun initUI() {
         binding.toolbar.nameSpace.setText(R.string.edit_album)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
-        binding.image.setOnClickListener { 
+        binding.image.setOnClickListener {
             cropImage.launch(
                 CropImageContractOptions(
                     uri = null,

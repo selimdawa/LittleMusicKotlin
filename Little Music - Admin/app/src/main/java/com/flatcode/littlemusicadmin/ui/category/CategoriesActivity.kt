@@ -19,8 +19,8 @@ import com.flatcode.littlemusicadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.text.MessageFormat
 import timber.log.Timber
+import java.text.MessageFormat
 
 @AndroidEntryPoint
 class CategoriesActivity : AppCompatActivity() {
@@ -69,6 +69,7 @@ class CategoriesActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 viewModel.setSearchQuery(s.toString())
             }
+
             override fun afterTextChanged(s: Editable) {}
         })
 

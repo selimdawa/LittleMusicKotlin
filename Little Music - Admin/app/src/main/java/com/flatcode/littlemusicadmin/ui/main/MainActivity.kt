@@ -22,7 +22,9 @@ class MainActivity : AppCompatActivity() {
     ) { permissions ->
         val allGranted = permissions.entries.all { it.value }
         if (!allGranted) {
-            Toast.makeText(this, "Permissions are required for full app functionality.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this, "Permissions are required for full app functionality.", Toast.LENGTH_SHORT
+            ).show()
         }
     }
 

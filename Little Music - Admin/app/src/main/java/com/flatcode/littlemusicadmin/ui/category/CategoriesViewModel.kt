@@ -7,7 +7,14 @@ import com.flatcode.littlemusicadmin.repository.CategoryRepository
 import com.flatcode.littlemusicadmin.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -17,7 +24,6 @@ class CategoriesViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
-    val searchQuery = _searchQuery.asStateFlow()
 
     private val _orderBy = MutableStateFlow(DATA.TIMESTAMP)
     val orderBy = _orderBy.asStateFlow()
@@ -26,12 +32,10 @@ class CategoriesViewModel @Inject constructor(
     val isLoading = _isLoading.asStateFlow()
 
     val categories: Flow<List<Category>> = combine(
-        _searchQuery,
-        _orderBy.flatMapLatest { order ->
+        _searchQuery, _orderBy.flatMapLatest { order ->
             _isLoading.value = true
             repository.getCategories(order).onEach { _isLoading.value = false }
-        }
-    ) { query, list ->
+        }) { query, list ->
         if (query.isEmpty()) {
             list
         } else {

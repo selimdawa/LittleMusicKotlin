@@ -2,10 +2,10 @@ package com.flatcode.littlemusicadmin.ui.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.core.view.isVisible
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ItemMainBinding
 import com.flatcode.littlemusicadmin.model.Main
@@ -51,9 +51,7 @@ class MainAdapter(private val onItemClick: (Main) -> Unit) :
                 oldItem.title == newItem.title
 
             override fun areContentsTheSame(oldItem: Main, newItem: Main): Boolean =
-                oldItem.image == newItem.image &&
-                        oldItem.number == newItem.number &&
-                        oldItem.title == newItem.title
+                oldItem.image == newItem.image && oldItem.number == newItem.number && oldItem.title == newItem.title
         }
     }
 }

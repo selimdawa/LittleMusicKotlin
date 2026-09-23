@@ -1,23 +1,24 @@
 package com.flatcode.littlemusicadmin.ui.main
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusicadmin.ui.auth.LoginActivity
-import com.flatcode.littlemusicadmin.utils.*
 import com.flatcode.littlemusicadmin.databinding.ActivitySplashBinding
+import com.flatcode.littlemusicadmin.ui.auth.LoginActivity
+import com.flatcode.littlemusicadmin.utils.openActivity
 import com.google.firebase.auth.FirebaseAuth
 
+@SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySplashBinding
     var context: Context = this@SplashActivity
     var auth: FirebaseAuth? = null
-    var time_per_second = 2
-    var time_final = time_per_millis * time_per_second
+    var timeFinal = 2000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -26,7 +27,7 @@ class SplashActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
-        Handler(Looper.getMainLooper()).postDelayed({ checkUser() }, time_final.toLong())
+        Handler(Looper.getMainLooper()).postDelayed({ checkUser() }, timeFinal.toLong())
     }
 
     private fun checkUser() {
@@ -38,9 +39,5 @@ class SplashActivity : AppCompatActivity() {
             context.openActivity<MainActivity>()
         }
         finish()
-    }
-
-    companion object {
-        const val time_per_millis = 1000
     }
 }

@@ -1,9 +1,7 @@
 package com.flatcode.littlemusicadmin.ui.others
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -11,21 +9,22 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.*
-import com.flatcode.littlemusicadmin.databinding.ActivitySliderShowBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
-import java.text.MessageFormat
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
+import com.flatcode.littlemusicadmin.R
+import com.flatcode.littlemusicadmin.databinding.ActivitySliderShowBinding
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.loadImage
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import java.text.MessageFormat
 
 class SliderShowActivity : AppCompatActivity() {
 
@@ -34,13 +33,13 @@ class SliderShowActivity : AppCompatActivity() {
     private val context: Context = also { activity = it }
     private var imageUri: Uri? = null
     private var dialog: AlertDialog? = null
-    private var IMAGE_NUMBER = 0
+    private var imageNumber = 0
     private var item = 0
 
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
             imageUri = result.uriContent
-            uploadImage(DATA.EMPTY + IMAGE_NUMBER)
+            uploadImage(DATA.EMPTY + imageNumber)
         } else {
             val error = result.error
             Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
@@ -48,11 +47,10 @@ class SliderShowActivity : AppCompatActivity() {
     }
 
     private fun startSliderCrop(num: Int) {
-        IMAGE_NUMBER = num
+        imageNumber = num
         cropImage.launch(
             CropImageContractOptions(
-                uri = null,
-                cropImageOptions = CropImageOptions(
+                uri = null, cropImageOptions = CropImageOptions(
                     minCropResultWidth = DATA.MIX_SLIDER_X,
                     minCropResultHeight = DATA.MIX_SLIDER_Y,
                     aspectRatioX = 16,
@@ -278,20 +276,21 @@ class SliderShowActivity : AppCompatActivity() {
         val filePathAndName = "Images/SliderShow/" + (DATA.EMPTY + name)
 
         try {
-            MediaManager.get().upload(imageUri)
-                .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
-                .option("public_id", filePathAndName)
-                .callback(object : UploadCallback {
+            MediaManager.get().upload(imageUri).unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+                .option("public_id", filePathAndName).callback(object : UploadCallback {
                     override fun onStart(requestId: String) {}
                     override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
                     override fun onSuccess(requestId: String, resultData: Map<*, *>) {
                         val uploadedImageUrl = resultData["secure_url"]?.toString() ?: ""
                         updateImage(uploadedImageUrl, DATA.EMPTY + name)
                     }
+
                     override fun onError(requestId: String, error: ErrorInfo?) {
                         dialog!!.dismiss()
-                        Toast.makeText(context, "Error! " + error?.description, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Error! " + error?.description, Toast.LENGTH_SHORT)
+                            .show()
                     }
+
                     override fun onReschedule(requestId: String, error: ErrorInfo?) {
                         dialog!!.dismiss()
                     }

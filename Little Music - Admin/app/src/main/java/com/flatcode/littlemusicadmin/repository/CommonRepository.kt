@@ -1,14 +1,14 @@
 package com.flatcode.littlemusicadmin.repository
 
 import android.net.Uri
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.flatcode.littlemusicadmin.utils.DATA
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.cloudinary.android.MediaManager
-import com.cloudinary.android.callback.ErrorInfo
-import com.cloudinary.android.callback.UploadCallback
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -25,31 +25,32 @@ class CommonRepository @Inject constructor(
 
     fun getNewKey(path: String): String? = database.getReference(path).push().key
 
-    suspend fun uploadImage(imageUri: Uri, path: String): String? = suspendCancellableCoroutine { continuation ->
-        try {
-            MediaManager.get().upload(imageUri)
-                .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
-                .option("public_id", path)
-                .callback(object : UploadCallback {
-                    override fun onStart(requestId: String) {}
-                    override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
-                    override fun onSuccess(requestId: String, resultData: Map<*, *>) {
-                        val secureUrl = resultData["secure_url"]?.toString()
-                        if (continuation.isActive) continuation.resume(secureUrl)
-                    }
-                    override fun onError(requestId: String, error: ErrorInfo?) {
-                        Timber.e("Cloudinary upload error: ${error?.description}")
-                        if (continuation.isActive) continuation.resume(null)
-                    }
-                    override fun onReschedule(requestId: String, error: ErrorInfo?) {
-                        if (continuation.isActive) continuation.resume(null)
-                    }
-                }).dispatch()
-        } catch (e: Exception) {
-            Timber.e(e, "Exception uploading image to Cloudinary")
-            if (continuation.isActive) continuation.resume(null)
+    suspend fun uploadImage(imageUri: Uri, path: String): String? =
+        suspendCancellableCoroutine { continuation ->
+            try {
+                MediaManager.get().upload(imageUri).unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+                    .option("public_id", path).callback(object : UploadCallback {
+                        override fun onStart(requestId: String) {}
+                        override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
+                        override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                            val secureUrl = resultData["secure_url"]?.toString()
+                            if (continuation.isActive) continuation.resume(secureUrl)
+                        }
+
+                        override fun onError(requestId: String, error: ErrorInfo?) {
+                            Timber.e("Cloudinary upload error: ${error?.description}")
+                            if (continuation.isActive) continuation.resume(null)
+                        }
+
+                        override fun onReschedule(requestId: String, error: ErrorInfo?) {
+                            if (continuation.isActive) continuation.resume(null)
+                        }
+                    }).dispatch()
+            } catch (e: Exception) {
+                Timber.e(e, "Exception uploading image to Cloudinary")
+                if (continuation.isActive) continuation.resume(null)
+            }
         }
-    }
 
     fun getNameById(path: String, id: String): Flow<String?> = callbackFlow {
         val ref = database.getReference(path).child(id).child(DATA.NAME)
@@ -109,7 +110,10 @@ class CommonRepository @Inject constructor(
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Timber.e(error.toException(), "Error incrementing item count for $databaseName/$id/$childDB")
+                Timber.e(
+                    error.toException(),
+                    "Error incrementing item count for $databaseName/$id/$childDB"
+                )
             }
         })
     }
@@ -126,7 +130,10 @@ class CommonRepository @Inject constructor(
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Timber.e(error.toException(), "Error decrementing item count for $databaseName/$id/$childDB")
+                Timber.e(
+                    error.toException(),
+                    "Error decrementing item count for $databaseName/$id/$childDB"
+                )
             }
         })
     }

@@ -3,7 +3,6 @@ package com.flatcode.littlemusicadmin.ui.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemusicadmin.model.User
-import com.flatcode.littlemusicadmin.repository.ArtistRepository
 import com.flatcode.littlemusicadmin.repository.CategoryRepository
 import com.flatcode.littlemusicadmin.repository.CommonRepository
 import com.flatcode.littlemusicadmin.repository.SongRepository
@@ -60,7 +59,7 @@ class MainViewModel @Inject constructor(
                 songRepository.getFavoritesCount()
             ) { flows ->
                 val users = flows[0] as Int
-                val songsEC = flows[1] as Pair<Int, Int>
+                val songsEC = flows[1] as? Pair<*, *>
                 val categories = flows[2] as Int
                 val slider = flows[3] as Int
                 val albums = flows[4] as Int
@@ -69,8 +68,8 @@ class MainViewModel @Inject constructor(
 
                 MainCounts(
                     users = users,
-                    songs = songsEC.first,
-                    editorsChoice = songsEC.second,
+                    songs = (songsEC?.first as? Int) ?: 0,
+                    editorsChoice = (songsEC?.second as? Int) ?: 0,
                     categories = categories,
                     sliderShow = slider,
                     albums = albums,

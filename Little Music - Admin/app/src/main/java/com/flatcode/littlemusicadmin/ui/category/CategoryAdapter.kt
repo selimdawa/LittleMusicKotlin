@@ -7,17 +7,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flatcode.littlemusicadmin.databinding.ItemCategoryBinding
 import com.flatcode.littlemusicadmin.model.Category
-import com.flatcode.littlemusicadmin.utils.DATA
-
 import com.flatcode.littlemusicadmin.utils.loadImage
 
 class CategoryAdapter(
-    private val onItemClick: (Category) -> Unit,
-    private val onMoreClick: (Category) -> Unit
+    private val onItemClick: (Category) -> Unit, private val onMoreClick: (Category) -> Unit
 ) : ListAdapter<Category, CategoryAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 

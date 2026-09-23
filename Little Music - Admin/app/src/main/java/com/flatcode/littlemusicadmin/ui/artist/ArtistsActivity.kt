@@ -1,4 +1,5 @@
 package com.flatcode.littlemusicadmin.ui.artist
+
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -70,25 +71,29 @@ class ArtistsActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = ArtistAdapter(
-            onItemClick = { artist ->
-                openActivity<ArtistSongsActivity>(
-                    extras = arrayOf(
-                        DATA.ARTIST_ID to artist.id,
-                        DATA.ARTIST_NAME to artist.name,
-                        DATA.ARTIST_IMAGE to artist.image,
-                        DATA.ARTIST_ABOUT to artist.aboutTheArtist
-                    )
+        adapter = ArtistAdapter(onItemClick = { artist ->
+            openActivity<ArtistSongsActivity>(
+                extras = arrayOf(
+                    DATA.ARTIST_ID to artist.id,
+                    DATA.ARTIST_NAME to artist.name,
+                    DATA.ARTIST_IMAGE to artist.image,
+                    DATA.ARTIST_ABOUT to artist.aboutTheArtist
                 )
-            },
-            onMoreClick = { artist ->
-                artist.moreDelete(
-                    this, DATA.NULL, DATA.NULL, DATA.NULL,
-                    DATA.NULL, DATA.NULL, DATA.NULL,
-                    DATA.NULL, DATA.NULL, DATA.NULL
-                )
-            }
-        )
+            )
+        }, onMoreClick = { artist ->
+            artist.moreDelete(
+                this,
+                DATA.NULL,
+                DATA.NULL,
+                DATA.NULL,
+                DATA.NULL,
+                DATA.NULL,
+                DATA.NULL,
+                DATA.NULL,
+                DATA.NULL,
+                DATA.NULL
+            )
+        })
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.setOrderBy(DATA.TIMESTAMP) }

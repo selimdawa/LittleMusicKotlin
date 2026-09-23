@@ -7,8 +7,8 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.*
 import com.flatcode.littlemusicadmin.databinding.ActivityPrivacyPolicyEditBinding
+import com.flatcode.littlemusicadmin.utils.DATA
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -46,7 +46,7 @@ class PrivacyPolicyEditActivity : AppCompatActivity() {
         val hashMap = HashMap<String?, Any>()
         hashMap[DATA.PRIVACY_POLICY] = DATA.EMPTY + description
         val ref = FirebaseDatabase.getInstance().getReference(DATA.TOOLS)
-        ref.updateChildren(hashMap).addOnSuccessListener { unused: Void? ->
+        ref.updateChildren(hashMap).addOnSuccessListener {
             Toast.makeText(context, "Privacy Policy updated...", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener { e: Exception ->
             Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
@@ -54,8 +54,8 @@ class PrivacyPolicyEditActivity : AppCompatActivity() {
     }
 
     private fun privacyPolicy() {
-        val reference = FirebaseDatabase.getInstance().reference.child(DATA.TOOLS)
-            .child(DATA.PRIVACY_POLICY)
+        val reference =
+            FirebaseDatabase.getInstance().reference.child(DATA.TOOLS).child(DATA.PRIVACY_POLICY)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val name = dataSnapshot.value.toString()

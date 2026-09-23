@@ -193,30 +193,6 @@ class SongRepository @Inject constructor(
         awaitClose { ref.removeEventListener(listener) }
     }
 
-    fun getSliderShow(): Flow<Map<String, String>> = callbackFlow {
-        val ref = database.getReference(DATA.SLIDER_SHOW)
-        val listener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val map = mutableMapOf<String, String>()
-                for (data in snapshot.children) {
-                    val key = data.key
-                    val value = data.value?.toString()
-                    if (key != null && value != null) {
-                        map[key] = value
-                    }
-                }
-                trySend(map)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Timber.e(error.toException(), "Error getting slider show")
-                close(error.toException())
-            }
-        }
-        ref.addValueEventListener(listener)
-        awaitClose { ref.removeEventListener(listener) }
-    }
-
     fun getEditorsChoiceSongs(): Flow<List<Song>> = callbackFlow {
         val ref = database.getReference(DATA.SONGS)
         val listener = object : ValueEventListener {
@@ -286,7 +262,9 @@ class SongRepository @Inject constructor(
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        Timber.e(error.toException(), "Error getting favorites not in editors choice")
+                        Timber.e(
+                            error.toException(), "Error getting favorites not in editors choice"
+                        )
                         close(error.toException())
                     }
                 })

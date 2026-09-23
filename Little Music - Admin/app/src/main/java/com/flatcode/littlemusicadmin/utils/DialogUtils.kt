@@ -4,13 +4,13 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.drawable.toDrawable
 import com.flatcode.littlemusicadmin.databinding.DialogAboutArtistBinding
 import com.flatcode.littlemusicadmin.databinding.DialogLogoutBinding
 import com.flatcode.littlemusicadmin.model.Album
@@ -38,8 +38,20 @@ fun Category.moreDelete(
             activity.openActivity<CategoryEditActivity>(extras = arrayOf(DATA.CATEGORY_ID to id))
         } else if (which == 1) {
             activity.dialogOptionDelete(
-                id, name, DATA.CATEGORY, DATA.CATEGORIES, false,
-                db, idDb, childDb, db2, idDb2, childDb2, db3, idDb3, childDb3
+                id,
+                name,
+                DATA.CATEGORY,
+                DATA.CATEGORIES,
+                false,
+                db,
+                idDb,
+                childDb,
+                db2,
+                idDb2,
+                childDb2,
+                db3,
+                idDb3,
+                childDb3
             )
         }
     }.show()
@@ -65,8 +77,20 @@ fun Album.moreDelete(
             )
         } else if (which == 1) {
             activity.dialogOptionDelete(
-                id, name, DATA.ALBUM, DATA.ALBUMS, false,
-                db, idDb, childDb, db2, idDb2, childDb2, db3, idDb3, childDb3
+                id,
+                name,
+                DATA.ALBUM,
+                DATA.ALBUMS,
+                false,
+                db,
+                idDb,
+                childDb,
+                db2,
+                idDb2,
+                childDb2,
+                db3,
+                idDb3,
+                childDb3
             )
         }
     }.show()
@@ -86,8 +110,20 @@ fun Artist.moreDelete(
             activity.openActivity<ArtistEditActivity>(extras = arrayOf(DATA.ARTIST_ID to id))
         } else if (which == 1) {
             activity.dialogOptionDelete(
-                id, name, DATA.ARTIST, DATA.ARTISTS, false,
-                db, idDb, childDb, db2, idDb2, childDb2, db3, idDb3, childDb3
+                id,
+                name,
+                DATA.ARTIST,
+                DATA.ARTISTS,
+                false,
+                db,
+                idDb,
+                childDb,
+                db2,
+                idDb2,
+                childDb2,
+                db3,
+                idDb3,
+                childDb3
             )
         }
     }.show()
@@ -117,8 +153,20 @@ fun Song.moreDelete(
             )
         } else if (which == 1) {
             activity.dialogOptionDelete(
-                id, name, DATA.SONG, DATA.SONGS, false,
-                db, idDb, childDb, db2, idDb2, childDb2, db3, idDb3, childDb3
+                id,
+                name,
+                DATA.SONG,
+                DATA.SONGS,
+                false,
+                db,
+                idDb,
+                childDb,
+                db2,
+                idDb2,
+                childDb2,
+                db3,
+                idDb3,
+                childDb3
             )
         }
     }.show()
@@ -135,7 +183,7 @@ fun Activity.dialogOptionDelete(
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(binding.root)
     dialog.setCancelable(true)
-    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
     val lp = WindowManager.LayoutParams()
     lp.copyFrom(dialog.window!!.attributes)
     lp.width = WindowManager.LayoutParams.WRAP_CONTENT
@@ -147,8 +195,19 @@ fun Activity.dialogOptionDelete(
             this.dialogUpdateEditorsChoice(dialog, id)
         } else {
             this.deleteDb(
-                dialog, id, name, nameDb,
-                db, idDb, childDb, db2, idDb2, childDb2, db3, idDb3, childDb3
+                dialog,
+                id,
+                name,
+                nameDb,
+                db,
+                idDb,
+                childDb,
+                db2,
+                idDb2,
+                childDb2,
+                db3,
+                idDb3,
+                childDb3
             )
         }
     }
@@ -232,7 +291,7 @@ fun Context.dialogAboutArtist(imageDb: String?, nameDb: String?, aboutDb: String
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(binding.root)
     dialog.setCancelable(true)
-    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
     val lp = WindowManager.LayoutParams()
     lp.copyFrom(dialog.window!!.attributes)
     lp.width = WindowManager.LayoutParams.WRAP_CONTENT

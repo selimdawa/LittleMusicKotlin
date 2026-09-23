@@ -2,17 +2,16 @@ package com.flatcode.littlemusicadmin.ui.album
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.core.view.isVisible
 import com.flatcode.littlemusicadmin.databinding.ItemAlbumBinding
 import com.flatcode.littlemusicadmin.model.Album
 import com.flatcode.littlemusicadmin.utils.loadImage
 
 class AlbumAdapter(
-    private val onItemClick: (Album) -> Unit,
-    private val onMoreClick: (Album) -> Unit
+    private val onItemClick: (Album) -> Unit, private val onMoreClick: (Album) -> Unit
 ) : ListAdapter<Album, AlbumAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,7 +24,8 @@ class AlbumAdapter(
         holder.bind(item, onItemClick, onMoreClick)
     }
 
-    class ViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemAlbumBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Album, onItemClick: (Album) -> Unit, onMoreClick: (Album) -> Unit) {
             binding.image.loadImage(false, item.image)
             binding.name.isVisible = !item.name.isNullOrEmpty()
@@ -45,12 +45,7 @@ class AlbumAdapter(
                 oldItem.id == newItem.id
 
             override fun areContentsTheSame(oldItem: Album, newItem: Album): Boolean =
-                oldItem.name == newItem.name &&
-                        oldItem.image == newItem.image &&
-                        oldItem.artistId == newItem.artistId &&
-                        oldItem.categoryId == newItem.categoryId &&
-                        oldItem.interestedCount == newItem.interestedCount &&
-                        oldItem.songsCount == newItem.songsCount
+                oldItem.name == newItem.name && oldItem.image == newItem.image && oldItem.artistId == newItem.artistId && oldItem.categoryId == newItem.categoryId && oldItem.interestedCount == newItem.interestedCount && oldItem.songsCount == newItem.songsCount
         }
     }
 }

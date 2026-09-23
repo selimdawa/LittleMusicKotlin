@@ -27,31 +27,43 @@ class EditorsChoiceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityEditorsChoiceBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+
         binding.toolbar.nameSpace.setText(R.string.editors_choice)
         binding.toolbar.back.setOnClickListener { finish() }
 
-        adapter = EditorsChoiceAdapter(
-            onAddClick = { item ->
-                openActivity<EditorsChoiceAddActivity>(
-                    extras = arrayOf(DATA.EDITORS_CHOICE_ID to item.position.toString(), DATA.OLD_ID to null)
+        adapter = EditorsChoiceAdapter(onAddClick = { item ->
+            openActivity<EditorsChoiceAddActivity>(
+                extras = arrayOf(
+                    DATA.EDITORS_CHOICE_ID to item.position.toString(), DATA.OLD_ID to null
                 )
-            },
-            onChangeClick = { item ->
-                openActivity<EditorsChoiceAddActivity>(
-                    extras = arrayOf(DATA.EDITORS_CHOICE_ID to item.position.toString(), DATA.OLD_ID to item.song?.id)
+            )
+        }, onChangeClick = { item ->
+            openActivity<EditorsChoiceAddActivity>(
+                extras = arrayOf(
+                    DATA.EDITORS_CHOICE_ID to item.position.toString(),
+                    DATA.OLD_ID to item.song?.id
                 )
-            },
-            onRemoveClick = { item ->
-                item.song?.let { song ->
-                    dialogOptionDelete(
-                        song.id, song.name ?: "", DATA.EDITORS_CHOICE, DATA.EDITORS_CHOICE,
-                        true, DATA.NULL, DATA.NULL, DATA.NULL, DATA.NULL,
-                        DATA.NULL, DATA.NULL, DATA.NULL, DATA.NULL, DATA.NULL
-                    )
-                }
+            )
+        }, onRemoveClick = { item ->
+            item.song?.let { song ->
+                dialogOptionDelete(
+                    song.id,
+                    song.name ?: "",
+                    DATA.EDITORS_CHOICE,
+                    DATA.EDITORS_CHOICE,
+                    true,
+                    DATA.NULL,
+                    DATA.NULL,
+                    DATA.NULL,
+                    DATA.NULL,
+                    DATA.NULL,
+                    DATA.NULL,
+                    DATA.NULL,
+                    DATA.NULL,
+                    DATA.NULL
+                )
             }
-        )
+        })
         binding.recyclerView.adapter = adapter
 
         observeViewModel()

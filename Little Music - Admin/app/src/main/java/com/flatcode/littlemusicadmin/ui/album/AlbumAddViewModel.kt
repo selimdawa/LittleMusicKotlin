@@ -61,7 +61,9 @@ class AlbumAddViewModel @Inject constructor(
         }
     }
 
-    fun addAlbum(name: String, categoryId: String, artistId: String, imageUri: Uri, extension: String) {
+    fun addAlbum(
+        name: String, categoryId: String, artistId: String, imageUri: Uri, extension: String
+    ) {
         viewModelScope.launch {
             _isLoading.value = true
             _addAlbumSuccess.value = null
@@ -78,7 +80,8 @@ class AlbumAddViewModel @Inject constructor(
 
             val imageUrl = commonRepository.uploadImage(imageUri, path)
             if (imageUrl != null) {
-                val success = albumRepository.addAlbum(albumId, name, categoryId, artistId, imageUrl)
+                val success =
+                    albumRepository.addAlbum(albumId, name, categoryId, artistId, imageUrl)
                 if (success) {
                     _addAlbumSuccess.value = true
                 } else {
@@ -89,10 +92,5 @@ class AlbumAddViewModel @Inject constructor(
             }
             _isLoading.value = false
         }
-    }
-
-    fun resetState() {
-        _addAlbumSuccess.value = null
-        _errorMessage.value = null
     }
 }

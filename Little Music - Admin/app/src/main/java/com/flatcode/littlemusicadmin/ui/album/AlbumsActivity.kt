@@ -71,24 +71,28 @@ class AlbumsActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        adapter = AlbumAdapter(
-            onItemClick = { album ->
-                openActivity<AlbumSongsActivity>(
-                    extras = arrayOf(
-                        DATA.ALBUM_ID to album.id,
-                        DATA.ALBUM_NAME to album.name,
-                        DATA.ALBUM_IMAGE to album.image
-                    )
+        adapter = AlbumAdapter(onItemClick = { album ->
+            openActivity<AlbumSongsActivity>(
+                extras = arrayOf(
+                    DATA.ALBUM_ID to album.id,
+                    DATA.ALBUM_NAME to album.name,
+                    DATA.ALBUM_IMAGE to album.image
                 )
-            },
-            onMoreClick = { album ->
-                album.moreDelete(
-                    this, DATA.ARTISTS, album.artistId, DATA.ALBUMS_COUNT,
-                    DATA.CATEGORIES, album.categoryId, DATA.ALBUMS_COUNT,
-                    DATA.NULL, DATA.NULL, DATA.NULL
-                )
-            }
-        )
+            )
+        }, onMoreClick = { album ->
+            album.moreDelete(
+                this,
+                DATA.ARTISTS,
+                album.artistId,
+                DATA.ALBUMS_COUNT,
+                DATA.CATEGORIES,
+                album.categoryId,
+                DATA.ALBUMS_COUNT,
+                DATA.NULL,
+                DATA.NULL,
+                DATA.NULL
+            )
+        })
         binding.recyclerView.adapter = adapter
 
         binding.switchBar.all.setOnClickListener { viewModel.setOrderBy(DATA.TIMESTAMP) }

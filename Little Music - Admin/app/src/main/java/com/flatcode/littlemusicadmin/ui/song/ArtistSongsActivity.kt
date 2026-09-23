@@ -12,17 +12,19 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.jean.jcplayer.model.JcAudio
-import com.flatcode.littlemusicadmin.ui.album.AlbumAdapter
-import com.flatcode.littlemusicadmin.model.Album
-import com.flatcode.littlemusicadmin.model.Song
-import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.*
 import com.flatcode.littlemusicadmin.databinding.ActivityArtistSongsBinding
+import com.flatcode.littlemusicadmin.ui.album.AlbumAdapter
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.checkFavorite
+import com.flatcode.littlemusicadmin.utils.checkLove
+import com.flatcode.littlemusicadmin.utils.dialogAboutArtist
+import com.flatcode.littlemusicadmin.utils.incrementViewCount
+import com.flatcode.littlemusicadmin.utils.moreDelete
+import com.flatcode.littlemusicadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.MessageFormat
-import timber.log.Timber
 
 @AndroidEntryPoint
 class ArtistSongsActivity : AppCompatActivity() {
@@ -30,7 +32,6 @@ class ArtistSongsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityArtistSongsBinding
     var activity: Activity = this@ArtistSongsActivity
     var albumAdapter: AlbumAdapter? = null
-    var songList: ArrayList<Song?>? = null
     var songAdapter: SongAdapter? = null
     var isAlbum = true
     var isSong = false
@@ -94,24 +95,28 @@ class ArtistSongsActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        albumAdapter = AlbumAdapter(
-            onItemClick = { album ->
-                activity.openActivity<AlbumSongsActivity>(
-                    extras = arrayOf(
-                        DATA.ALBUM_ID to album.id,
-                        DATA.ALBUM_NAME to album.name,
-                        DATA.ALBUM_IMAGE to album.image
-                    )
+        albumAdapter = AlbumAdapter(onItemClick = { album ->
+            activity.openActivity<AlbumSongsActivity>(
+                extras = arrayOf(
+                    DATA.ALBUM_ID to album.id,
+                    DATA.ALBUM_NAME to album.name,
+                    DATA.ALBUM_IMAGE to album.image
                 )
-            },
-            onMoreClick = { album ->
-                album.moreDelete(
-                    activity, DATA.ARTISTS, album.artistId, DATA.ALBUMS_COUNT,
-                    DATA.CATEGORIES, album.categoryId, DATA.ALBUMS_COUNT,
-                    null, null, null
-                )
-            }
-        )
+            )
+        }, onMoreClick = { album ->
+            album.moreDelete(
+                activity,
+                DATA.ARTISTS,
+                album.artistId,
+                DATA.ALBUMS_COUNT,
+                DATA.CATEGORIES,
+                album.categoryId,
+                DATA.ALBUMS_COUNT,
+                null,
+                null,
+                null
+            )
+        })
         binding.recyclerAlbums.adapter = albumAdapter
 
         initSongs()
@@ -175,42 +180,41 @@ class ArtistSongsActivity : AppCompatActivity() {
 
     private fun initSongs() {
         jcAudios = ArrayList()
-        songAdapter = SongAdapter(
-            onItemClick = { song, position ->
-                changeSelectedSong(position)
-                binding.player.jcPlayer.playAudio(jcAudios!![position])
-                binding.player.jcPlayer.visibility = View.VISIBLE
-                song.id.incrementViewCount()
-            },
-            onFavoriteClick = { song, view ->
-                view.checkFavorite(song.id)
-            },
-            onLoveClick = { song, view ->
-                view.checkLove(song.id)
-            },
-            onMoreClick = { song ->
-                song.moreDelete(
-                    activity, DATA.ARTISTS, song.artistId, DATA.SONGS_COUNT,
-                    DATA.CATEGORIES, song.categoryId, DATA.SONGS_COUNT,
-                    DATA.ALBUMS, song.albumId, DATA.SONGS_COUNT
-                )
-            },
-            onArtistClick = { artistId ->
-                activity.openActivity<ArtistSongsActivity>(
-                    extras = arrayOf(DATA.ARTIST_ID to artistId)
-                )
-            },
-            onAlbumClick = { albumId ->
-                activity.openActivity<AlbumSongsActivity>(
-                    extras = arrayOf(DATA.ALBUM_ID to albumId)
-                )
-            },
-            onCategoryClick = { categoryId ->
-                activity.openActivity<CategorySongsActivity>(
-                    extras = arrayOf(DATA.CATEGORY_ID to categoryId)
-                )
-            }
-        )
+        songAdapter = SongAdapter(onItemClick = { song, position ->
+            changeSelectedSong(position)
+            binding.player.jcPlayer.playAudio(jcAudios!![position])
+            binding.player.jcPlayer.visibility = View.VISIBLE
+            song.id.incrementViewCount()
+        }, onFavoriteClick = { song, view ->
+            view.checkFavorite(song.id)
+        }, onLoveClick = { song, view ->
+            view.checkLove(song.id)
+        }, onMoreClick = { song ->
+            song.moreDelete(
+                activity,
+                DATA.ARTISTS,
+                song.artistId,
+                DATA.SONGS_COUNT,
+                DATA.CATEGORIES,
+                song.categoryId,
+                DATA.SONGS_COUNT,
+                DATA.ALBUMS,
+                song.albumId,
+                DATA.SONGS_COUNT
+            )
+        }, onArtistClick = { artistId ->
+            activity.openActivity<ArtistSongsActivity>(
+                extras = arrayOf(DATA.ARTIST_ID to artistId)
+            )
+        }, onAlbumClick = { albumId ->
+            activity.openActivity<AlbumSongsActivity>(
+                extras = arrayOf(DATA.ALBUM_ID to albumId)
+            )
+        }, onCategoryClick = { categoryId ->
+            activity.openActivity<CategorySongsActivity>(
+                extras = arrayOf(DATA.CATEGORY_ID to categoryId)
+            )
+        })
         binding.recyclerSongs.adapter = songAdapter
     }
 
@@ -285,7 +289,6 @@ class ArtistSongsActivity : AppCompatActivity() {
             songAdapter!!.notifyItemChanged(currentSong)
         }
     }
-
 
 
     override fun onPause() {

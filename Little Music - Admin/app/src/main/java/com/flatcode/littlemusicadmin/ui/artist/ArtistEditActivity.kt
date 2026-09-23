@@ -1,8 +1,6 @@
 package com.flatcode.littlemusicadmin.ui.artist
 
-import android.Manifest
 import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -10,14 +8,6 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusicadmin.model.Artist
-import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.*
-import com.flatcode.littlemusicadmin.databinding.ActivityArtistAddBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
@@ -25,6 +15,15 @@ import com.canhub.cropper.CropImageView
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
+import com.flatcode.littlemusicadmin.R
+import com.flatcode.littlemusicadmin.databinding.ActivityArtistAddBinding
+import com.flatcode.littlemusicadmin.model.Artist
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.loadImage
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class ArtistEditActivity : AppCompatActivity() {
 
@@ -60,7 +59,7 @@ class ArtistEditActivity : AppCompatActivity() {
 
         binding.toolbar.nameSpace.setText(R.string.edit_artist)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
-        binding.image.setOnClickListener { 
+        binding.image.setOnClickListener {
             cropImage.launch(
                 CropImageContractOptions(
                     uri = null,
@@ -112,12 +111,16 @@ class ArtistEditActivity : AppCompatActivity() {
                         val uploadedImageUrl = resultData["secure_url"]?.toString() ?: ""
                         update(uploadedImageUrl)
                     }
+
                     override fun onError(requestId: String, error: ErrorInfo?) {
                         dialog!!.dismiss()
                         Toast.makeText(
-                            activity, "Failed to upload image due to " + error?.description, Toast.LENGTH_SHORT
+                            activity,
+                            "Failed to upload image due to " + error?.description,
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
+
                     override fun onReschedule(requestId: String, error: ErrorInfo?) {
                         dialog!!.dismiss()
                     }

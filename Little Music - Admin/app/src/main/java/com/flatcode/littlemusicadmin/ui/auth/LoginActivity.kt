@@ -8,10 +8,10 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.flatcode.littlemusicadmin.databinding.ActivityLoginBinding
 import com.flatcode.littlemusicadmin.ui.main.MainActivity
 import com.flatcode.littlemusicadmin.utils.DATA
 import com.flatcode.littlemusicadmin.utils.openActivity
-import com.flatcode.littlemusicadmin.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {

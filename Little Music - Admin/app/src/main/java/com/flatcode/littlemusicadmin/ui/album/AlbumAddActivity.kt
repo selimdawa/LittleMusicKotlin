@@ -1,9 +1,7 @@
 package com.flatcode.littlemusicadmin.ui.album
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -13,13 +11,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.databinding.ActivityAlbumAddBinding
-import com.flatcode.littlemusicadmin.utils.*
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
+import com.flatcode.littlemusicadmin.R
+import com.flatcode.littlemusicadmin.databinding.ActivityAlbumAddBinding
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.getFileExtension
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -30,7 +29,7 @@ class AlbumAddActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAlbumAddBinding
     private val viewModel: AlbumAddViewModel by viewModels()
-    
+
     private var activity: Activity? = null
     private var context: Context = this@AlbumAddActivity
     private var imageUri: Uri? = null
@@ -70,11 +69,10 @@ class AlbumAddActivity : AppCompatActivity() {
     private fun initUI() {
         binding.toolbar.nameSpace.setText(R.string.add_new_album)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
-        binding.image.setOnClickListener { 
+        binding.image.setOnClickListener {
             cropImage.launch(
                 CropImageContractOptions(
-                    uri = null,
-                    cropImageOptions = CropImageOptions(
+                    uri = null, cropImageOptions = CropImageOptions(
                         minCropResultWidth = DATA.MIX_SQUARE,
                         minCropResultHeight = DATA.MIX_SQUARE,
                         aspectRatioX = 1,
@@ -151,9 +149,7 @@ class AlbumAddActivity : AppCompatActivity() {
         }
 
         val items = categories.map { it.name }.toTypedArray()
-        AlertDialog.Builder(context)
-            .setTitle("Pick Category")
-            .setItems(items) { _, which ->
+        AlertDialog.Builder(context).setTitle("Pick Category").setItems(items) { _, which ->
                 selectedCategoryTitle = categories[which].name
                 selectedCategoryId = categories[which].id
                 binding.category.text = selectedCategoryTitle
@@ -168,9 +164,7 @@ class AlbumAddActivity : AppCompatActivity() {
         }
 
         val items = artists.map { it.name }.toTypedArray()
-        AlertDialog.Builder(context)
-            .setTitle("Pick Artist")
-            .setItems(items) { _, which ->
+        AlertDialog.Builder(context).setTitle("Pick Artist").setItems(items) { _, which ->
                 selectedArtistTitle = artists[which].name
                 selectedArtistId = artists[which].id
                 binding.artist.text = selectedArtistTitle

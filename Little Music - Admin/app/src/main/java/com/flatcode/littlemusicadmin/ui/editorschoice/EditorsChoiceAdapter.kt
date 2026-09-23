@@ -2,10 +2,10 @@ package com.flatcode.littlemusicadmin.ui.editorschoice
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.core.view.isVisible
 import com.flatcode.littlemusicadmin.databinding.ItemSongEditorsChoiceBinding
 import com.flatcode.littlemusicadmin.model.EditorsChoice
 import com.flatcode.littlemusicadmin.utils.DATA
@@ -18,7 +18,8 @@ class EditorsChoiceAdapter(
 ) : ListAdapter<EditorsChoice, EditorsChoiceAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemSongEditorsChoiceBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemSongEditorsChoiceBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -27,7 +28,8 @@ class EditorsChoiceAdapter(
         holder.bind(item, onAddClick, onChangeClick, onRemoveClick)
     }
 
-    class ViewHolder(private val binding: ItemSongEditorsChoiceBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemSongEditorsChoiceBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(
             item: EditorsChoice,
             onAddClick: (EditorsChoice) -> Unit,
@@ -64,10 +66,10 @@ class EditorsChoiceAdapter(
             override fun areItemsTheSame(oldItem: EditorsChoice, newItem: EditorsChoice): Boolean =
                 oldItem.position == newItem.position
 
-            override fun areContentsTheSame(oldItem: EditorsChoice, newItem: EditorsChoice): Boolean =
-                oldItem.song?.id == newItem.song?.id &&
-                        oldItem.song?.viewsCount == newItem.song?.viewsCount &&
-                        oldItem.song?.lovesCount == newItem.song?.lovesCount
+            override fun areContentsTheSame(
+                oldItem: EditorsChoice, newItem: EditorsChoice
+            ): Boolean =
+                oldItem.song?.id == newItem.song?.id && oldItem.song?.viewsCount == newItem.song?.viewsCount && oldItem.song?.lovesCount == newItem.song?.lovesCount
         }
     }
 }

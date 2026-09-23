@@ -9,24 +9,26 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.flatcode.littlemusicadmin.ui.user.UsersActivity
-import com.flatcode.littlemusicadmin.ui.song.SongAddActivity
-import com.flatcode.littlemusicadmin.ui.song.SongsActivity
-import com.flatcode.littlemusicadmin.ui.editorschoice.EditorsChoiceActivity
-import com.flatcode.littlemusicadmin.ui.category.CategoryAddActivity
-import com.flatcode.littlemusicadmin.ui.category.CategoriesActivity
-import com.flatcode.littlemusicadmin.ui.others.SliderShowActivity
+import com.flatcode.littlemusicadmin.R
+import com.flatcode.littlemusicadmin.databinding.FragmentMainBinding
+import com.flatcode.littlemusicadmin.model.Main
 import com.flatcode.littlemusicadmin.ui.album.AlbumAddActivity
 import com.flatcode.littlemusicadmin.ui.album.AlbumsActivity
 import com.flatcode.littlemusicadmin.ui.artist.ArtistAddActivity
 import com.flatcode.littlemusicadmin.ui.artist.ArtistsActivity
+import com.flatcode.littlemusicadmin.ui.category.CategoriesActivity
+import com.flatcode.littlemusicadmin.ui.category.CategoryAddActivity
+import com.flatcode.littlemusicadmin.ui.editorschoice.EditorsChoiceActivity
 import com.flatcode.littlemusicadmin.ui.others.FavoritesActivity
 import com.flatcode.littlemusicadmin.ui.others.PrivacyPolicyActivity
+import com.flatcode.littlemusicadmin.ui.others.SliderShowActivity
 import com.flatcode.littlemusicadmin.ui.profile.ProfileActivity
-import com.flatcode.littlemusicadmin.model.Main
-import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.*
-import com.flatcode.littlemusicadmin.databinding.FragmentMainBinding
+import com.flatcode.littlemusicadmin.ui.song.SongAddActivity
+import com.flatcode.littlemusicadmin.ui.song.SongsActivity
+import com.flatcode.littlemusicadmin.ui.user.UsersActivity
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.loadImage
+import com.flatcode.littlemusicadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -49,8 +51,7 @@ class MainFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
@@ -87,8 +88,14 @@ class MainFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.counts.collectLatest { counts ->
                 ideaPosts(
-                    counts.users, counts.songs, counts.editorsChoice, counts.categories,
-                    counts.sliderShow, counts.albums, counts.artists, counts.favorites
+                    counts.users,
+                    counts.songs,
+                    counts.editorsChoice,
+                    counts.categories,
+                    counts.sliderShow,
+                    counts.albums,
+                    counts.artists,
+                    counts.favorites
                 )
                 Timber.d("Counts updated: $counts")
             }
@@ -110,16 +117,46 @@ class MainFragment : Fragment() {
         list.add(Main(R.drawable.ic_person, "Users", users, UsersActivity::class.java))
         list.add(Main(R.drawable.ic_add, "Add Song", 0, SongAddActivity::class.java))
         list.add(Main(R.drawable.ic_music, "Songs", songs, SongsActivity::class.java))
-        list.add(Main(R.drawable.ic_users, "Editors Choice", editorsChoice, EditorsChoiceActivity::class.java))
-        list.add(Main(R.drawable.ic_add_category, "Add Category", 0, CategoryAddActivity::class.java))
-        list.add(Main(R.drawable.ic_category_gray, "Categories", categories, CategoriesActivity::class.java))
-        list.add(Main(R.drawable.ic_slider, "Slider Show", sliderShow, SliderShowActivity::class.java))
+        list.add(
+            Main(
+                R.drawable.ic_users,
+                "Editors Choice",
+                editorsChoice,
+                EditorsChoiceActivity::class.java
+            )
+        )
+        list.add(
+            Main(
+                R.drawable.ic_add_category, "Add Category", 0, CategoryAddActivity::class.java
+            )
+        )
+        list.add(
+            Main(
+                R.drawable.ic_category_gray,
+                "Categories",
+                categories,
+                CategoriesActivity::class.java
+            )
+        )
+        list.add(
+            Main(
+                R.drawable.ic_slider, "Slider Show", sliderShow, SliderShowActivity::class.java
+            )
+        )
         list.add(Main(R.drawable.ic_adds, "Add Album", 0, AlbumAddActivity::class.java))
         list.add(Main(R.drawable.ic_album, "Albums", albums, AlbumsActivity::class.java))
         list.add(Main(R.drawable.ic__add, "Add Artist", 0, ArtistAddActivity::class.java))
         list.add(Main(R.drawable.ic_mic, "Artists", artists, ArtistsActivity::class.java))
-        list.add(Main(R.drawable.ic_star_selected, "Favorites", favorites, FavoritesActivity::class.java))
-        list.add(Main(R.drawable.ic_privacy_policy, "Privacy Policy", 0, PrivacyPolicyActivity::class.java))
+        list.add(
+            Main(
+                R.drawable.ic_star_selected, "Favorites", favorites, FavoritesActivity::class.java
+            )
+        )
+        list.add(
+            Main(
+                R.drawable.ic_privacy_policy, "Privacy Policy", 0, PrivacyPolicyActivity::class.java
+            )
+        )
 
         adapter!!.submitList(list)
     }

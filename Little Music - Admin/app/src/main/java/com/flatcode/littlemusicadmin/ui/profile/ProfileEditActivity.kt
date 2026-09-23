@@ -1,9 +1,7 @@
 package com.flatcode.littlemusicadmin.ui.profile
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -11,13 +9,6 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.*
-import com.flatcode.littlemusicadmin.databinding.ActivityProfileEditBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
@@ -25,6 +16,14 @@ import com.canhub.cropper.CropImageView
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
+import com.flatcode.littlemusicadmin.R
+import com.flatcode.littlemusicadmin.databinding.ActivityProfileEditBinding
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.loadImage
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.util.Objects
 
 class ProfileEditActivity : AppCompatActivity() {
@@ -59,11 +58,10 @@ class ProfileEditActivity : AppCompatActivity() {
         loadUserInfo()
         binding.toolbar.nameSpace.setText(R.string.edit_profile)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
-        binding.image.setOnClickListener { 
+        binding.image.setOnClickListener {
             cropImage.launch(
                 CropImageContractOptions(
-                    uri = null,
-                    cropImageOptions = CropImageOptions(
+                    uri = null, cropImageOptions = CropImageOptions(
                         minCropResultWidth = DATA.MIX_SQUARE,
                         minCropResultHeight = DATA.MIX_SQUARE,
                         aspectRatioX = 1,
@@ -97,22 +95,24 @@ class ProfileEditActivity : AppCompatActivity() {
         val filePathAndName = "Images/Profile/" + DATA.FirebaseUserUid
 
         try {
-            MediaManager.get().upload(imageUri)
-                .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
-                .option("public_id", filePathAndName)
-                .callback(object : UploadCallback {
+            MediaManager.get().upload(imageUri).unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+                .option("public_id", filePathAndName).callback(object : UploadCallback {
                     override fun onStart(requestId: String) {}
                     override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
                     override fun onSuccess(requestId: String, resultData: Map<*, *>) {
                         val uploadedImageUrl = resultData["secure_url"]?.toString() ?: ""
                         updateProfile(uploadedImageUrl)
                     }
+
                     override fun onError(requestId: String, error: ErrorInfo?) {
                         dialog!!.dismiss()
                         Toast.makeText(
-                            context, "Failed to upload image due to " + error?.description, Toast.LENGTH_SHORT
+                            context,
+                            "Failed to upload image due to " + error?.description,
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
+
                     override fun onReschedule(requestId: String, error: ErrorInfo?) {
                         dialog!!.dismiss()
                     }

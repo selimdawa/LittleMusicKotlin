@@ -2,24 +2,31 @@ package com.flatcode.littlemusicadmin.ui.song
 
 import android.app.Activity
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.jean.jcplayer.model.JcAudio
-import com.flatcode.littlemusicadmin.model.Song
-import com.flatcode.littlemusicadmin.R
-import com.flatcode.littlemusicadmin.utils.*
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumSongsBinding
+import com.flatcode.littlemusicadmin.model.Song
+import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.checkFavorite
+import com.flatcode.littlemusicadmin.utils.checkLove
+import com.flatcode.littlemusicadmin.utils.incrementViewCount
+import com.flatcode.littlemusicadmin.utils.loadImage
+import com.flatcode.littlemusicadmin.utils.loadImageBlur
+import com.flatcode.littlemusicadmin.utils.moreDelete
+import com.flatcode.littlemusicadmin.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.text.MessageFormat
 import timber.log.Timber
+import java.text.MessageFormat
 
 @AndroidEntryPoint
 class AlbumSongsActivity : AppCompatActivity() {
@@ -50,6 +57,24 @@ class AlbumSongsActivity : AppCompatActivity() {
         binding.toolbar.nameSpace.text = albumName
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
+                    viewModel.setSearchQuery("")
+                } else if (DATA.isChange) {
+                    onResume()
+                    DATA.isChange = false
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
 
         binding.image.loadImage(false, albumImage)
         binding.imageBlur.loadImageBlur(false, albumImage, 50)
@@ -88,42 +113,41 @@ class AlbumSongsActivity : AppCompatActivity() {
 
     private fun init() {
         jcAudios = ArrayList()
-        adapter = SongAdapter(
-            onItemClick = { song, position ->
-                changeSelectedSong(position)
-                binding.player.jcPlayer.playAudio(jcAudios!![position])
-                binding.player.jcPlayer.visibility = View.VISIBLE
-                song.id.incrementViewCount()
-            },
-            onFavoriteClick = { song, view ->
-                view.checkFavorite(song.id)
-            },
-            onLoveClick = { song, view ->
-                view.checkLove(song.id)
-            },
-            onMoreClick = { song ->
-                song.moreDelete(
-                    activity, DATA.ARTISTS, song.artistId, DATA.SONGS_COUNT,
-                    DATA.CATEGORIES, song.categoryId, DATA.SONGS_COUNT,
-                    DATA.ALBUMS, song.albumId, DATA.SONGS_COUNT
-                )
-            },
-            onArtistClick = { artistId ->
-                activity.openActivity<ArtistSongsActivity>(
-                    extras = arrayOf(DATA.ARTIST_ID to artistId)
-                )
-            },
-            onAlbumClick = { albumId ->
-                activity.openActivity<AlbumSongsActivity>(
-                    extras = arrayOf(DATA.ALBUM_ID to albumId)
-                )
-            },
-            onCategoryClick = { categoryId ->
-                activity.openActivity<CategorySongsActivity>(
-                    extras = arrayOf(DATA.CATEGORY_ID to categoryId)
-                )
-            }
-        )
+        adapter = SongAdapter(onItemClick = { song, position ->
+            changeSelectedSong(position)
+            binding.player.jcPlayer.playAudio(jcAudios!![position])
+            binding.player.jcPlayer.visibility = View.VISIBLE
+            song.id.incrementViewCount()
+        }, onFavoriteClick = { song, view ->
+            view.checkFavorite(song.id)
+        }, onLoveClick = { song, view ->
+            view.checkLove(song.id)
+        }, onMoreClick = { song ->
+            song.moreDelete(
+                activity,
+                DATA.ARTISTS,
+                song.artistId,
+                DATA.SONGS_COUNT,
+                DATA.CATEGORIES,
+                song.categoryId,
+                DATA.SONGS_COUNT,
+                DATA.ALBUMS,
+                song.albumId,
+                DATA.SONGS_COUNT
+            )
+        }, onArtistClick = { artistId ->
+            activity.openActivity<ArtistSongsActivity>(
+                extras = arrayOf(DATA.ARTIST_ID to artistId)
+            )
+        }, onAlbumClick = { albumId ->
+            activity.openActivity<AlbumSongsActivity>(
+                extras = arrayOf(DATA.ALBUM_ID to albumId)
+            )
+        }, onCategoryClick = { categoryId ->
+            activity.openActivity<CategorySongsActivity>(
+                extras = arrayOf(DATA.CATEGORY_ID to categoryId)
+            )
+        })
         binding.recyclerView.adapter = adapter
     }
 
@@ -171,20 +195,6 @@ class AlbumSongsActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding.toolbar.toolbar.visibility = View.VISIBLE
-            binding.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding.toolbar.textSearch.setText(DATA.EMPTY)
-            viewModel.setSearchQuery("")
-        } else if (DATA.isChange) {
-            onResume()
-            DATA.isChange = false
-        } else {
-            onBackPressedDispatcher.onBackPressed()
-        }
-    }
 
     override fun onPause() {
         binding.player.jcPlayer.pause()

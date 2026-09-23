@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -40,6 +41,21 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
         binding.toolbar.nameSpace.setText(R.string.editors_choice)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (DATA.searchStatus) {
+                    binding.toolbar.toolbar.visibility = View.VISIBLE
+                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    DATA.searchStatus = false
+                    binding.toolbar.textSearch.setText(DATA.EMPTY)
+                    viewModel.setSearchQuery("")
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.toolbar.visibility = View.GONE
@@ -80,7 +96,7 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
             viewModel.songs.collectLatest { songs ->
                 binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
                 adapter!!.submitList(songs)
-                
+
                 if (songs.isNotEmpty()) {
                     binding.recyclerView.visibility = View.VISIBLE
                     binding.emptyText.visibility = View.GONE
@@ -88,7 +104,9 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
                     binding.recyclerView.visibility = View.GONE
                     binding.emptyText.visibility = View.VISIBLE
                     if (!DATA.searchStatus) {
-                        Toast.makeText(this@EditorsChoiceAddActivity, "There is no songs!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@EditorsChoiceAddActivity, "There is no songs!", Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
                 Timber.d("Songs updated: ${songs.size}")
@@ -102,15 +120,4 @@ class EditorsChoiceAddActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (DATA.searchStatus) {
-            binding.toolbar.toolbar.visibility = View.VISIBLE
-            binding.toolbar.toolbarSearch.visibility = View.GONE
-            DATA.searchStatus = false
-            binding.toolbar.textSearch.setText(DATA.EMPTY)
-            viewModel.setSearchQuery("")
-        } else {
-            super.onBackPressed()
-        }
-    }
 }

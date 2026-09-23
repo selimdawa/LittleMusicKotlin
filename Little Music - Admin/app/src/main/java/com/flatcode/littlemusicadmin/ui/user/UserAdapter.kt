@@ -1,12 +1,11 @@
 package com.flatcode.littlemusicadmin.ui.user
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.core.view.isVisible
 import com.flatcode.littlemusicadmin.databinding.ItemUserBinding
 import com.flatcode.littlemusicadmin.model.User
 import com.flatcode.littlemusicadmin.utils.loadImage

@@ -16,8 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AlbumRepository @Inject constructor(
-    private val database: FirebaseDatabase,
-    private val commonRepository: CommonRepository
+    private val database: FirebaseDatabase, private val commonRepository: CommonRepository
 ) {
 
     fun getAlbums(orderBy: String): Flow<List<Album>> = callbackFlow {
@@ -104,11 +103,7 @@ class AlbumRepository @Inject constructor(
     }
 
     suspend fun addAlbum(
-        id: String,
-        name: String,
-        categoryId: String,
-        artistId: String,
-        imageUrl: String
+        id: String, name: String, categoryId: String, artistId: String, imageUrl: String
     ): Boolean {
         return try {
             val ref = database.getReference(DATA.ALBUMS)
@@ -158,11 +153,15 @@ class AlbumRepository @Inject constructor(
 
             // Update counts if category or artist changed
             if (oldCategoryId != null && oldCategoryId != categoryId) {
-                commonRepository.incrementItemRemoveCount(DATA.CATEGORIES, oldCategoryId, DATA.ALBUMS_COUNT)
+                commonRepository.incrementItemRemoveCount(
+                    DATA.CATEGORIES, oldCategoryId, DATA.ALBUMS_COUNT
+                )
                 commonRepository.incrementItemCount(DATA.CATEGORIES, categoryId, DATA.ALBUMS_COUNT)
             }
             if (oldArtistId != null && oldArtistId != artistId) {
-                commonRepository.incrementItemRemoveCount(DATA.ARTISTS, oldArtistId, DATA.ALBUMS_COUNT)
+                commonRepository.incrementItemRemoveCount(
+                    DATA.ARTISTS, oldArtistId, DATA.ALBUMS_COUNT
+                )
                 commonRepository.incrementItemCount(DATA.ARTISTS, artistId, DATA.ALBUMS_COUNT)
             }
 
