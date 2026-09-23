@@ -3,7 +3,7 @@
 <p align="center">
  <a><img alt="Min SDK" src="https://img.shields.io/badge/Min SDK-24-020290?logo=android&logoColor=white"/></a>
  <a><img alt="Target SDK" src="https://img.shields.io/badge/Target SDK-37-0EB265?logo=android&logoColor=0EB265"/></a>
- <a href="https://kotlinlang.org"><img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-2.4.10-blue?logo=kotlin&logoColor=white"/></a>
+ <a href="https://kotlinlang.org"><img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-2.4.20-blue?logo=kotlin&logoColor=white"/></a>
  <a href="https://opensource.org/licenses/MIT"><img alt="License" src="https://img.shields.io/badge/License-MIT-CC9900?logo=MIT&logoColor=white"/></a>
 </p>
 
@@ -81,12 +81,108 @@ Logout | Share App | Privacy Policy
 --- | --- | --- | 
 ![](https://blogger.googleusercontent.com/img/a/AVvXsEhSWDG2K9upynKWDTPtgB-SHbdLR-Ceer4UaD778RLPl4h5GPf4ay5G1QTFTrE1_-rLPEe_h6ujwQoBSPQ4F7E9M-vbtHXIyAFPY0eISzQwEcfPJegD2xqgFw0AMoXt4l2CKABnQsHAiX4L1_XvKpK5j-QAs4TPnTCDerR1JdesqXwD0dGSvH33ufT-Rw) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEglPSAJ9cHz3g9OJLN4BgpcScjdS2ygf8JLZCEyNYDgS_3iCoElDkaKUirm6zHV5srYGAuRHT3G1w9egJnH8Vr9M92pSBTzj3y6kTM4f847wevUPUUh7mNpkz2nhHMcjMQof2Tx9AebnDJDDgs4j_mX9mZuhwU5Y7oZrJ0dG8XdXDgzQefCTSR7tTfrRg) | ![](https://blogger.googleusercontent.com/img/a/AVvXsEhtVgbw67hWg1E0xGCU0_T4UhN0VuBbDAXbpHu4ZkZBXbY-5OPHMdDAiSpvgog7sDqoDXXvvX6TwzJjwieOV_ukrwgRPJFbInE9IXMiNdihqfw-0vpc5PiLo9cYAManILYTe_xvjaRiPltLcSTJ4IXZoH79tQTCcGUks3OHN6AdId3gYQCMwI9ThyZyfA) | 
 
-<a href='https://play.google.com/store/apps/details?id=com.flatcode.littlemusic'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="170px"/></a>
-<br />
+---
 
-- [Kotlin Old Code Version](https://github.com/selimdawa/LittleMusicKotlinOld/)
+### ✨ Core Functionalities
+*   **Robust Authentication Flow**: Secure identity management via **Firebase Authentication**.
+*   **Seamless Music Streaming**: Play songs, albums, and explore artist discographies.
+*   **Personalized Playlists & Favorites**: Create custom music collections and bookmark favorite tracks.
+*   **Context-Aware Theming**: Adaptive UI support for dark and light modes.
+*   **Resilient Offline Capabilities**: "Local-first" data strategy using **Room Database**.
+*   **Elastic Cloud Synchronization**: Distributed data persistence via **Firebase**.
 
-- [Java Old Code Version](https://github.com/selimdawa/LittleMusic/)
+---
+
+## 🛠️ Built With
+*   **Language:** [Kotlin](https://kotlinlang.org/)
+*   **UI Framework:** Material Design 3, ViewBinding
+*   **Database:** [Room](https://developer.android.com/training/data-storage/room)
+*   **Cloud Infrastructure:** [Firebase](https://firebase.google.com/) (Auth, Realtime Database)
+*   **Dependency Injection:** [Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
+*   **Async Operations:** Coroutines & Flow
+
+---
+
+### 🏗️ Technical Architecture
+
+#### User App
+```text
+app/src/main/java/com/flatcode/littlemusic/
+├── db/                 # Room Database Configuration & DAOs
+├── di/                 # Dependency Injection (Hilt modules)
+├── model/              # Data Entities & Models
+├── repository/         # Repository Pattern Implementation
+├── ui/                 # Presentation Layer
+│   ├── album/          # Albums & Track Lists
+│   ├── artist/         # Artists Profiles & Discography
+│   ├── auth/           # Authentication (Login, Register)
+│   ├── category/       # Category Songs & Genres
+│   ├── favorites/      # Liked Songs & Favorites
+│   ├── main/           # Main Music Player & Dashboard Navigation
+│   ├── profile/        # User Profile Settings
+│   ├── settings/       # App Settings & Privacy Policy
+│   ├── showmore/       # Curated Selections & Most Viewed Tracks
+│   └── song/           # Audio Player Screen & Song Details
+└── utils/              # Extensions, Constants & Utility Classes
+```
+
+#### Admin App
+```text
+app/src/main/java/com/flatcode/littlemusicadmin/
+├── db/                 # Room Database Configuration & DAOs
+├── di/                 # Dependency Injection (Hilt modules)
+├── model/              # Data Entities & Models
+├── repository/         # Repository Pattern Implementation
+├── ui/                 # Admin Presentation Layer
+│   ├── album/          # Album Creation & Editing
+│   ├── artist/         # Artist Profile Management
+│   ├── auth/           # Admin Authentication
+│   ├── category/       # Category & Genre Management
+│   ├── editorschoice/  # Editor's Choice Picks
+│   ├── main/           # Admin Dashboard
+│   ├── others/         # Additional Admin Tools
+│   ├── profile/        # Admin Profile Settings
+│   ├── song/           # Song Uploads, Audio Links & Metadata
+│   └── user/           # User Management
+└── utils/              # Extensions, Constants & Utility Classes
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+*   Android Studio Ladybug or newer.
+*   JDK 21.
+*   Android SDK Level 37 (Compile SDK).
+
+### Installation
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/selimdawa/LittleMusicKotlin.git
+    ```
+2.  Open the project in Android Studio.
+3.  Sync Project with Gradle Files.
+4.  Add your `google-services.json` file to the `app/` directory.
+5.  Run the app on your device or emulator.
+
+---
+
+### 🛠️ Technology Stack
+*   **Language**: Kotlin (Modern, expressive, and safe development).
+*   **Dependency Injection**: **Dagger Hilt** (Simplified, standard DI for Android).
+*   **Cloud Infrastructure**: **Firebase** (Scalable authentication and real-time NoSQL storage).
+*   **Local Persistence**: **Room** (SQLite abstraction layer for robust offline data).
+*   **Concurrency**: **Coroutines & Flow** (High-performance asynchronous data streams).
+*   **View Interop**: **ViewBinding** (Safe and efficient UI component interaction).
+
+---
+
+## 🔗 Links & Resources
+*   **Legacy Versions:**
+    *   [Kotlin Old Code Version](https://github.com/selimdawa/LittleMusicKotlinOld/)
+    *   [Java Old Code Version](https://github.com/selimdawa/LittleMusic/)
+*   **Author:** [Selim Dawa](https://github.com/selimdawa)
 
 ---
 
