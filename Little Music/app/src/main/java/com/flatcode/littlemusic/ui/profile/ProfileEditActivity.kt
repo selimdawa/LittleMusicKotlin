@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -20,15 +21,11 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
-import com.canhub.cropper.CropImageView
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.databinding.ActivityProfileEditBinding
-import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.ProgressDialog
 import com.flatcode.littlemusic.utils.loadImage
+import com.flatcode.littlemusic.utils.startCropActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -41,14 +38,24 @@ class ProfileEditActivity : AppCompatActivity() {
     private var imageUri: Uri? = null
     private var dialog: ProgressDialog? = null
 
-    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
-        if (result.isSuccessful) {
-            imageUri = result.uriContent
-            binding.profileImage.setImageURI(imageUri)
-        } else {
-            val exception = result.error
-            if (exception != null) {
-                Toast.makeText(this, "Error! ${exception.message}", Toast.LENGTH_SHORT).show()
+    private val pickImageLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            cropActivityLauncher.launch(startCropActivity(uri, isOval = true))
+        }
+    }
+
+    private val cropActivityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK && result.data != null) {
+            val croppedUri = IntentCompat.getParcelableExtra(
+                result.data!!, "CROP_RESULT_URI", Uri::class.java
+            )
+            if (croppedUri != null) {
+                imageUri = croppedUri
+                binding.profileImage.setImageURI(imageUri)
             }
         }
     }
@@ -87,19 +94,7 @@ class ProfileEditActivity : AppCompatActivity() {
     }
 
     private fun launchImagePicker() {
-        cropImage.launch(
-            CropImageContractOptions(
-                uri = null, cropImageOptions = CropImageOptions(
-                    guidelines = CropImageView.Guidelines.ON,
-                    aspectRatioX = 1,
-                    aspectRatioY = 1,
-                    fixAspectRatio = true,
-                    cropShape = CropImageView.CropShape.OVAL,
-                    minCropResultWidth = DATA.MIX_SQUARE,
-                    minCropResultHeight = DATA.MIX_SQUARE
-                )
-            )
-        )
+        pickImageLauncher.launch("image/*")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

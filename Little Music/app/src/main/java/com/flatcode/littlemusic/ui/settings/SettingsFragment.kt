@@ -45,7 +45,9 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupToolbar() {
-        context?.openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to DATA.FirebaseUserUid))
+        binding.toolbar.item.setOnClickListener {
+            context?.openActivity<ProfileActivity>(extras = arrayOf(DATA.PROFILE_ID to DATA.FirebaseUserUid))
+        }
     }
 
     private fun setupRecyclerView() {

@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.kotlinParcelize)
 }
 
-
 android {
     namespace = "com.flatcode.littlemusic"
     compileSdk {
@@ -29,8 +28,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("debug")
         }
@@ -47,11 +45,6 @@ android {
 }
 
 dependencies {
-    modules {
-        module("org.jetbrains.kotlin:kotlin-android-extensions-runtime") {
-            replacedBy("org.jetbrains.kotlin:kotlin-parcelize-runtime", "Duplicate class issue")
-        }
-    }
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)

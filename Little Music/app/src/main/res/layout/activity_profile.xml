@@ -2,11 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="all"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?mc_bg"
-    tools:context=".activity.ProfileActivity">
+    tools:context=".activity.ProfileActivity"
+    tools:ignore="all">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_progress"
@@ -22,15 +22,16 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profile"
-                android:layout_width="240dp"
-                android:layout_height="240dp"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:background="@color/white"
                 android:contentDescription="@null"
+                android:padding="5dp"
                 android:scaleType="centerCrop"
                 android:src="@color/image_profile"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle"
                 app:strokeColor="@color/white"
-                app:strokeWidth="5sp"
-                android:background="@color/white"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Circle" />
+                app:strokeWidth="5sp" />
 
             <TextView
                 android:id="@+id/username"
@@ -174,10 +175,10 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/zero"
-                tools:ignore="HardcodedText"
                 android:textColor="@color/white"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
 
         </LinearLayout>
 

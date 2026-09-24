@@ -2,7 +2,7 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="30dp"
@@ -12,7 +12,7 @@
     tool:ignore="all">
 
     <LinearLayout
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?mc_bg"
         android:orientation="vertical">
@@ -32,13 +32,13 @@
             style="@style/RippleStyleWhite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white">
+            android:background="?colorOnBackground">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="10sp"
+                android:gravity="center"
+                android:padding="10dp"
                 android:text="@string/app_name"
                 android:textAlignment="center"
                 android:textColor="?mc_track"
@@ -58,11 +58,11 @@
                 android:background="?mc_bg">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:gravity="center"
-                    android:padding="5sp"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="8dp"
                     android:text="@string/about_app"
                     android:textAlignment="center"
                     android:textColor="@color/white"
@@ -78,7 +78,7 @@
             style="@style/RippleStyleWhite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white">
+            android:background="?colorOnBackground">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -93,7 +93,7 @@
                     android:layout_height="24dp"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_web"
-                    app:tint="@color/black" />
+                    app:tint="?colorError" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -112,7 +112,7 @@
             style="@style/RippleStyleWhite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white">
+            android:background="?colorOnBackground">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -127,7 +127,7 @@
                     android:layout_height="24dp"
                     android:contentDescription="@null"
                     android:src="@drawable/facebook_icon"
-                    app:tint="@color/black" />
+                    app:tint="?colorError" />
 
                 <TextView
                     android:layout_width="wrap_content"

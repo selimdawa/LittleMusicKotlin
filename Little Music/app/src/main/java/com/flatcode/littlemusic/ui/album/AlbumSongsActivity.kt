@@ -2,10 +2,8 @@ package com.flatcode.littlemusic.ui.album
 
 import android.os.Bundle
 import android.text.Editable
-import com.flatcode.littlemusic.R
 import android.text.TextWatcher
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -14,12 +12,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.jean.jcplayer.model.JcAudio
+import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.databinding.ActivityAlbumSongsBinding
 import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
@@ -55,17 +53,11 @@ class AlbumSongsActivity : AppCompatActivity() {
         setContentView(binding.root)
         Timber.i("AlbumSongsActivity Created")
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar.root) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                topMargin = insets.top
-            }
-            windowInsets
-        }
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.player.root) { v, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(bottom = insets.bottom)
+            v.updatePadding(
+                top = insets.top, bottom = insets.bottom
+            )
             windowInsets
         }
 

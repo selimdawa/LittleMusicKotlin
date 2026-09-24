@@ -10,7 +10,7 @@
     <string name="welcome_to">Welcome to</string>
     <string name="email_example">abc@example.com</string>
     <string name="password_hint">********</string>
-    <string name="do_you_want_to_logout">Do you want to logout?</string>
+    <string name="do_you_want_to_logout">Do you want to log out?</string>
     <string name="no">NO</string>
     <string name="yes">YES</string>
     <string name="do_you_want_to_exit">Do you want to Exit ?</string>
@@ -57,4 +57,6 @@
     <string name="crop_image">Crop Image</string>
     <string name="zero">0</string>
     <string name="count_format">( %d )</string>
+    <string name="please_wait">Please wait&#8230;</string>
+    <string name="loading">Loading&#8230;</string>
 </resources>

@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.widget.ImageView
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
@@ -37,6 +38,19 @@ inline fun <reified T : Activity> Context.openActivity(
         }
     }
     startActivity(intent)
+}
+
+fun Context.startCropActivity(
+    uri: Uri, aspectRatioX: Int = 1, aspectRatioY: Int = 1, isOval: Boolean = false
+): Intent {
+    return Intent(this, CropActivity::class.java).apply {
+        putExtra("IMAGE_URI", uri)
+        putExtra("ASPECT_RATIO_X", aspectRatioX)
+        putExtra("ASPECT_RATIO_Y", aspectRatioY)
+        putExtra("IS_OVAL", isOval)
+        putExtra("MIN_WIDTH", DATA.MIX_SQUARE)
+        putExtra("MIN_HEIGHT", DATA.MIX_SQUARE)
+    }
 }
 
 fun ImageView.loadImage(url: String?, isUser: Boolean = false) {
