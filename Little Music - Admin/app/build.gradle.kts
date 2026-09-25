@@ -9,9 +9,7 @@ plugins {
 
 android {
     namespace = "com.flatcode.littlemusicadmin"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.flatcode.littlemusicadmin"
@@ -68,9 +66,6 @@ dependencies {
     //Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    //Room
-    implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.compiler)
     //Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
@@ -79,10 +74,6 @@ dependencies {
     implementation(libs.jcplayer)                       //JcPlayer
     implementation(libs.multiwaveheader)                //MultiWave
     implementation(libs.timber)
-}
-
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 configurations.all {

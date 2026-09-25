@@ -7,6 +7,10 @@ plugins {
     alias(libs.plugins.kotlinParcelize)
 }
 
+configurations.configureEach {
+    exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
+}
+
 android {
     namespace = "com.flatcode.littlemusic"
     compileSdk {

@@ -1,14 +1,11 @@
 package com.flatcode.littlemusicadmin.model
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-@Entity(tableName = "songs")
 data class Song(
-    @PrimaryKey var id: String = "",
+    var id: String = "",
     var publisher: String? = null,
     var categoryId: String? = null,
     var name: String? = null,
