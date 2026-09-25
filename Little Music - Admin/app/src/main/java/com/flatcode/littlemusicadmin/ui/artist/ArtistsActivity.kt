@@ -5,9 +5,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityArtistsBinding
@@ -22,14 +21,13 @@ import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class ArtistsActivity : AppCompatActivity() {
+class ArtistsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityArtistsBinding
     private var adapter: ArtistAdapter? = null
     private val viewModel: ArtistsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityArtistsBinding.inflate(layoutInflater)
         setContentView(binding.root)

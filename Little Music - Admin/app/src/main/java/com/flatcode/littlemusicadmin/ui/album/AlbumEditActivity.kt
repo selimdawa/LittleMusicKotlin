@@ -6,10 +6,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import coil3.load
 import com.canhub.cropper.CropImageContract
@@ -26,7 +25,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class AlbumEditActivity : AppCompatActivity() {
+class AlbumEditActivity : BaseActivity() {
 
     private lateinit var binding: ActivityAlbumAddBinding
     private val viewModel: AlbumEditViewModel by viewModels()
@@ -53,7 +52,6 @@ class AlbumEditActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         activity = this@AlbumEditActivity
         binding = ActivityAlbumAddBinding.inflate(layoutInflater)

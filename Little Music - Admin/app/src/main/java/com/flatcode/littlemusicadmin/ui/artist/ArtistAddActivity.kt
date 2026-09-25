@@ -5,9 +5,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
@@ -21,7 +20,7 @@ import com.flatcode.littlemusicadmin.utils.DATA
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-class ArtistAddActivity : AppCompatActivity() {
+class ArtistAddActivity : BaseActivity() {
 
     private lateinit var binding: ActivityArtistAddBinding
     var activity: Activity = this@ArtistAddActivity
@@ -39,7 +38,6 @@ class ArtistAddActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityArtistAddBinding.inflate(layoutInflater)
         setContentView(binding.root)

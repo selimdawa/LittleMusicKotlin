@@ -5,9 +5,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityUsersBinding
@@ -21,14 +20,13 @@ import timber.log.Timber
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class UsersActivity : AppCompatActivity() {
+class UsersActivity : BaseActivity() {
 
     private lateinit var binding: ActivityUsersBinding
     private var adapter: UserAdapter? = null
     private val viewModel: UsersViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityUsersBinding.inflate(layoutInflater)
         setContentView(binding.root)

@@ -10,14 +10,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -26,6 +21,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.databinding.ActivityMainBinding
 import com.flatcode.littlemusic.ui.profile.ProfileActivity
+import com.flatcode.littlemusic.utils.BaseActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.closeApp
 import com.flatcode.littlemusic.utils.loadImage
@@ -37,7 +33,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMainBinding
     var activity: Activity? = null
@@ -77,21 +73,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(
-                top = insets.top, bottom = insets.bottom
-            )
-            windowInsets
-        }
 
         Timber.i("MainActivity Created")
 
@@ -130,7 +117,7 @@ class MainActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                context.closeApp(activity)
+                context.closeApp()
             }
         })
 

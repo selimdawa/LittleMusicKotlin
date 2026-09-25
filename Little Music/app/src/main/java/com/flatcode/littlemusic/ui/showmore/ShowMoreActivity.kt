@@ -4,17 +4,10 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
-import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -26,6 +19,7 @@ import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
 import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.ui.song.SongAdapter
+import com.flatcode.littlemusic.utils.BaseActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkFavorite
 import com.flatcode.littlemusic.utils.checkLove
@@ -36,7 +30,7 @@ import timber.log.Timber
 
 
 @AndroidEntryPoint
-class ShowMoreActivity : AppCompatActivity() {
+class ShowMoreActivity : BaseActivity() {
 
     private lateinit var binding: ActivityShowMoreBinding
     private val viewModel: ShowMoreViewModel by viewModels()
@@ -49,25 +43,10 @@ class ShowMoreActivity : AppCompatActivity() {
     private var recyclerView: RecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityShowMoreBinding.inflate(layoutInflater)
         setContentView(binding.root)
         Timber.i("ShowMoreActivity Created")
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar.root) { v, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                topMargin = insets.top
-            }
-            windowInsets
-        }
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.player.root) { v, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(bottom = insets.bottom)
-            windowInsets
-        }
 
         type = intent.getStringExtra(DATA.SHOW_MORE_TYPE)
         name = intent.getStringExtra(DATA.SHOW_MORE_NAME)
@@ -127,10 +106,10 @@ class ShowMoreActivity : AppCompatActivity() {
 
         adapter = SongAdapter(
             onItemClick = { _, position ->
-                changeSelectedSong(position)
-                binding.player.jcPlayer.playAudio(jcAudios[position])
-                binding.player.jcPlayer.visibility = View.VISIBLE
-            },
+            changeSelectedSong(position)
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+            binding.player.jcPlayer.visibility = View.VISIBLE
+        },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name ->

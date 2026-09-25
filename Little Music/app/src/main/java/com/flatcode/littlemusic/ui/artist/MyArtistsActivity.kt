@@ -6,12 +6,8 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
+import com.flatcode.littlemusic.utils.BaseActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -25,26 +21,17 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class MyArtistsActivity : AppCompatActivity() {
+class MyArtistsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMyArtistsBinding
     private val viewModel: MyArtistsViewModel by viewModels()
     private var adapter: ArtistAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityMyArtistsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         Timber.i("MyArtistsActivity Created")
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(
-                top = insets.top, bottom = insets.bottom
-            )
-            windowInsets
-        }
 
         setupToolbar()
         setupSwitchBar()

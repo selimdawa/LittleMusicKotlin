@@ -4,8 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityPrivacyPolicyEditBinding
 import com.flatcode.littlemusicadmin.utils.DATA
@@ -14,13 +13,12 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class PrivacyPolicyEditActivity : AppCompatActivity() {
+class PrivacyPolicyEditActivity : BaseActivity() {
 
     private lateinit var binding: ActivityPrivacyPolicyEditBinding
     var context: Context = this@PrivacyPolicyEditActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityPrivacyPolicyEditBinding.inflate(layoutInflater)
         setContentView(binding.root)

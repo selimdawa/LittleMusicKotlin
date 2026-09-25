@@ -2,9 +2,8 @@ package com.flatcode.littlemusicadmin.ui.editorschoice
 
 import android.os.Bundle
 import android.view.View
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityEditorsChoiceBinding
@@ -16,14 +15,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class EditorsChoiceActivity : AppCompatActivity() {
+class EditorsChoiceActivity : BaseActivity() {
 
     private lateinit var binding: ActivityEditorsChoiceBinding
     private var adapter: EditorsChoiceAdapter? = null
     private val viewModel: EditorsChoiceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityEditorsChoiceBinding.inflate(layoutInflater)
         setContentView(binding.root)

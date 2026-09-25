@@ -7,10 +7,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
@@ -25,7 +24,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class SongAddActivity : AppCompatActivity() {
+class SongAddActivity : BaseActivity() {
     private lateinit var binding: ActivitySongAddBinding
     var activity: Activity = this@SongAddActivity
     var audioUri: Uri? = null
@@ -44,7 +43,6 @@ class SongAddActivity : AppCompatActivity() {
     private var artistList: ArrayList<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivitySongAddBinding.inflate(layoutInflater)
         setContentView(binding.root)

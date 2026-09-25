@@ -4,20 +4,15 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.databinding.ActivityMyCategoriesBinding
+import com.flatcode.littlemusic.utils.BaseActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkInterested
 import com.flatcode.littlemusic.utils.openActivity
@@ -26,26 +21,17 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class MyCategoriesActivity : AppCompatActivity() {
+class MyCategoriesActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMyCategoriesBinding
     private val viewModel: MyCategoriesViewModel by viewModels()
     private var adapter: CategoryAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityMyCategoriesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         Timber.i("MyCategoriesActivity Created")
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar.root) { v, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                topMargin = insets.top
-            }
-            windowInsets
-        }
 
         setupToolbar()
         setupSwitchBar()
@@ -103,22 +89,17 @@ class MyCategoriesActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = CategoryAdapter(
-            onItemClick = { category ->
-                openActivity<CategorySongsActivity>(
-                    extras = arrayOf(
-                        DATA.CATEGORY_ID to category.id,
-                        DATA.CATEGORY_NAME to category.name
-                    )
+        adapter = CategoryAdapter(onItemClick = { category ->
+            openActivity<CategorySongsActivity>(
+                extras = arrayOf(
+                    DATA.CATEGORY_ID to category.id, DATA.CATEGORY_NAME to category.name
                 )
-            },
-            onInterestedClick = { category, view ->
-                (view as? ImageView)?.checkInterested(
-                    DATA.CATEGORIES,
-                    category.id
-                )
-            }
-        )
+            )
+        }, onInterestedClick = { category, view ->
+            (view as? ImageView)?.checkInterested(
+                DATA.CATEGORIES, category.id
+            )
+        })
         binding.recyclerView.adapter = adapter
     }
 

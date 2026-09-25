@@ -7,9 +7,8 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusicadmin.databinding.ActivityCategorySongsBinding
@@ -25,7 +24,7 @@ import kotlinx.coroutines.launch
 import java.text.MessageFormat
 
 @AndroidEntryPoint
-class CategorySongsActivity : AppCompatActivity() {
+class CategorySongsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCategorySongsBinding
     private val activity: Activity = this@CategorySongsActivity
@@ -40,7 +39,6 @@ class CategorySongsActivity : AppCompatActivity() {
     private val viewModel: CategorySongsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityCategorySongsBinding.inflate(layoutInflater)
         setContentView(binding.root)
