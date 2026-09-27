@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -93,9 +92,10 @@ class SongAdapter(
                 onItemClick(item, position)
             }
 
-            binding.wave.isVisible = selectedPosition == position
-            if (binding.wave.isVisible) {
+            if (selectedPosition == position) {
                 binding.wave.visibility = View.VISIBLE
+            } else {
+                binding.wave.visibility = View.GONE
             }
         }
     }

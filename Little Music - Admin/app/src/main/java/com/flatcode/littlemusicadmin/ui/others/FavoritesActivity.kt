@@ -140,7 +140,6 @@ class FavoritesActivity : BaseActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.favorites.collectLatest { songs ->
-                changeSelectedSong(-1)
                 jcAudios!!.clear()
                 for (item in songs) {
                     val name = item.name

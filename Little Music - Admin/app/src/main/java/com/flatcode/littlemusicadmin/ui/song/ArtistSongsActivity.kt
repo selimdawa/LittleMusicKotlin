@@ -230,7 +230,6 @@ class ArtistSongsActivity : BaseActivity() {
         lifecycleScope.launch {
             viewModel.songs.collectLatest { songs ->
                 if (isSong) {
-                    changeSelectedSong(-1)
                     jcAudios!!.clear()
                     for (item in songs) {
                         val name = item.name

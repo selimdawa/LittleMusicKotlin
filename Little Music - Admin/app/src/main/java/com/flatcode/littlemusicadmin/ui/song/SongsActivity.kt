@@ -129,7 +129,6 @@ class SongsActivity : BaseActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.songs.collectLatest { songs ->
-                changeSelectedSong(-1)
                 jcAudios!!.clear()
                 for (item in songs) {
                     val name = item.name
