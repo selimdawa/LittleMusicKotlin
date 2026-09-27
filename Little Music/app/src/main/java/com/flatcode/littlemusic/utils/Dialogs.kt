@@ -1,7 +1,6 @@
 package com.flatcode.littlemusic.utils
 
 import android.R
-import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -16,7 +15,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 
 fun Context.closeApp() {
-    val activity = this as? Activity ?: return
+    val activity = this.findActivity() ?: return
     if (activity.isFinishing || activity.isDestroyed) return
 
     val dialogBinding = DialogCloseAppBinding.inflate(activity.layoutInflater)
@@ -39,7 +38,7 @@ fun Context.closeApp() {
 }
 
 fun Context.dialogLogout() {
-    val activity = this as? Activity ?: return
+    val activity = this.findActivity() ?: return
     if (activity.isFinishing || activity.isDestroyed) return
 
     val dialogBinding = DialogLogoutBinding.inflate(activity.layoutInflater)
@@ -64,7 +63,7 @@ fun Context.dialogLogout() {
 }
 
 fun Context.dialogAboutApp() {
-    val activity = this as? Activity ?: return
+    val activity = this.findActivity() ?: return
     if (activity.isFinishing || activity.isDestroyed) return
 
     val dialogBinding = DialogAboutAppBinding.inflate(activity.layoutInflater)
@@ -99,7 +98,7 @@ fun Context.dialogAboutApp() {
 }
 
 fun Context.dialogAboutArtist(imageDb: String?, nameDb: String?, aboutDb: String?) {
-    val activity = this as? Activity ?: return
+    val activity = this.findActivity() ?: return
     if (activity.isFinishing || activity.isDestroyed) return
 
     val dialogBinding = DialogAboutArtistBinding.inflate(activity.layoutInflater)

@@ -87,7 +87,10 @@
                             android:layout_height="50sp"
                             android:scaleY="-1"
                             android:visibility="gone"
-                            app:mwhShape="Oval" />
+                            app:mwhCloseColor="@color/white"
+                            app:mwhProgress="100"
+                            app:mwhShape="Oval"
+                            app:mwhStartColor="@color/dark" />
 
                     </LinearLayout>
 

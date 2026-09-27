@@ -1,6 +1,5 @@
 package com.flatcode.littlemusic.ui.song
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import io.selimdawa.multiwave.MultiWaveHeader
 import java.util.Locale
 
 class SongAdapter(
@@ -118,7 +116,7 @@ class SongAdapter(
             }
 
             if (selectedPosition == bindingAdapterPosition) {
-                open(binding.wave)
+                binding.wave.visibility = View.VISIBLE
             } else {
                 binding.wave.visibility = View.GONE
             }
@@ -161,17 +159,6 @@ class SongAdapter(
             override fun areContentsTheSame(oldItem: Song, newItem: Song): Boolean {
                 return oldItem == newItem
             }
-        }
-
-        fun open(wave: MultiWaveHeader) {
-            wave.velocity = 1f
-            wave.progress = 1f
-            wave.isRunning
-            wave.gradientAngle = 45
-            wave.waveHeight = 40
-            wave.startColor = Color.WHITE
-            wave.closeColor = Color.DKGRAY
-            wave.visibility = View.VISIBLE
         }
     }
 }

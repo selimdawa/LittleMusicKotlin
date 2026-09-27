@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import com.flatcode.littlemusic.utils.BaseActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
@@ -16,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.databinding.ActivityProfileEditBinding
+import com.flatcode.littlemusic.utils.BaseActivity
 import com.flatcode.littlemusic.utils.ProgressDialog
 import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.startCropActivity
@@ -118,12 +118,16 @@ class ProfileEditActivity : BaseActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.username.collect { username ->
-                        binding.nameEt.setText(username)
+                        if (binding.nameEt.text.isNullOrEmpty()) {
+                            binding.nameEt.setText(username)
+                        }
                     }
                 }
                 launch {
                     viewModel.profileImage.collect { profileImage ->
-                        binding.profileImage.loadImage(profileImage, true)
+                        if (imageUri == null) {
+                            binding.profileImage.loadImage(profileImage, true)
+                        }
                     }
                 }
                 launch {

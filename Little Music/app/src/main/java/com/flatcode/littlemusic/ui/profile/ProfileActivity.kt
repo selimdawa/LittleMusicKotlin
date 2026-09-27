@@ -2,6 +2,7 @@ package com.flatcode.littlemusic.ui.profile
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.flatcode.littlemusic.utils.BaseActivity
 import androidx.lifecycle.Lifecycle
@@ -12,6 +13,7 @@ import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.openActivity
 import com.flatcode.littlemusic.databinding.ActivityProfileBinding
+import com.flatcode.littlemusic.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -36,6 +38,18 @@ class ProfileActivity : BaseActivity() {
             binding.edit.setImageResource(R.drawable.ic_edit_white)
             binding.edit.setOnClickListener { this.openActivity<ProfileEditActivity>() }
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isTaskRoot) {
+                    openActivity<MainActivity>(clear = true)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+
         binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         observeViewModel()

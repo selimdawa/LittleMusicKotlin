@@ -33,10 +33,9 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="16dp"
-                android:contentDescription="@string/save"
+                android:contentDescription="@string/done"
                 android:padding="8dp"
-                android:rotation="180"
-                android:src="@drawable/ic_back_white"
+                android:src="@drawable/ic_true"
                 app:tint="@color/white" />
 
             <TextView

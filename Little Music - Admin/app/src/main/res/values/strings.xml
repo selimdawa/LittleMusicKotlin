@@ -26,7 +26,7 @@
     <string name="most_views">Most Views</string>
     <string name="most_loves">Most Loves</string>
     <string name="favorites">Favorites</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="choose_song">Choose Song</string>
     <string name="duration">Duration</string>
     <string name="add_new_album">Add New Album</string>
@@ -87,4 +87,10 @@
     <string name="title_splash">Splash</string>
     <string name="title_login">Login</string>
     <string name="title_main">Main</string>
+
+    <string name="artists_count">Artists count</string>
+    <string name="albums_count">Albums count</string>
+    <string name="categories_count">Categories count</string>
+    <string name="favorites_count">Favorites count</string>
+    <string name="back">Back</string>
 </resources>

@@ -56,14 +56,16 @@ class ProfileEditViewModel @Inject constructor(
 
     private fun uploadImage(name: String, imageUri: Uri) {
         _updateStatus.value = UpdateStatus.Loading("Uploading Image...")
+        val publicId = "${DATA.FirebaseUserUid}_${System.currentTimeMillis()}"
 
-        MediaManager.get().upload(imageUri).option("folder", "Images/Profile/")
-            .option("public_id", DATA.FirebaseUserUid).callback(object : UploadCallback {
-                override fun onStart(requestId: String) {
-                }
+        MediaManager.get().upload(imageUri)
+            .option("public_id", publicId)
+            .option("folder", "Images/Profile")
+            .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+            .callback(object : UploadCallback {
+                override fun onStart(requestId: String) {}
 
-                override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
-                }
+                override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
 
                 override fun onSuccess(requestId: String, resultData: Map<*, *>) {
                     val imageUrl = resultData["secure_url"] as String
@@ -75,8 +77,7 @@ class ProfileEditViewModel @Inject constructor(
                         UpdateStatus.Error("Failed to upload image: ${error.description}")
                 }
 
-                override fun onReschedule(requestId: String, error: ErrorInfo) {
-                }
+                override fun onReschedule(requestId: String, error: ErrorInfo) {}
             }).dispatch()
     }
 

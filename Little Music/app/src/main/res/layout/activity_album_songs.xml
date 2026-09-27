@@ -34,7 +34,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5sp"
-                android:layout_marginTop="10sp"
                 android:elevation="0sp"
                 android:src="@color/white"
                 app:cardCornerRadius="15dp"
@@ -76,18 +75,6 @@
                             android:src="@color/overlay_dark_20"
                             app:layout_constraintDimensionRatio="2:1"
                             tools:ignore="MissingConstraints" />
-
-                        <TextView
-                            android:id="@+id/name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_margin="20sp"
-                            android:gravity="center"
-                            android:textColor="@color/white"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

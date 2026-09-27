@@ -61,8 +61,8 @@ class ArtistSongsActivity : BaseActivity() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (DATA.searchStatus) {
-                    binding.toolbar.toolbar.visibility = View.VISIBLE
-                    binding.toolbar.toolbarSearch.visibility = View.GONE
+                    binding.toolbar.root.getChildAt(0).visibility = View.VISIBLE
+                    binding.toolbar.root.getChildAt(1).visibility = View.GONE
                     DATA.searchStatus = false
                     binding.toolbar.textSearch.setText(DATA.EMPTY)
                     viewModel.setSearchQuery("")
@@ -79,8 +79,8 @@ class ArtistSongsActivity : BaseActivity() {
         binding.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
 
         binding.toolbar.search.setOnClickListener {
-            binding.toolbar.toolbar.visibility = View.GONE
-            binding.toolbar.toolbarSearch.visibility = View.VISIBLE
+            binding.toolbar.root.getChildAt(0).visibility = View.GONE
+            binding.toolbar.root.getChildAt(1).visibility = View.VISIBLE
             DATA.searchStatus = true
         }
 

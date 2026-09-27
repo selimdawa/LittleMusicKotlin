@@ -13,6 +13,8 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import coil3.load
 import coil3.request.crossfade
+import coil3.request.error
+import coil3.request.fallback
 import coil3.request.placeholder
 import coil3.request.transformations
 import coil3.size.Size
@@ -44,40 +46,38 @@ inline fun <reified T : Activity> Context.openActivity(
 }
 
 fun ImageView.loadImage(isUser: Boolean, url: String?) {
+    val defaultRes = if (isUser) R.drawable.basic_user else R.color.image_profile
     try {
-        if (url == DATA.BASIC) {
-            if (isUser) {
-                this.setImageResource(R.drawable.basic_user)
-            } else {
-                this.setImageResource(R.drawable.basic_music)
-            }
+        if (url.isNullOrBlank() || url == DATA.BASIC || url == "null") {
+            this.setImageResource(defaultRes)
         } else {
             this.load(url) {
                 placeholder(R.color.image_profile)
+                error(defaultRes)
+                fallback(defaultRes)
                 crossfade(true)
             }
         }
     } catch (_: Exception) {
-        this.setImageResource(R.drawable.basic_music)
+        this.setImageResource(defaultRes)
     }
 }
 
 fun ImageView.loadImageBlur(isUser: Boolean, url: String?, level: Int) {
+    val defaultRes = if (isUser) R.drawable.basic_user else R.color.image_profile
     try {
-        if (url == DATA.BASIC) {
-            if (isUser) {
-                this.setImageResource(R.drawable.basic_user)
-            } else {
-                this.setImageResource(R.drawable.basic_music)
-            }
+        if (url.isNullOrBlank() || url == DATA.BASIC || url == "null") {
+            this.setImageResource(defaultRes)
         } else {
             this.load(url) {
                 placeholder(R.color.image_profile)
+                error(defaultRes)
+                fallback(defaultRes)
                 transformations(SimpleBlurTransformation(level.toFloat()))
             }
         }
     } catch (_: Exception) {
-        this.setImageResource(R.drawable.basic_music)
+        this.setImageResource(defaultRes)
     }
 }
 

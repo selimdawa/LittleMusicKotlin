@@ -2,8 +2,8 @@ package com.flatcode.littlemusic.ui.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import coil3.load
 import com.flatcode.littlemusic.databinding.ItemSliderBinding
+import com.flatcode.littlemusic.utils.loadImage
 import io.selimdawa.autoimageslider.adapter.SliderViewAdapter
 
 class ImageSliderAdapter(private val imageList: List<String>) :
@@ -16,9 +16,7 @@ class ImageSliderAdapter(private val imageList: List<String>) :
 
     override fun onBind(viewHolder: SliderViewHolder, position: Int) {
         val imageLink = imageList[position]
-        if (imageLink.isNotEmpty()) {
-            viewHolder.binding.imageView.load(imageLink)
-        }
+        viewHolder.binding.imageView.loadImage(imageLink)
     }
 
     override fun getItemCount(): Int {

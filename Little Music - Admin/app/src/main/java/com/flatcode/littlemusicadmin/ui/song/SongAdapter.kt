@@ -16,7 +16,6 @@ import com.flatcode.littlemusicadmin.utils.dataName
 import com.flatcode.littlemusicadmin.utils.isFavorite
 import com.flatcode.littlemusicadmin.utils.isLoves
 import com.flatcode.littlemusicadmin.utils.nrLoves
-import io.selimdawa.multiwave.MultiWaveHeader
 
 class SongAdapter(
     private val onItemClick: (Song, Int) -> Unit,
@@ -38,15 +37,24 @@ class SongAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position) ?: return
         holder.bind(
-            item, position, selectedPosition,
-            onItemClick, onFavoriteClick, onLoveClick, onMoreClick,
-            onArtistClick, onAlbumClick, onCategoryClick
+            item,
+            position,
+            selectedPosition,
+            onItemClick,
+            onFavoriteClick,
+            onLoveClick,
+            onMoreClick,
+            onArtistClick,
+            onAlbumClick,
+            onCategoryClick
         )
     }
 
     class ViewHolder(private val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(
-            item: Song, position: Int, selectedPosition: Int,
+            item: Song,
+            position: Int,
+            selectedPosition: Int,
             onItemClick: (Song, Int) -> Unit,
             onFavoriteClick: (Song, ImageView) -> Unit,
             onLoveClick: (Song, ImageView) -> Unit,
@@ -87,30 +95,18 @@ class SongAdapter(
 
             binding.wave.isVisible = selectedPosition == position
             if (binding.wave.isVisible) {
-                open(binding.wave)
+                binding.wave.visibility = View.VISIBLE
             }
         }
     }
 
     companion object {
-        fun open(wave: MultiWaveHeader) {
-            wave.visibility = View.VISIBLE
-        }
-
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Song>() {
             override fun areItemsTheSame(oldItem: Song, newItem: Song): Boolean =
                 oldItem.id == newItem.id
 
             override fun areContentsTheSame(oldItem: Song, newItem: Song): Boolean =
-                oldItem.name == newItem.name &&
-                        oldItem.publisher == newItem.publisher &&
-                        oldItem.categoryId == newItem.categoryId &&
-                        oldItem.artistId == newItem.artistId &&
-                        oldItem.albumId == newItem.albumId &&
-                        oldItem.duration == newItem.duration &&
-                        oldItem.songLink == newItem.songLink &&
-                        oldItem.viewsCount == newItem.viewsCount &&
-                        oldItem.lovesCount == newItem.lovesCount
+                oldItem.name == newItem.name && oldItem.publisher == newItem.publisher && oldItem.categoryId == newItem.categoryId && oldItem.artistId == newItem.artistId && oldItem.albumId == newItem.albumId && oldItem.duration == newItem.duration && oldItem.songLink == newItem.songLink && oldItem.viewsCount == newItem.viewsCount && oldItem.lovesCount == newItem.lovesCount
         }
     }
 }

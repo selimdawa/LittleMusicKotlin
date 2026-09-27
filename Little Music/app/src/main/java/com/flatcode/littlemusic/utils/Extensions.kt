@@ -12,13 +12,25 @@ import androidx.core.graphics.scale
 import androidx.core.net.toUri
 import coil3.load
 import coil3.request.crossfade
+import coil3.request.error
+import coil3.request.fallback
 import coil3.request.placeholder
 import coil3.request.transformations
 import coil3.size.Size
+import android.content.ContextWrapper
 import coil3.transform.Transformation
 import com.flatcode.littlemusic.R
 import java.io.Serializable
 import java.util.Locale
+
+fun Context.findActivity(): Activity? {
+    var ctx = this
+    while (ctx is ContextWrapper) {
+        if (ctx is Activity) return ctx
+        ctx = ctx.baseContext
+    }
+    return null
+}
 
 inline fun <reified T : Activity> Context.openActivity(
     c: Class<*>? = null, clear: Boolean = false, vararg extras: Pair<String, Any?>
@@ -61,9 +73,13 @@ fun ImageView.loadImage(url: String?, isUser: Boolean = false) {
             } else {
                 this.setImageResource(R.drawable.basic_music)
             }
+        } else if (url.isNullOrEmpty() || url == DATA.NULL) {
+            this.setImageResource(R.color.image_profile)
         } else {
             this.load(url) {
                 placeholder(R.color.image_profile)
+                error(R.color.image_profile)
+                fallback(R.color.image_profile)
                 crossfade(true)
             }
         }
@@ -80,9 +96,13 @@ fun ImageView.loadBlurImage(url: String?, level: Int, isUser: Boolean = false) {
             } else {
                 this.setImageResource(R.drawable.basic_music)
             }
+        } else if (url.isNullOrEmpty() || url == DATA.NULL) {
+            this.setImageResource(R.color.image_profile)
         } else {
             this.load(url) {
                 placeholder(R.color.image_profile)
+                error(R.color.image_profile)
+                fallback(R.color.image_profile)
                 transformations(SimpleBlurTransformation(level.toFloat()))
             }
         }

@@ -37,7 +37,15 @@ class ToolsRepository @Inject constructor() {
         val reference = database.getReference(DATA.SLIDER_SHOW)
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val images = snapshot.children.mapNotNull { it.child(DATA.IMAGE).value?.toString() }
+                val images = mutableListOf<String>()
+                for (child in snapshot.children) {
+                    val url = child.child(DATA.IMAGE).value?.toString()
+                        ?: (child.value as? String)
+                    if (!url.isNullOrEmpty() && url != "null") {
+                        images.add(url)
+                    }
+                }
+                Timber.d("getSliderImages: loaded %d images", images.size)
                 trySend(images)
             }
 

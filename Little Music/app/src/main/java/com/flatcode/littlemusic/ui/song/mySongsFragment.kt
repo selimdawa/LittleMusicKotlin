@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -117,8 +116,6 @@ class MySongsFragment : Fragment() {
                         } else {
                             binding.recyclerView.visibility = View.GONE
                             binding.emptyText.visibility = View.VISIBLE
-                            Toast.makeText(context, "There are no songs!", Toast.LENGTH_SHORT)
-                                .show()
                         }
                     }
                 }
