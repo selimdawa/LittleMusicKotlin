@@ -101,11 +101,6 @@ class EditorsChoiceAddActivity : BaseActivity() {
                 } else {
                     binding.recyclerView.visibility = View.GONE
                     binding.emptyText.visibility = View.VISIBLE
-                    if (!DATA.searchStatus) {
-                        Toast.makeText(
-                            this@EditorsChoiceAddActivity, "There is no songs!", Toast.LENGTH_SHORT
-                        ).show()
-                    }
                 }
                 Timber.d("Songs updated: ${songs.size}")
             }

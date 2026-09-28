@@ -166,9 +166,6 @@ class SongsActivity : BaseActivity() {
                 } else {
                     binding.recyclerView.visibility = View.GONE
                     binding.emptyText.visibility = View.VISIBLE
-                    if (!DATA.searchStatus) {
-                        Toast.makeText(activity, "There is no songs!", Toast.LENGTH_SHORT).show()
-                    }
                 }
                 Timber.d("Songs updated: ${songs.size}")
             }

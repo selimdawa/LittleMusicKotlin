@@ -177,7 +177,6 @@ class FavoritesActivity : BaseActivity() {
                 } else {
                     binding.recyclerView.visibility = View.GONE
                     binding.emptyText.visibility = View.VISIBLE
-                    Toast.makeText(activity, "There is no songs!", Toast.LENGTH_SHORT).show()
                 }
                 Timber.d("Favorites updated: ${songs.size}")
             }
