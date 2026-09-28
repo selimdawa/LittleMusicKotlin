@@ -13,6 +13,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
+import com.example.jean.jcplayer.JcPlayerManagerListener
+import com.example.jean.jcplayer.general.JcStatus
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.databinding.FragmentHomeBinding
 import com.flatcode.littlemusic.model.Song
@@ -49,6 +51,33 @@ class HomeFragment : Fragment() {
 
     private val jcAudios = ArrayList<JcAudio>()
     private var categoryAdapter: CategoryHomeAdapter? = null
+
+    private val jcPlayerListener = object : JcPlayerManagerListener {
+        override fun onPreparedAudio(status: JcStatus) {
+            val index = jcAudios.indexOf(status.jcAudio)
+            if (index != -1) {
+                changeSelectedSong(index, adapter)
+                changeSelectedSong(index, adapter2)
+                changeSelectedSong(index, adapter3)
+                changeSelectedSong(index, adapter4)
+            }
+        }
+        override fun onCompletedAudio() {}
+        override fun onPaused(status: JcStatus) {}
+        override fun onContinueAudio(status: JcStatus) {
+            val index = jcAudios.indexOf(status.jcAudio)
+            if (index != -1) {
+                changeSelectedSong(index, adapter)
+                changeSelectedSong(index, adapter2)
+                changeSelectedSong(index, adapter3)
+                changeSelectedSong(index, adapter4)
+            }
+        }
+        override fun onPlaying(status: JcStatus) {}
+        override fun onTimeChanged(status: JcStatus) {}
+        override fun onStopped(status: JcStatus) {}
+        override fun onJcpError(throwable: Throwable) {}
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
@@ -273,7 +302,7 @@ class HomeFragment : Fragment() {
             songs.forEach { song ->
                 jcAudios.add(JcAudio.createFromURL(song.name ?: "", song.songLink ?: ""))
             }
-            binding.player.jcPlayer.initPlaylist(jcAudios, null)
+            binding.player.jcPlayer.initPlaylist(jcAudios, jcPlayerListener)
         } else {
             recyclerView?.visibility = View.GONE
             empty?.visibility = View.VISIBLE

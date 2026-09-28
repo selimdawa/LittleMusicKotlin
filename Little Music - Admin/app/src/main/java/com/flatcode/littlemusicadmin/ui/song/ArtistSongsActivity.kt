@@ -10,6 +10,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.flatcode.littlemusicadmin.utils.BaseActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.jean.jcplayer.JcPlayerManagerListener
+import com.example.jean.jcplayer.general.JcStatus
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusicadmin.databinding.ActivityArtistSongsBinding
 import com.flatcode.littlemusicadmin.ui.album.AlbumAdapter
@@ -36,6 +38,23 @@ class ArtistSongsActivity : BaseActivity() {
     var isSong = false
     var jcAudios: ArrayList<JcAudio>? = null
     private var currentSong = 0
+
+    private val jcPlayerListener = object : JcPlayerManagerListener {
+        override fun onPreparedAudio(status: JcStatus) {
+            val index = jcAudios?.indexOf(status.jcAudio) ?: -1
+            if (index != -1) changeSelectedSong(index)
+        }
+        override fun onCompletedAudio() {}
+        override fun onPaused(status: JcStatus) {}
+        override fun onContinueAudio(status: JcStatus) {
+            val index = jcAudios?.indexOf(status.jcAudio) ?: -1
+            if (index != -1) changeSelectedSong(index)
+        }
+        override fun onPlaying(status: JcStatus) {}
+        override fun onTimeChanged(status: JcStatus) {}
+        override fun onStopped(status: JcStatus) {}
+        override fun onJcpError(throwable: Throwable) {}
+    }
     var artistId: String? = null
     var artistName: String? = null
     var artistImage: String? = null
@@ -241,7 +260,7 @@ class ArtistSongsActivity : BaseActivity() {
                     binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
                     songAdapter!!.submitList(songs)
                     if (songs.isNotEmpty()) {
-                        binding.player.jcPlayer.initPlaylist(jcAudios!!, null)
+                        binding.player.jcPlayer.initPlaylist(jcAudios!!, jcPlayerListener)
                     }
                     updateVisibility()
                 }

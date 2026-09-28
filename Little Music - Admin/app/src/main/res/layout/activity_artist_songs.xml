@@ -7,7 +7,7 @@
     android:background="?colorOnBackground"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".Activity.ArtistSongsActivity"
+    tools:context=".ui.song.ArtistSongsActivity"
     tools:ignore="all">
 
     <include
@@ -95,7 +95,7 @@
                         app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
                         app:spanCount="2"
                         app:stackFromEnd="true"
-                        tools:listitem="@layout/item_book_staggered" />
+                        tools:listitem="@layout/item_album" />
 
                 </LinearLayout>
 

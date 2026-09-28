@@ -7,7 +7,7 @@
     android:background="?colorOnBackground"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".Activity.AlbumSongsActivity"
+    tools:context=".ui.song.AlbumSongsActivity"
     tools:ignore="all">
 
     <include
@@ -77,18 +77,6 @@
                             android:src="@color/overlay_dark_20"
                             app:layout_constraintDimensionRatio="2:1"
                             tools:ignore="MissingConstraints" />
-
-                        <TextView
-                            android:id="@+id/name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_margin="20sp"
-                            android:gravity="center"
-                            android:textColor="@color/white"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

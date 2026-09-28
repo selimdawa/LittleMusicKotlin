@@ -3,8 +3,18 @@ package com.flatcode.littlemusicadmin.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.net.Uri
+
+fun Context.findActivity(): Activity? {
+    var ctx = this
+    while (ctx is ContextWrapper) {
+        if (ctx is Activity) return ctx
+        ctx = ctx.baseContext
+    }
+    return null
+}
 import android.os.Bundle
 import android.os.Parcelable
 import android.webkit.MimeTypeMap

@@ -284,7 +284,7 @@ fun Activity.addToEditorsChoice(id: String?, number: Int) {
 }
 
 fun Context.dialogAboutArtist(imageDb: String?, nameDb: String?, aboutDb: String?) {
-    val activity = this as? Activity ?: return
+    val activity = this.findActivity() ?: return
     if (activity.isFinishing || activity.isDestroyed) return
 
     val dialogBinding = DialogAboutArtistBinding.inflate(activity.layoutInflater)

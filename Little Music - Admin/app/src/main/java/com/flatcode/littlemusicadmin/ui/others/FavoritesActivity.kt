@@ -10,6 +10,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.flatcode.littlemusicadmin.utils.BaseActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.jean.jcplayer.JcPlayerManagerListener
+import com.example.jean.jcplayer.general.JcStatus
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityPageSongSwitchBinding
@@ -37,6 +39,23 @@ class FavoritesActivity : BaseActivity() {
     var adapter: SongAdapter? = null
     var jcAudios: ArrayList<JcAudio>? = null
     private var currentSong = 0
+
+    private val jcPlayerListener = object : JcPlayerManagerListener {
+        override fun onPreparedAudio(status: JcStatus) {
+            val index = jcAudios?.indexOf(status.jcAudio) ?: -1
+            if (index != -1) changeSelectedSong(index)
+        }
+        override fun onCompletedAudio() {}
+        override fun onPaused(status: JcStatus) {}
+        override fun onContinueAudio(status: JcStatus) {
+            val index = jcAudios?.indexOf(status.jcAudio) ?: -1
+            if (index != -1) changeSelectedSong(index)
+        }
+        override fun onPlaying(status: JcStatus) {}
+        override fun onTimeChanged(status: JcStatus) {}
+        override fun onStopped(status: JcStatus) {}
+        override fun onJcpError(throwable: Throwable) {}
+    }
     private val viewModel: FavoritesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -154,7 +173,7 @@ class FavoritesActivity : BaseActivity() {
                 if (songs.isNotEmpty()) {
                     binding.recyclerView.visibility = View.VISIBLE
                     binding.emptyText.visibility = View.GONE
-                    binding.player.jcPlayer.initPlaylist(jcAudios!!, null)
+                    binding.player.jcPlayer.initPlaylist(jcAudios!!, jcPlayerListener)
                 } else {
                     binding.recyclerView.visibility = View.GONE
                     binding.emptyText.visibility = View.VISIBLE

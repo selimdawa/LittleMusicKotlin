@@ -4,10 +4,12 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import com.flatcode.littlemusicadmin.utils.BaseActivity
+import androidx.activity.OnBackPressedCallback
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityProfileBinding
 import com.flatcode.littlemusicadmin.model.Category
+import com.flatcode.littlemusicadmin.ui.main.MainActivity
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.utils.DATA
 import com.flatcode.littlemusicadmin.utils.loadImage
 import com.flatcode.littlemusicadmin.utils.openActivity
@@ -30,6 +32,17 @@ class ProfileActivity : BaseActivity() {
 
         val intent = intent
         profileId = intent.getStringExtra(DATA.PROFILE_ID)
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isTaskRoot) {
+                    openActivity<MainActivity>(clear = true)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
 
         loadUserInfo()
         nrFavorites

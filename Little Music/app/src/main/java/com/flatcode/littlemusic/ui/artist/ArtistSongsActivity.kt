@@ -12,6 +12,8 @@ import com.flatcode.littlemusic.utils.BaseActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.jean.jcplayer.JcPlayerManagerListener
+import com.example.jean.jcplayer.general.JcStatus
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.databinding.ActivityArtistSongsBinding
@@ -39,6 +41,23 @@ class ArtistSongsActivity : BaseActivity() {
     private var albumAdapter: AlbumAdapter? = null
     private var songAdapter: SongAdapter? = null
     private val jcAudios = ArrayList<JcAudio>()
+
+    private val jcPlayerListener = object : JcPlayerManagerListener {
+        override fun onPreparedAudio(status: JcStatus) {
+            val index = jcAudios.indexOf(status.jcAudio)
+            if (index != -1) changeSelectedSong(index)
+        }
+        override fun onCompletedAudio() {}
+        override fun onPaused(status: JcStatus) {}
+        override fun onContinueAudio(status: JcStatus) {
+            val index = jcAudios.indexOf(status.jcAudio)
+            if (index != -1) changeSelectedSong(index)
+        }
+        override fun onPlaying(status: JcStatus) {}
+        override fun onTimeChanged(status: JcStatus) {}
+        override fun onStopped(status: JcStatus) {}
+        override fun onJcpError(throwable: Throwable) {}
+    }
 
     private var isAlbum = true
     private var isSong = false
@@ -259,7 +278,7 @@ class ArtistSongsActivity : BaseActivity() {
                             if (songs.isNotEmpty()) {
                                 binding.recyclerSongs.visibility = View.VISIBLE
                                 binding.emptyText.visibility = View.GONE
-                                binding.player.jcPlayer.initPlaylist(jcAudios, null)
+                                binding.player.jcPlayer.initPlaylist(jcAudios, jcPlayerListener)
                             } else {
                                 binding.recyclerSongs.visibility = View.GONE
                                 binding.emptyText.visibility = View.VISIBLE
