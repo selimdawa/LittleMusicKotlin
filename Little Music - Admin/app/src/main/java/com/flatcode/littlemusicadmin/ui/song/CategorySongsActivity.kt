@@ -5,21 +5,24 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import com.flatcode.littlemusicadmin.utils.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.jean.jcplayer.JcPlayerManagerListener
 import com.example.jean.jcplayer.general.JcStatus
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusicadmin.databinding.ActivityCategorySongsBinding
 import com.flatcode.littlemusicadmin.ui.album.AlbumAdapter
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.utils.DATA
 import com.flatcode.littlemusicadmin.utils.checkFavorite
 import com.flatcode.littlemusicadmin.utils.checkLove
 import com.flatcode.littlemusicadmin.utils.moreDelete
 import com.flatcode.littlemusicadmin.utils.openActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -36,6 +39,8 @@ class CategorySongsActivity : BaseActivity() {
     private var isSong = false
     private var jcAudios: ArrayList<JcAudio> = ArrayList()
     private var currentSong = 0
+    private var albumsCount = 0
+    private var songsCount = 0
 
     private val jcPlayerListener = object : JcPlayerManagerListener {
         override fun onPreparedAudio(status: JcStatus) {
@@ -65,9 +70,14 @@ class CategorySongsActivity : BaseActivity() {
         categoryId = intent.getStringExtra(DATA.CATEGORY_ID)
         categoryName = intent.getStringExtra(DATA.CATEGORY_NAME)
 
+        if (categoryName.isNullOrEmpty() && !categoryId.isNullOrEmpty()) {
+            loadCategoryDetails(categoryId!!)
+        } else {
+            binding.toolbar.nameSpace.text = categoryName
+        }
+
         viewModel.init(categoryId)
 
-        binding.toolbar.nameSpace.text = categoryName
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
@@ -116,6 +126,7 @@ class CategorySongsActivity : BaseActivity() {
             binding.player.jcPlayer.visibility = View.GONE
             isAlbum = false
             isSong = true
+            binding.toolbar.number.text = MessageFormat.format("( {0} )", songsCount)
             updateVisibility()
             if (DATA.searchStatus) onBackPressedDispatcher.onBackPressed()
         }
@@ -140,6 +151,7 @@ class CategorySongsActivity : BaseActivity() {
             binding.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
             isAlbum = true
             isSong = false
+            binding.toolbar.number.text = MessageFormat.format("( {0} )", albumsCount)
             updateVisibility()
             if (DATA.searchStatus) onBackPressedDispatcher.onBackPressed()
         }
@@ -159,6 +171,19 @@ class CategorySongsActivity : BaseActivity() {
         observeViewModel()
     }
 
+    private fun loadCategoryDetails(id: String) {
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES).child(id)
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    categoryName = snapshot.child(DATA.NAME).value as? String
+                    binding.toolbar.nameSpace.text = categoryName
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
     private fun initAdapters() {
         albumAdapter = AlbumAdapter(onItemClick = { album ->
             openActivity<AlbumSongsActivity>(
@@ -175,10 +200,10 @@ class CategorySongsActivity : BaseActivity() {
 
         songAdapter = SongAdapter(
             onItemClick = { _, position ->
-            changeSelectedSong(position)
-            binding.player.jcPlayer.playAudio(jcAudios[position])
-            binding.player.jcPlayer.visibility = View.VISIBLE
-        },
+                changeSelectedSong(position)
+                binding.player.jcPlayer.playAudio(jcAudios[position])
+                binding.player.jcPlayer.visibility = View.VISIBLE
+            },
             onFavoriteClick = { song, imageView -> imageView.checkFavorite(song.id) },
             onLoveClick = { song, imageView -> imageView.checkLove(song.id) },
             onMoreClick = { song ->
@@ -197,32 +222,34 @@ class CategorySongsActivity : BaseActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.albums.collectLatest { albums ->
+                albumsCount = albums.size
+                albumAdapter.submitList(albums)
                 if (isAlbum) {
-                    binding.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
-                    albumAdapter.submitList(albums)
-                    updateVisibility()
+                    binding.toolbar.number.text = MessageFormat.format("( {0} )", albumsCount)
                 }
+                updateVisibility()
             }
         }
 
         lifecycleScope.launch {
             viewModel.songs.collectLatest { songs ->
-                if (isSong) {
-                    jcAudios.clear()
-                    for (item in songs) {
-                        val name = item.name
-                        val songLink = item.songLink
-                        if (name != null && songLink != null) {
-                            jcAudios.add(JcAudio.createFromURL(name, songLink))
-                        }
+                songsCount = songs.size
+                jcAudios.clear()
+                for (item in songs) {
+                    val name = item.name
+                    val songLink = item.songLink
+                    if (name != null && songLink != null) {
+                        jcAudios.add(JcAudio.createFromURL(name, songLink))
                     }
-                    binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
-                    songAdapter.submitList(songs)
-                    if (songs.isNotEmpty()) {
-                        binding.player.jcPlayer.initPlaylist(jcAudios, jcPlayerListener)
-                    }
-                    updateVisibility()
                 }
+                songAdapter.submitList(songs)
+                if (songs.isNotEmpty()) {
+                    binding.player.jcPlayer.initPlaylist(jcAudios, jcPlayerListener)
+                }
+                if (isSong) {
+                    binding.toolbar.number.text = MessageFormat.format("( {0} )", songsCount)
+                }
+                updateVisibility()
             }
         }
 
@@ -236,7 +263,7 @@ class CategorySongsActivity : BaseActivity() {
     private fun updateVisibility() {
         if (isAlbum) {
             binding.recyclerSongs.visibility = View.GONE
-            if (albumAdapter.itemCount > 0) {
+            if (albumsCount > 0) {
                 binding.recyclerAlbums.visibility = View.VISIBLE
                 binding.emptyText.visibility = View.GONE
             } else {
@@ -245,7 +272,7 @@ class CategorySongsActivity : BaseActivity() {
             }
         } else {
             binding.recyclerAlbums.visibility = View.GONE
-            if (songAdapter.itemCount > 0) {
+            if (songsCount > 0) {
                 binding.recyclerSongs.visibility = View.VISIBLE
                 binding.emptyText.visibility = View.GONE
             } else {

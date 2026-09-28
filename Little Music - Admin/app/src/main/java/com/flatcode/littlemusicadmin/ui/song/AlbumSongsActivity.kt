@@ -5,16 +5,15 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import com.flatcode.littlemusicadmin.utils.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.jean.jcplayer.JcPlayerManagerListener
 import com.example.jean.jcplayer.general.JcStatus
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumSongsBinding
 import com.flatcode.littlemusicadmin.model.Song
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.utils.DATA
 import com.flatcode.littlemusicadmin.utils.checkFavorite
 import com.flatcode.littlemusicadmin.utils.checkLove
@@ -23,6 +22,10 @@ import com.flatcode.littlemusicadmin.utils.loadImage
 import com.flatcode.littlemusicadmin.utils.loadImageBlur
 import com.flatcode.littlemusicadmin.utils.moreDelete
 import com.flatcode.littlemusicadmin.utils.openActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -69,9 +72,16 @@ class AlbumSongsActivity : BaseActivity() {
         albumName = intent.getStringExtra(DATA.ALBUM_NAME)
         albumImage = intent.getStringExtra(DATA.ALBUM_IMAGE)
 
+        if (albumName.isNullOrEmpty() && !albumId.isNullOrEmpty()) {
+            loadAlbumDetails(albumId!!)
+        } else {
+            binding.toolbar.nameSpace.text = albumName
+            binding.image.loadImage(false, albumImage)
+            binding.imageBlur.loadImageBlur(false, albumImage, 50)
+        }
+
         viewModel.init(albumId)
 
-        binding.toolbar.nameSpace.text = albumName
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
@@ -92,9 +102,6 @@ class AlbumSongsActivity : BaseActivity() {
                 }
             }
         })
-
-        binding.image.loadImage(false, albumImage)
-        binding.imageBlur.loadImageBlur(false, albumImage, 50)
 
         binding.toolbar.search.setOnClickListener {
             binding.toolbar.root.getChildAt(0).visibility = View.GONE
@@ -126,6 +133,22 @@ class AlbumSongsActivity : BaseActivity() {
         }
 
         observeViewModel()
+    }
+
+    private fun loadAlbumDetails(id: String) {
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.ALBUMS).child(id)
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    albumName = snapshot.child(DATA.NAME).value as? String
+                    albumImage = snapshot.child(DATA.IMAGE).value as? String
+                    binding.toolbar.nameSpace.text = albumName
+                    binding.image.loadImage(false, albumImage)
+                    binding.imageBlur.loadImageBlur(false, albumImage, 50)
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     private fun init() {
@@ -210,7 +233,6 @@ class AlbumSongsActivity : BaseActivity() {
         }
     }
 
-
     override fun onPause() {
         binding.player.jcPlayer.pause()
         super.onPause()
@@ -219,13 +241,5 @@ class AlbumSongsActivity : BaseActivity() {
     override fun onStop() {
         binding.player.jcPlayer.pause()
         super.onStop()
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 }

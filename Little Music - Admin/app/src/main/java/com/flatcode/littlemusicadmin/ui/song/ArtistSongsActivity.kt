@@ -5,16 +5,15 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import com.flatcode.littlemusicadmin.utils.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.jean.jcplayer.JcPlayerManagerListener
 import com.example.jean.jcplayer.general.JcStatus
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusicadmin.databinding.ActivityArtistSongsBinding
 import com.flatcode.littlemusicadmin.ui.album.AlbumAdapter
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.utils.DATA
 import com.flatcode.littlemusicadmin.utils.checkFavorite
 import com.flatcode.littlemusicadmin.utils.checkLove
@@ -22,6 +21,10 @@ import com.flatcode.littlemusicadmin.utils.dialogAboutArtist
 import com.flatcode.littlemusicadmin.utils.incrementViewCount
 import com.flatcode.littlemusicadmin.utils.moreDelete
 import com.flatcode.littlemusicadmin.utils.openActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -38,6 +41,8 @@ class ArtistSongsActivity : BaseActivity() {
     var isSong = false
     var jcAudios: ArrayList<JcAudio>? = null
     private var currentSong = 0
+    private var albumsCount = 0
+    private var songsCount = 0
 
     private val jcPlayerListener = object : JcPlayerManagerListener {
         override fun onPreparedAudio(status: JcStatus) {
@@ -71,9 +76,14 @@ class ArtistSongsActivity : BaseActivity() {
         artistImage = intent.getStringExtra(DATA.ARTIST_IMAGE)
         artistAbout = intent.getStringExtra(DATA.ARTIST_ABOUT)
 
+        if (artistName.isNullOrEmpty() && !artistId.isNullOrEmpty()) {
+            loadArtistDetails(artistId!!)
+        } else {
+            binding.toolbar.nameSpace.text = artistName
+        }
+
         viewModel.init(artistId)
 
-        binding.toolbar.nameSpace.text = artistName
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.toolbar.close.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
@@ -146,6 +156,7 @@ class ArtistSongsActivity : BaseActivity() {
             binding.player.jcPlayer.visibility = View.GONE
             isAlbum = false
             isSong = true
+            binding.toolbar.number.text = MessageFormat.format("( {0} )", songsCount)
             updateVisibility()
             if (DATA.searchStatus) onBackPressedDispatcher.onBackPressed()
         }
@@ -173,6 +184,7 @@ class ArtistSongsActivity : BaseActivity() {
             binding.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
             isAlbum = true
             isSong = false
+            binding.toolbar.number.text = MessageFormat.format("( {0} )", albumsCount)
             updateVisibility()
             if (DATA.searchStatus) onBackPressedDispatcher.onBackPressed()
         }
@@ -193,6 +205,21 @@ class ArtistSongsActivity : BaseActivity() {
         }
 
         observeViewModel()
+    }
+
+    private fun loadArtistDetails(id: String) {
+        val ref = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS).child(id)
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    artistName = snapshot.child(DATA.NAME).value as? String
+                    artistImage = snapshot.child(DATA.IMAGE).value as? String
+                    artistAbout = snapshot.child(DATA.ABOUT_THE_ARTIST).value as? String
+                    binding.toolbar.nameSpace.text = artistName
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     private fun initSongs() {
@@ -238,32 +265,34 @@ class ArtistSongsActivity : BaseActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.albums.collectLatest { albums ->
+                albumsCount = albums.size
+                albumAdapter!!.submitList(albums)
                 if (isAlbum) {
-                    binding.toolbar.number.text = MessageFormat.format("( {0} )", albums.size)
-                    albumAdapter!!.submitList(albums)
-                    updateVisibility()
+                    binding.toolbar.number.text = MessageFormat.format("( {0} )", albumsCount)
                 }
+                updateVisibility()
             }
         }
 
         lifecycleScope.launch {
             viewModel.songs.collectLatest { songs ->
-                if (isSong) {
-                    jcAudios!!.clear()
-                    for (item in songs) {
-                        val name = item.name
-                        val songLink = item.songLink
-                        if (name != null && songLink != null) {
-                            jcAudios!!.add(JcAudio.createFromURL(name, songLink))
-                        }
+                songsCount = songs.size
+                jcAudios!!.clear()
+                for (item in songs) {
+                    val name = item.name
+                    val songLink = item.songLink
+                    if (name != null && songLink != null) {
+                        jcAudios!!.add(JcAudio.createFromURL(name, songLink))
                     }
-                    binding.toolbar.number.text = MessageFormat.format("( {0} )", songs.size)
-                    songAdapter!!.submitList(songs)
-                    if (songs.isNotEmpty()) {
-                        binding.player.jcPlayer.initPlaylist(jcAudios!!, jcPlayerListener)
-                    }
-                    updateVisibility()
                 }
+                songAdapter!!.submitList(songs)
+                if (songs.isNotEmpty()) {
+                    binding.player.jcPlayer.initPlaylist(jcAudios!!, jcPlayerListener)
+                }
+                if (isSong) {
+                    binding.toolbar.number.text = MessageFormat.format("( {0} )", songsCount)
+                }
+                updateVisibility()
             }
         }
 
@@ -277,7 +306,7 @@ class ArtistSongsActivity : BaseActivity() {
     private fun updateVisibility() {
         if (isAlbum) {
             binding.recyclerSongs.visibility = View.GONE
-            if (albumAdapter!!.itemCount > 0) {
+            if (albumsCount > 0) {
                 binding.recyclerAlbums.visibility = View.VISIBLE
                 binding.emptyText.visibility = View.GONE
             } else {
@@ -286,7 +315,7 @@ class ArtistSongsActivity : BaseActivity() {
             }
         } else {
             binding.recyclerAlbums.visibility = View.GONE
-            if (songAdapter!!.itemCount > 0) {
+            if (songsCount > 0) {
                 binding.recyclerSongs.visibility = View.VISIBLE
                 binding.emptyText.visibility = View.GONE
             } else {
@@ -304,7 +333,6 @@ class ArtistSongsActivity : BaseActivity() {
             songAdapter!!.notifyItemChanged(currentSong)
         }
     }
-
 
     override fun onPause() {
         binding.player.jcPlayer.pause()
