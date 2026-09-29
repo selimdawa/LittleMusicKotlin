@@ -18,6 +18,7 @@ import com.cloudinary.android.callback.UploadCallback
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityCategoryAddBinding
 import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.isNetworkAvailable
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
@@ -78,6 +79,8 @@ class CategoryAddActivity : BaseActivity() {
             Toast.makeText(context, "Enter Name...", Toast.LENGTH_SHORT).show()
         } else if (imageUri == null) {
             Toast.makeText(context, "Pick Image...", Toast.LENGTH_SHORT).show()
+        } else if (!isNetworkAvailable()) {
+            Toast.makeText(context, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
         } else {
             uploadToStorage()
         }

@@ -17,6 +17,7 @@ import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.databinding.ActivityProfileEditBinding
 import com.flatcode.littlemusic.utils.BaseActivity
 import com.flatcode.littlemusic.utils.ProgressDialog
+import com.flatcode.littlemusic.utils.isNetworkAvailable
 import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.startCropActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -106,7 +107,14 @@ class ProfileEditActivity : BaseActivity() {
             checkStoragePermission()
         }
         binding.go.setOnClickListener {
-            viewModel.updateProfile(binding.nameEt.text.toString().trim(), imageUri)
+            val username = binding.nameEt.text.toString().trim()
+            if (username.isEmpty()) {
+                Toast.makeText(this, "Enter name...", Toast.LENGTH_SHORT).show()
+            } else if (!isNetworkAvailable()) {
+                Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
+            } else {
+                viewModel.updateProfile(username, imageUri)
+            }
         }
 
         observeViewModel()

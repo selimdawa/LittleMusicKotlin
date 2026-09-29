@@ -18,6 +18,7 @@ import com.flatcode.littlemusicadmin.databinding.ActivitySongAddBinding
 import com.flatcode.littlemusicadmin.utils.DATA
 import com.flatcode.littlemusicadmin.utils.convertDuration
 import com.flatcode.littlemusicadmin.utils.incrementItemCount
+import com.flatcode.littlemusicadmin.utils.isNetworkAvailable
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -127,6 +128,8 @@ class SongAddActivity : BaseActivity() {
         val message = binding.choose.text.toString()
         if (message == "No file Selected") {
             Toast.makeText(this, "Please selected an image!", Toast.LENGTH_SHORT).show()
+        } else if (!isNetworkAvailable()) {
+            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
         } else {
             uploadFile()
         }

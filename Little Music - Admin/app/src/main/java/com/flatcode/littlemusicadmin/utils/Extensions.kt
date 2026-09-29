@@ -55,6 +55,14 @@ fun Context.findActivity(): Activity? {
     return null
 }
 
+fun Context.isNetworkAvailable(): Boolean {
+    val connectivityManager =
+        getSystemService(Context.CONNECTIVITY_SERVICE) as? android.net.ConnectivityManager ?: return false
+    val network = connectivityManager.activeNetwork ?: return false
+    val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+    return capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
+}
+
 fun ImageView.loadImage(isUser: Boolean, url: String?) {
     val defaultRes = if (isUser) R.drawable.basic_user else R.color.image_profile
     try {
