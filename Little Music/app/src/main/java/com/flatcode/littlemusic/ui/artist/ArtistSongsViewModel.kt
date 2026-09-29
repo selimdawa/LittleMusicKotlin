@@ -9,6 +9,7 @@ import com.flatcode.littlemusic.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,7 +39,7 @@ class ArtistSongsViewModel @Inject constructor(
         if (artistId == null) return
         viewModelScope.launch {
             _isLoading.value = true
-            musicRepository.getAlbums(_currentType.value).collect { list ->
+            musicRepository.getAlbums(_currentType.value).collectLatest { list ->
                 _albums.value = list.filter { it.artistId == artistId }
                 _isLoading.value = false
             }
@@ -49,8 +50,14 @@ class ArtistSongsViewModel @Inject constructor(
         if (artistId == null) return
         viewModelScope.launch {
             _isLoading.value = true
-            musicRepository.getSongs(_currentType.value).collect { list ->
-                _songs.value = list.filter { it.artistId == artistId }
+            musicRepository.getSongsByArtist(artistId).collectLatest { list ->
+                val sortedList = when (_currentType.value) {
+                    DATA.VIEWS_COUNT -> list.sortedByDescending { it.viewsCount }
+                    DATA.LOVES_COUNT -> list.sortedByDescending { it.lovesCount }
+                    DATA.NAME -> list.sortedBy { it.name }
+                    else -> list.sortedByDescending { it.timestamp }
+                }
+                _songs.value = sortedList
                 _isLoading.value = false
             }
         }

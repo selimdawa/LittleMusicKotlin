@@ -2,7 +2,15 @@ package com.flatcode.littlemusic.di
 
 import android.content.Context
 import androidx.room.Room
-import com.flatcode.littlemusic.db.*
+import com.flatcode.littlemusic.db.AlbumDao
+import com.flatcode.littlemusic.db.AppDatabase
+import com.flatcode.littlemusic.db.ArtistDao
+import com.flatcode.littlemusic.db.CategoryDao
+import com.flatcode.littlemusic.db.FavoriteDao
+import com.flatcode.littlemusic.db.InterestedDao
+import com.flatcode.littlemusic.db.SliderDao
+import com.flatcode.littlemusic.db.SongDao
+import com.flatcode.littlemusic.db.UserDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,7 +29,7 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "little_music_database"
-        ).build()
+        ).fallbackToDestructiveMigration(true).build()
     }
 
     @Provides
@@ -38,4 +46,13 @@ object DatabaseModule {
 
     @Provides
     fun provideArtistDao(database: AppDatabase): ArtistDao = database.artistDao()
+
+    @Provides
+    fun provideFavoriteDao(database: AppDatabase): FavoriteDao = database.favoriteDao()
+
+    @Provides
+    fun provideInterestedDao(database: AppDatabase): InterestedDao = database.interestedDao()
+
+    @Provides
+    fun provideSliderDao(database: AppDatabase): SliderDao = database.sliderDao()
 }

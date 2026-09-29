@@ -2,6 +2,7 @@ package com.flatcode.littlemusic.ui.settings
 
 import androidx.lifecycle.viewModelScope
 import com.flatcode.littlemusic.model.User
+import com.flatcode.littlemusic.repository.MusicRepository
 import com.flatcode.littlemusic.repository.UserRepository
 import com.flatcode.littlemusic.ui.BaseViewModel
 import com.flatcode.littlemusic.utils.DATA
@@ -9,12 +10,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val musicRepository: MusicRepository
 ) : BaseViewModel() {
 
     private val _user = MutableStateFlow<User?>(null)
@@ -25,7 +28,7 @@ class SettingsViewModel @Inject constructor(
 
     fun loadUserInfo() {
         viewModelScope.launch {
-            userRepository.getUserInfo(DATA.FirebaseUserUid).collect { user ->
+            userRepository.getUserInfo(DATA.FirebaseUserUid).collectLatest { user ->
                 _user.value = user
             }
         }
@@ -36,26 +39,26 @@ class SettingsViewModel @Inject constructor(
         val counts = mutableMapOf<String, Int>()
 
         viewModelScope.launch {
-            userRepository.getInterestedCount(uid, DATA.ALBUMS).collect { alb ->
-                counts[DATA.ALBUMS] = alb.toInt()
+            musicRepository.getInterestedCount(uid, DATA.ALBUMS).collectLatest { alb ->
+                counts[DATA.ALBUMS] = alb
                 _itemCounts.value = counts.toMap()
             }
         }
         viewModelScope.launch {
-            userRepository.getInterestedCount(uid, DATA.ARTISTS).collect { art ->
-                counts[DATA.ARTISTS] = art.toInt()
+            musicRepository.getInterestedCount(uid, DATA.ARTISTS).collectLatest { art ->
+                counts[DATA.ARTISTS] = art
                 _itemCounts.value = counts.toMap()
             }
         }
         viewModelScope.launch {
-            userRepository.getInterestedCount(uid, DATA.CATEGORIES).collect { cat ->
-                counts[DATA.CATEGORIES] = cat.toInt()
+            musicRepository.getInterestedCount(uid, DATA.CATEGORIES).collectLatest { cat ->
+                counts[DATA.CATEGORIES] = cat
                 _itemCounts.value = counts.toMap()
             }
         }
         viewModelScope.launch {
-            userRepository.getCount(uid, DATA.FAVORITES).collect { fav ->
-                counts[DATA.FAVORITES] = fav.toInt()
+            musicRepository.getFavoriteCount(uid).collectLatest { fav ->
+                counts[DATA.FAVORITES] = fav
                 _itemCounts.value = counts.toMap()
             }
         }

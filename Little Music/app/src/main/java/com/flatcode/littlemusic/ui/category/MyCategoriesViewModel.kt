@@ -8,6 +8,7 @@ import com.flatcode.littlemusic.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,13 +34,10 @@ class MyCategoriesViewModel @Inject constructor(
     fun getData() {
         viewModelScope.launch {
             _isLoading.value = true
-            musicRepository.getInterestedIds(DATA.FirebaseUserUid, DATA.CATEGORIES)
-                .collect { interestedIds ->
-                    musicRepository.getCategories().collect { allCategories ->
-                        _categories.value = allCategories.filter { it.id in interestedIds }
-                        _isLoading.value = false
-                    }
-                }
+            musicRepository.getInterestedCategories(DATA.FirebaseUserUid).collectLatest { list ->
+                _categories.value = list
+                _isLoading.value = false
+            }
         }
     }
 }

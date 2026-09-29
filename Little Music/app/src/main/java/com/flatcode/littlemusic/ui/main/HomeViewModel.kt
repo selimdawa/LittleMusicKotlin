@@ -10,12 +10,14 @@ import com.flatcode.littlemusic.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val musicRepository: MusicRepository, private val toolsRepository: ToolsRepository
+    private val musicRepository: MusicRepository,
+    private val toolsRepository: ToolsRepository
 ) : BaseViewModel() {
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
@@ -38,7 +40,7 @@ class HomeViewModel @Inject constructor(
 
     fun loadCategories() {
         viewModelScope.launch {
-            musicRepository.getCategories().collect { list ->
+            musicRepository.getCategories().collectLatest { list ->
                 _categories.value = list
             }
         }
@@ -46,7 +48,7 @@ class HomeViewModel @Inject constructor(
 
     fun loadSliderImages() {
         viewModelScope.launch {
-            toolsRepository.getSliderImages().collect { images ->
+            toolsRepository.getSliderImages().collectLatest { images ->
                 _sliderImages.value = images
             }
         }
@@ -55,22 +57,22 @@ class HomeViewModel @Inject constructor(
     fun loadSongs() {
         viewModelScope.launch {
             launch {
-                musicRepository.getSongs(DATA.EDITORS_CHOICE).collect { songs ->
-                    _editorsChoiceSongs.value = songs.filter { it.editorsChoice in 1..5 }
+                musicRepository.getSongs(DATA.EDITORS_CHOICE).collectLatest { songs ->
+                    _editorsChoiceSongs.value = songs
                 }
             }
             launch {
-                musicRepository.getSongs(DATA.VIEWS_COUNT, DATA.ORDER_MAIN).collect { songs ->
+                musicRepository.getSongs(DATA.VIEWS_COUNT, DATA.ORDER_MAIN).collectLatest { songs ->
                     _mostViewedSongs.value = songs
                 }
             }
             launch {
-                musicRepository.getSongs(DATA.LOVES_COUNT, DATA.ORDER_MAIN).collect { songs ->
+                musicRepository.getSongs(DATA.LOVES_COUNT, DATA.ORDER_MAIN).collectLatest { songs ->
                     _mostLovedSongs.value = songs
                 }
             }
             launch {
-                musicRepository.getSongs(DATA.TIMESTAMP, DATA.ORDER_MAIN).collect { songs ->
+                musicRepository.getSongs(DATA.TIMESTAMP, DATA.ORDER_MAIN).collectLatest { songs ->
                     _latestSongs.value = songs
                 }
             }

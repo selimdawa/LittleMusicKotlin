@@ -8,6 +8,7 @@ import com.flatcode.littlemusic.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,12 +33,15 @@ class FavoritesViewModel @Inject constructor(
 
     fun getData() {
         viewModelScope.launch {
-            _isLoading.value = true
-            musicRepository.getFavoriteIds(DATA.FirebaseUserUid).collect { favoriteIds ->
-                musicRepository.getSongs(_currentType.value).collect { allSongs ->
-                    _songs.value = allSongs.filter { it.id in favoriteIds }
-                    _isLoading.value = false
+            musicRepository.getFavoriteSongs(DATA.FirebaseUserUid).collectLatest { favoriteSongs ->
+                val sortedSongs = when (_currentType.value) {
+                    DATA.VIEWS_COUNT -> favoriteSongs.sortedByDescending { it.viewsCount }
+                    DATA.LOVES_COUNT -> favoriteSongs.sortedByDescending { it.lovesCount }
+                    DATA.NAME -> favoriteSongs.sortedBy { it.name }
+                    else -> favoriteSongs.sortedByDescending { it.timestamp }
                 }
+                _songs.value = sortedSongs
+                _isLoading.value = false
             }
         }
     }

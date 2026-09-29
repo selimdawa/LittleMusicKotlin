@@ -1,16 +1,25 @@
 package com.flatcode.littlemusic.db
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.flatcode.littlemusic.model.Album
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AlbumDao {
-    @Query("SELECT * FROM albums")
-    fun getAllAlbums(): List<Album>
+
+    @Query("SELECT * FROM albums ORDER BY name ASC")
+    fun getAllAlbums(): Flow<List<Album>>
+
+    @Query("SELECT COUNT(*) FROM albums")
+    fun getAlbumsCount(): Flow<Int>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAlbums(albums: List<Album>)
+    suspend fun insertAlbums(albums: List<Album>)
 
     @Delete
-    fun deleteAlbum(album: Album)
+    suspend fun deleteAlbum(album: Album)
 }

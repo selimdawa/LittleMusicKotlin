@@ -8,6 +8,7 @@ import com.flatcode.littlemusic.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,8 +43,8 @@ class MySongsViewModel @Inject constructor(
             val orderBy = _currentType.value
 
             musicRepository.getInterestedIds(DATA.FirebaseUserUid, typeDB)
-                .collect { interestedIds ->
-                    musicRepository.getSongs(orderBy).collect { allSongs ->
+                .collectLatest { interestedIds ->
+                    musicRepository.getSongs(orderBy).collectLatest { allSongs ->
                         val filtered = allSongs.filter { song ->
                             when (typeDB) {
                                 DATA.ARTISTS -> song.artistId in interestedIds

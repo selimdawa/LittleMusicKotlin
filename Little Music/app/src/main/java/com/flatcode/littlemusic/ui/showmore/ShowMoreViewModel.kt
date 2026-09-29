@@ -8,6 +8,7 @@ import com.flatcode.littlemusic.utils.DATA
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,10 +26,9 @@ class ShowMoreViewModel @Inject constructor(
     fun getData(orderBy: String?) {
         if (orderBy == null) return
         viewModelScope.launch {
-            _isLoading.value = true
-            musicRepository.getSongs(orderBy).collect { list ->
+            musicRepository.getSongs(orderBy).collectLatest { list ->
                 if (orderBy == DATA.EDITORS_CHOICE) {
-                    _songs.value = list.filter { it.editorsChoice > 0 }
+                    _songs.value = list.filter { it.editorsChoice in 1..5 }
                 } else {
                     _songs.value = list
                 }
