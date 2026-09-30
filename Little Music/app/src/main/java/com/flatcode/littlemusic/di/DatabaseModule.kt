@@ -8,6 +8,7 @@ import com.flatcode.littlemusic.db.ArtistDao
 import com.flatcode.littlemusic.db.CategoryDao
 import com.flatcode.littlemusic.db.FavoriteDao
 import com.flatcode.littlemusic.db.InterestedDao
+import com.flatcode.littlemusic.db.SettingDao
 import com.flatcode.littlemusic.db.SliderDao
 import com.flatcode.littlemusic.db.SongDao
 import com.flatcode.littlemusic.db.UserDao
@@ -55,4 +56,7 @@ object DatabaseModule {
 
     @Provides
     fun provideSliderDao(database: AppDatabase): SliderDao = database.sliderDao()
+
+    @Provides
+    fun provideSettingDao(database: AppDatabase): SettingDao = database.settingDao()
 }

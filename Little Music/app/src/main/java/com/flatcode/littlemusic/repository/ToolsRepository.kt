@@ -1,6 +1,8 @@
 package com.flatcode.littlemusic.repository
 
+import com.flatcode.littlemusic.db.SettingDao
 import com.flatcode.littlemusic.db.SliderDao
+import com.flatcode.littlemusic.model.SettingEntity
 import com.flatcode.littlemusic.model.SliderEntity
 import com.flatcode.littlemusic.utils.DATA
 import com.google.firebase.database.DataSnapshot
@@ -20,25 +22,43 @@ import javax.inject.Singleton
 
 @Singleton
 class ToolsRepository @Inject constructor(
-    private val sliderDao: SliderDao
+    private val sliderDao: SliderDao,
+    private val settingDao: SettingDao
 ) {
 
     private val database = FirebaseDatabase.getInstance()
 
     fun getPrivacyPolicy(): Flow<String> = callbackFlow {
+        val repositoryScope = CoroutineScope(Dispatchers.IO)
+        val localJob = repositoryScope.launch {
+            settingDao.getSetting(DATA.PRIVACY_POLICY).collect { cached ->
+                if (!cached.isNullOrEmpty()) {
+                    trySend(cached)
+                }
+            }
+        }
+
         val reference = database.getReference(DATA.TOOLS).child(DATA.PRIVACY_POLICY)
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.value?.toString() ?: "")
+                val value = snapshot.value?.toString().orEmpty()
+                if (value.isNotEmpty()) {
+                    trySend(value)
+                    repositoryScope.launch {
+                        settingDao.insertSetting(SettingEntity(DATA.PRIVACY_POLICY, value))
+                    }
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Timber.e(error.toException(), "getPrivacyPolicy failed")
-                close(error.toException())
             }
         }
         reference.addValueEventListener(listener)
-        awaitClose { reference.removeEventListener(listener) }
+        awaitClose {
+            reference.removeEventListener(listener)
+            localJob.cancel()
+        }
     }
 
     fun getSliderImages(): Flow<List<String>> {

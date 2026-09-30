@@ -7,6 +7,7 @@ import com.flatcode.littlemusic.model.Artist
 import com.flatcode.littlemusic.model.Category
 import com.flatcode.littlemusic.model.FavoriteEntity
 import com.flatcode.littlemusic.model.InterestedEntity
+import com.flatcode.littlemusic.model.SettingEntity
 import com.flatcode.littlemusic.model.SliderEntity
 import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.model.User
@@ -14,7 +15,7 @@ import com.flatcode.littlemusic.model.User
 @Database(
     entities = [
         Song::class, Category::class, User::class, Album::class, Artist::class,
-        FavoriteEntity::class, InterestedEntity::class, SliderEntity::class
+        FavoriteEntity::class, InterestedEntity::class, SliderEntity::class, SettingEntity::class
     ],
     version = 2,
     exportSchema = true
@@ -28,4 +29,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
     abstract fun interestedDao(): InterestedDao
     abstract fun sliderDao(): SliderDao
+    abstract fun settingDao(): SettingDao
 }
