@@ -5,10 +5,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import com.flatcode.littlemusic.utils.BaseActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -21,6 +19,7 @@ import com.flatcode.littlemusic.ui.album.AlbumAdapter
 import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.ui.song.SongAdapter
+import com.flatcode.littlemusic.utils.BaseActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkFavorite
 import com.flatcode.littlemusic.utils.checkInterested
@@ -47,12 +46,14 @@ class ArtistSongsActivity : BaseActivity() {
             val index = jcAudios.indexOf(status.jcAudio)
             if (index != -1) changeSelectedSong(index)
         }
+
         override fun onCompletedAudio() {}
         override fun onPaused(status: JcStatus) {}
         override fun onContinueAudio(status: JcStatus) {
             val index = jcAudios.indexOf(status.jcAudio)
             if (index != -1) changeSelectedSong(index)
         }
+
         override fun onPlaying(status: JcStatus) {}
         override fun onTimeChanged(status: JcStatus) {}
         override fun onStopped(status: JcStatus) {}
@@ -282,11 +283,6 @@ class ArtistSongsActivity : BaseActivity() {
                             } else {
                                 binding.recyclerSongs.visibility = View.GONE
                                 binding.emptyText.visibility = View.VISIBLE
-                                Toast.makeText(
-                                    this@ArtistSongsActivity,
-                                    "There are no songs!",
-                                    Toast.LENGTH_SHORT
-                                ).show()
                             }
                         }
                     }

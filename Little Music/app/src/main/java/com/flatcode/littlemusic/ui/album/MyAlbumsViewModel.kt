@@ -35,7 +35,13 @@ class MyAlbumsViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             musicRepository.getInterestedAlbums(DATA.FirebaseUserUid).collectLatest { list ->
-                _albums.value = list
+                val sorted = when (_currentType.value) {
+                    DATA.SONGS_COUNT -> list.sortedByDescending { it.songsCount }
+                    DATA.INTERESTED_COUNT -> list.sortedByDescending { it.interestedCount }
+                    DATA.NAME -> list.sortedBy { it.name?.lowercase() ?: "" }
+                    else -> list.sortedByDescending { it.timestamp }
+                }
+                _albums.value = sorted
                 _isLoading.value = false
             }
         }

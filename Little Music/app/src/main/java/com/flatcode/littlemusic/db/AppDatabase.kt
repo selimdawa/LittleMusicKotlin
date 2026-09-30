@@ -17,7 +17,7 @@ import com.flatcode.littlemusic.model.User
         Song::class, Category::class, User::class, Album::class, Artist::class,
         FavoriteEntity::class, InterestedEntity::class, SliderEntity::class, SettingEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

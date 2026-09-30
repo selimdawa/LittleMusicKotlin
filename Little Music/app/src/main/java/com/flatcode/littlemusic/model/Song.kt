@@ -2,6 +2,7 @@ package com.flatcode.littlemusic.model
 
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
@@ -20,5 +21,14 @@ data class Song(
     var viewsCount: Int = 0,
     var lovesCount: Int = 0,
     var editorsChoice: Int = 0,
-    var timestamp: Long = 0
-) : Parcelable
+    var timestamp: Long = 0,
+    @Ignore var localPath: String? = null,
+    @Ignore var categoryName: String? = null,
+    @Ignore var albumName: String? = null,
+    @Ignore var artistName: String? = null
+) : Parcelable {
+    constructor() : this(
+        "", null, null, null, null, null, null, null, null,
+        0, 0, 0, 0, null, null, null, null
+    )
+}

@@ -5,7 +5,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -46,12 +45,14 @@ class CategorySongsActivity : BaseActivity() {
             val index = jcAudios.indexOf(status.jcAudio)
             if (index != -1) changeSelectedSong(index)
         }
+
         override fun onCompletedAudio() {}
         override fun onPaused(status: JcStatus) {}
         override fun onContinueAudio(status: JcStatus) {
             val index = jcAudios.indexOf(status.jcAudio)
             if (index != -1) changeSelectedSong(index)
         }
+
         override fun onPlaying(status: JcStatus) {}
         override fun onTimeChanged(status: JcStatus) {}
         override fun onStopped(status: JcStatus) {}
@@ -277,11 +278,6 @@ class CategorySongsActivity : BaseActivity() {
                             } else {
                                 binding.recyclerSongs.visibility = View.GONE
                                 binding.emptyText.visibility = View.VISIBLE
-                                Toast.makeText(
-                                    this@CategorySongsActivity,
-                                    "There are no songs!",
-                                    Toast.LENGTH_SHORT
-                                ).show()
                             }
                         }
                     }

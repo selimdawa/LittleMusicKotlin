@@ -47,7 +47,7 @@ class ProfileViewModel @Inject constructor(
     fun loadCounts(profileId: String) {
         viewModelScope.launch {
             launch {
-                userRepository.getCount(profileId, DATA.FAVORITES)
+                userRepository.getCount(profileId)
                     .collect { _favoritesCount.value = it }
             }
             launch {

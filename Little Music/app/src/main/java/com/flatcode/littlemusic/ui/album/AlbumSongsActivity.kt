@@ -5,10 +5,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import com.flatcode.littlemusic.utils.BaseActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -20,6 +18,7 @@ import com.flatcode.littlemusic.databinding.ActivityAlbumSongsBinding
 import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.ui.song.SongAdapter
+import com.flatcode.littlemusic.utils.BaseActivity
 import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkFavorite
 import com.flatcode.littlemusic.utils.checkInterested
@@ -49,12 +48,14 @@ class AlbumSongsActivity : BaseActivity() {
             val index = jcAudios.indexOf(status.jcAudio)
             if (index != -1) changeSelectedSong(index)
         }
+
         override fun onCompletedAudio() {}
         override fun onPaused(status: JcStatus) {}
         override fun onContinueAudio(status: JcStatus) {
             val index = jcAudios.indexOf(status.jcAudio)
             if (index != -1) changeSelectedSong(index)
         }
+
         override fun onPlaying(status: JcStatus) {}
         override fun onTimeChanged(status: JcStatus) {}
         override fun onStopped(status: JcStatus) {}
@@ -71,12 +72,12 @@ class AlbumSongsActivity : BaseActivity() {
         albumName = intent.getStringExtra(DATA.ALBUM_NAME)
         albumImage = intent.getStringExtra(DATA.ALBUM_IMAGE)
 
-       setupToolbar()
-       setupSwitchBar()
-       setupRecyclerView()
-       observeViewModel()
+        setupToolbar()
+        setupSwitchBar()
+        setupRecyclerView()
+        observeViewModel()
 
-       viewModel.getData(albumId)
+        viewModel.getData(albumId)
     }
 
     private fun setupToolbar() {
@@ -142,10 +143,10 @@ class AlbumSongsActivity : BaseActivity() {
     private fun setupRecyclerView() {
         adapter = SongAdapter(
             onItemClick = { _, position ->
-            changeSelectedSong(position)
-            binding.player.jcPlayer.playAudio(jcAudios[position])
-            binding.player.jcPlayer.visibility = View.VISIBLE
-        },
+                changeSelectedSong(position)
+                binding.player.jcPlayer.playAudio(jcAudios[position])
+                binding.player.jcPlayer.visibility = View.VISIBLE
+            },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name ->
@@ -196,9 +197,6 @@ class AlbumSongsActivity : BaseActivity() {
                         } else {
                             binding.recyclerView.visibility = View.GONE
                             binding.emptyText.visibility = View.VISIBLE
-                            Toast.makeText(
-                                this@AlbumSongsActivity, "There are no songs!", Toast.LENGTH_SHORT
-                            ).show()
                         }
                     }
                 }

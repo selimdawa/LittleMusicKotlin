@@ -5,7 +5,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -43,12 +42,14 @@ class FavoritesActivity : BaseActivity() {
             val index = jcAudios.indexOf(status.jcAudio)
             if (index != -1) changeSelectedSong(index)
         }
+
         override fun onCompletedAudio() {}
         override fun onPaused(status: JcStatus) {}
         override fun onContinueAudio(status: JcStatus) {
             val index = jcAudios.indexOf(status.jcAudio)
             if (index != -1) changeSelectedSong(index)
         }
+
         override fun onPlaying(status: JcStatus) {}
         override fun onTimeChanged(status: JcStatus) {}
         override fun onStopped(status: JcStatus) {}
@@ -116,10 +117,10 @@ class FavoritesActivity : BaseActivity() {
     private fun setupRecyclerView() {
         adapter = SongAdapter(
             onItemClick = { _, position ->
-                changeSelectedSong(position)
-                binding.player.jcPlayer.playAudio(jcAudios[position])
-                binding.player.jcPlayer.visibility = View.VISIBLE
-            },
+            changeSelectedSong(position)
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+            binding.player.jcPlayer.visibility = View.VISIBLE
+        },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name ->
@@ -170,9 +171,6 @@ class FavoritesActivity : BaseActivity() {
                         } else {
                             binding.recyclerView.visibility = View.GONE
                             binding.emptyText.visibility = View.VISIBLE
-                            Toast.makeText(
-                                this@FavoritesActivity, "There are no songs!", Toast.LENGTH_SHORT
-                            ).show()
                         }
                     }
                 }

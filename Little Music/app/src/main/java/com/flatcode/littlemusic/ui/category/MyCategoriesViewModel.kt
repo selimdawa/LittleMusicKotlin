@@ -35,7 +35,14 @@ class MyCategoriesViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             musicRepository.getInterestedCategories(DATA.FirebaseUserUid).collectLatest { list ->
-                _categories.value = list
+                val sorted = when (_currentType.value) {
+                    DATA.SONGS_COUNT -> list.sortedByDescending { it.songsCount }
+                    DATA.ALBUMS_COUNT -> list.sortedByDescending { it.albumsCount }
+                    DATA.INTERESTED_COUNT -> list.sortedByDescending { it.interestedCount }
+                    DATA.NAME -> list.sortedBy { it.name?.lowercase() ?: "" }
+                    else -> list.sortedByDescending { it.timestamp }
+                }
+                _categories.value = sorted
                 _isLoading.value = false
             }
         }

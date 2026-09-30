@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -44,27 +45,53 @@ class MusicRepository @Inject constructor(
 
     fun getSongs(orderBy: String, limit: Int? = null): Flow<List<Song>> {
         syncSongs(orderBy, limit)
-        return when (orderBy) {
+        val songsFlow = when (orderBy) {
             DATA.EDITORS_CHOICE -> songDao.getEditorsChoiceSongs()
             DATA.VIEWS_COUNT -> songDao.getMostViewedSongs(limit ?: 100)
             DATA.LOVES_COUNT -> songDao.getMostLovedSongs(limit ?: 100)
             else -> songDao.getLatestSongs(limit ?: 100)
         }
+        return enrichSongsFlow(songsFlow)
     }
 
     fun getSongsByCategory(categoryId: String): Flow<List<Song>> {
         syncSongs(DATA.TIMESTAMP, null)
-        return songDao.getSongsByCategory(categoryId)
+        return enrichSongsFlow(songDao.getSongsByCategory(categoryId))
     }
 
     fun getSongsByAlbum(albumId: String): Flow<List<Song>> {
         syncSongs(DATA.TIMESTAMP, null)
-        return songDao.getSongsByAlbum(albumId)
+        return enrichSongsFlow(songDao.getSongsByAlbum(albumId))
     }
 
     fun getSongsByArtist(artistId: String): Flow<List<Song>> {
         syncSongs(DATA.TIMESTAMP, null)
-        return songDao.getSongsByArtist(artistId)
+        return enrichSongsFlow(songDao.getSongsByArtist(artistId))
+    }
+
+    fun getFavoriteSongs(userId: String): Flow<List<Song>> {
+        syncFavorites(userId)
+        return enrichSongsFlow(favoriteDao.getFavoriteSongs(userId))
+    }
+
+    private fun enrichSongsFlow(songsFlow: Flow<List<Song>>): Flow<List<Song>> {
+        return combine(
+            songsFlow,
+            categoryDao.getAllCategories(),
+            albumDao.getAllAlbums(),
+            artistDao.getAllArtists()
+        ) { songs, categories, albums, artists ->
+            val catMap = categories.associateBy { it.id }
+            val albumMap = albums.associateBy { it.id }
+            val artistMap = artists.associateBy { it.id }
+
+            songs.map { song ->
+                song.categoryName = catMap[song.categoryId]?.name ?: song.categoryName
+                song.albumName = albumMap[song.albumId]?.name ?: song.albumName
+                song.artistName = artistMap[song.artistId]?.name ?: song.artistName
+                song
+            }
+        }
     }
 
     fun getAlbums(orderBy: String = DATA.TIMESTAMP): Flow<List<Album>> {
@@ -78,23 +105,21 @@ class MusicRepository @Inject constructor(
     }
 
     fun getInterestedCategories(userId: String): Flow<List<Category>> {
+        syncCategories()
         syncInterested(userId, DATA.CATEGORIES)
         return interestedDao.getInterestedCategories(userId, DATA.CATEGORIES)
     }
 
     fun getInterestedAlbums(userId: String): Flow<List<Album>> {
+        syncAlbums()
         syncInterested(userId, DATA.ALBUMS)
         return interestedDao.getInterestedAlbums(userId, DATA.ALBUMS)
     }
 
     fun getInterestedArtists(userId: String): Flow<List<Artist>> {
+        syncArtists()
         syncInterested(userId, DATA.ARTISTS)
         return interestedDao.getInterestedArtists(userId, DATA.ARTISTS)
-    }
-
-    fun getFavoriteSongs(userId: String): Flow<List<Song>> {
-        syncFavorites(userId)
-        return favoriteDao.getFavoriteSongs(userId)
     }
 
     fun getFavoriteCount(userId: String): Flow<Int> {
@@ -111,8 +136,6 @@ class MusicRepository @Inject constructor(
         syncInterested(userId, databaseName)
         return interestedDao.getInterestedIds(userId, databaseName)
     }
-
-
 
     private fun syncCategories() {
         database.getReference(DATA.CATEGORIES)
