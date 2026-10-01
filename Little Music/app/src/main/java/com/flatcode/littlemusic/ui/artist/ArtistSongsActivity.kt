@@ -27,15 +27,21 @@ import com.flatcode.littlemusic.utils.checkLove
 import com.flatcode.littlemusic.utils.dialogAboutArtist
 import com.flatcode.littlemusic.utils.isInterested
 import com.flatcode.littlemusic.utils.openActivity
+import com.flatcode.littlemusic.db.SongDao
+import com.flatcode.littlemusic.utils.SongCacheManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ArtistSongsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityArtistSongsBinding
     private val viewModel: ArtistSongsViewModel by viewModels()
+
+    @Inject
+    lateinit var songDao: SongDao
 
     private var albumAdapter: AlbumAdapter? = null
     private var songAdapter: SongAdapter? = null
@@ -268,11 +274,7 @@ class ArtistSongsActivity : BaseActivity() {
 
                             jcAudios.clear()
                             songs.forEach { song ->
-                                jcAudios.add(
-                                    JcAudio.createFromURL(
-                                        song.name ?: "", song.songLink ?: ""
-                                    )
-                                )
+                                jcAudios.add(SongCacheManager.getJcAudio(song))
                             }
 
                             binding.progress.visibility = View.GONE

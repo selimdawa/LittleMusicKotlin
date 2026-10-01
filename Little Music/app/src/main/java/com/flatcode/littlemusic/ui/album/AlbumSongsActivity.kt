@@ -27,10 +27,12 @@ import com.flatcode.littlemusic.utils.isInterested
 import com.flatcode.littlemusic.utils.loadBlurImage
 import com.flatcode.littlemusic.utils.loadImage
 import com.flatcode.littlemusic.utils.openActivity
+import com.flatcode.littlemusic.db.SongDao
+import com.flatcode.littlemusic.utils.SongCacheManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AlbumSongsActivity : BaseActivity() {
@@ -39,6 +41,9 @@ class AlbumSongsActivity : BaseActivity() {
     private val viewModel: AlbumSongsViewModel by viewModels()
     private var adapter: SongAdapter? = null
     private val jcAudios = ArrayList<JcAudio>()
+
+    @Inject
+    lateinit var songDao: SongDao
     private var albumId: String? = null
     private var albumName: String? = null
     private var albumImage: String? = null
@@ -142,10 +147,13 @@ class AlbumSongsActivity : BaseActivity() {
 
     private fun setupRecyclerView() {
         adapter = SongAdapter(
-            onItemClick = { _, position ->
+            onItemClick = { song, position ->
                 changeSelectedSong(position)
-                binding.player.jcPlayer.playAudio(jcAudios[position])
-                binding.player.jcPlayer.visibility = View.VISIBLE
+                if (position in jcAudios.indices) {
+                    binding.player.jcPlayer.playAudio(jcAudios[position])
+                    binding.player.jcPlayer.visibility = View.VISIBLE
+                }
+                SongCacheManager.cacheSongAudio(applicationContext, song, songDao)
             },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
@@ -183,11 +191,7 @@ class AlbumSongsActivity : BaseActivity() {
 
                         jcAudios.clear()
                         songs.forEach { song ->
-                            jcAudios.add(
-                                JcAudio.createFromURL(
-                                    song.name ?: "", song.songLink ?: ""
-                                )
-                            )
+                            jcAudios.add(SongCacheManager.getJcAudio(song))
                         }
 
                         if (songs.isNotEmpty()) {

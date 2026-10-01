@@ -17,12 +17,14 @@ import com.example.jean.jcplayer.JcPlayerManagerListener
 import com.example.jean.jcplayer.general.JcStatus
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.databinding.FragmentHomeBinding
+import com.flatcode.littlemusic.db.SongDao
 import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
 import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.ui.showmore.ShowMoreActivity
 import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.SongCacheManager
 import com.flatcode.littlemusic.utils.checkFavorite
 import com.flatcode.littlemusic.utils.checkLove
 import com.flatcode.littlemusic.utils.openActivity
@@ -31,6 +33,7 @@ import io.selimdawa.autoimageslider.SliderAnimations
 import io.selimdawa.autoimageslider.view.model.IndicatorAnimationType
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -38,6 +41,9 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
+
+    @Inject
+    lateinit var songDao: SongDao
 
     private var adapter: SongMainAdapter? = null
     private var adapter2: SongMainAdapter? = null
@@ -63,7 +69,12 @@ class HomeFragment : Fragment() {
             }
         }
         override fun onCompletedAudio() {}
-        override fun onPaused(status: JcStatus) {}
+        override fun onPaused(status: JcStatus) {
+            changeSelectedSong(-1, adapter)
+            changeSelectedSong(-1, adapter2)
+            changeSelectedSong(-1, adapter3)
+            changeSelectedSong(-1, adapter4)
+        }
         override fun onContinueAudio(status: JcStatus) {
             val index = jcAudios.indexOf(status.jcAudio)
             if (index != -1) {
@@ -75,7 +86,12 @@ class HomeFragment : Fragment() {
         }
         override fun onPlaying(status: JcStatus) {}
         override fun onTimeChanged(status: JcStatus) {}
-        override fun onStopped(status: JcStatus) {}
+        override fun onStopped(status: JcStatus) {
+            changeSelectedSong(-1, adapter)
+            changeSelectedSong(-1, adapter2)
+            changeSelectedSong(-1, adapter3)
+            changeSelectedSong(-1, adapter4)
+        }
         override fun onJcpError(throwable: Throwable) {}
     }
 
@@ -108,12 +124,16 @@ class HomeFragment : Fragment() {
         binding.recyclerCategory.adapter = categoryAdapter
 
         adapter = SongMainAdapter(
-            onPlayClick = { _, position ->
-            playSong(
-                position, adapter, adapter2, adapter3, adapter4
-            )
-        },
-            onPauseClick = { _, _ -> binding.player.jcPlayer.pause() },
+            onPlayClick = { song, position ->
+                playSong(position, song, adapter, adapter2, adapter3, adapter4)
+            },
+            onPauseClick = { _, _ ->
+                binding.player.jcPlayer.pause()
+                changeSelectedSong(-1, adapter)
+                changeSelectedSong(-1, adapter2)
+                changeSelectedSong(-1, adapter3)
+                changeSelectedSong(-1, adapter4)
+            },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name -> openArtistSongs(id, name) },
@@ -122,12 +142,16 @@ class HomeFragment : Fragment() {
         binding.recyclerView.adapter = adapter
 
         adapter2 = SongMainAdapter(
-            onPlayClick = { _, position ->
-            playSong(
-                position, adapter2, adapter, adapter3, adapter4
-            )
-        },
-            onPauseClick = { _, _ -> binding.player.jcPlayer.pause() },
+            onPlayClick = { song, position ->
+                playSong(position, song, adapter2, adapter, adapter3, adapter4)
+            },
+            onPauseClick = { _, _ ->
+                binding.player.jcPlayer.pause()
+                changeSelectedSong(-1, adapter)
+                changeSelectedSong(-1, adapter2)
+                changeSelectedSong(-1, adapter3)
+                changeSelectedSong(-1, adapter4)
+            },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name -> openArtistSongs(id, name) },
@@ -136,12 +160,16 @@ class HomeFragment : Fragment() {
         binding.recyclerView2.adapter = adapter2
 
         adapter3 = SongMainAdapter(
-            onPlayClick = { _, position ->
-            playSong(
-                position, adapter3, adapter, adapter2, adapter4
-            )
-        },
-            onPauseClick = { _, _ -> binding.player.jcPlayer.pause() },
+            onPlayClick = { song, position ->
+                playSong(position, song, adapter3, adapter, adapter2, adapter4)
+            },
+            onPauseClick = { _, _ ->
+                binding.player.jcPlayer.pause()
+                changeSelectedSong(-1, adapter)
+                changeSelectedSong(-1, adapter2)
+                changeSelectedSong(-1, adapter3)
+                changeSelectedSong(-1, adapter4)
+            },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name -> openArtistSongs(id, name) },
@@ -150,12 +178,16 @@ class HomeFragment : Fragment() {
         binding.recyclerView3.adapter = adapter3
 
         adapter4 = SongMainAdapter(
-            onPlayClick = { _, position ->
-            playSong(
-                position, adapter4, adapter, adapter2, adapter3
-            )
-        },
-            onPauseClick = { _, _ -> binding.player.jcPlayer.pause() },
+            onPlayClick = { song, position ->
+                playSong(position, song, adapter4, adapter, adapter2, adapter3)
+            },
+            onPauseClick = { _, _ ->
+                binding.player.jcPlayer.pause()
+                changeSelectedSong(-1, adapter)
+                changeSelectedSong(-1, adapter2)
+                changeSelectedSong(-1, adapter3)
+                changeSelectedSong(-1, adapter4)
+            },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name -> openArtistSongs(id, name) },
@@ -165,11 +197,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun playSong(
-        position: Int, current: SongMainAdapter?, vararg others: SongMainAdapter?
+        position: Int, song: Song, current: SongMainAdapter?, vararg others: SongMainAdapter?
     ) {
         changeSelectedSong(position, current)
         others.forEach { changeSelectedSong(-1, it) }
-        binding.player.jcPlayer.playAudio(jcAudios[position])
+        if (position in jcAudios.indices) {
+            binding.player.jcPlayer.playAudio(jcAudios[position])
+            binding.player.jcPlayer.visibility = View.VISIBLE
+        }
+        context?.let { ctx ->
+            SongCacheManager.cacheSongAudio(ctx.applicationContext, song, songDao)
+        }
     }
 
     private fun openArtistSongs(id: String, name: String) {
@@ -300,7 +338,7 @@ class HomeFragment : Fragment() {
 
             jcAudios.clear()
             songs.forEach { song ->
-                jcAudios.add(JcAudio.createFromURL(song.name ?: "", song.songLink ?: ""))
+                jcAudios.add(SongCacheManager.getJcAudio(song))
             }
             binding.player.jcPlayer.initPlaylist(jcAudios, jcPlayerListener)
         } else {

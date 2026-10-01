@@ -92,10 +92,29 @@ class SongMainAdapter(
             val categoryId = item.categoryId ?: ""
             val nrLovesCount = item.lovesCount
 
+            val categoryName = item.categoryName ?: ""
+            val albumName = item.albumName ?: ""
+            val artistName = item.artistName ?: ""
+
             binding.name.text = name
-            binding.artist.dataName(DATA.ARTISTS, artistId)
-            binding.album.dataName(DATA.ALBUMS, albumId)
-            binding.category.dataName(DATA.CATEGORIES, categoryId)
+
+            if (artistName.isNotEmpty()) {
+                binding.artist.text = artistName
+            } else {
+                binding.artist.dataName(DATA.ARTISTS, artistId)
+            }
+
+            if (albumName.isNotEmpty()) {
+                binding.album.text = albumName
+            } else {
+                binding.album.dataName(DATA.ALBUMS, albumId)
+            }
+
+            if (categoryName.isNotEmpty()) {
+                binding.category.text = categoryName
+            } else {
+                binding.category.dataName(DATA.CATEGORIES, categoryId)
+            }
             binding.duration.text = item.duration?.toLongOrNull()?.convertDuration() ?: "00:00"
             binding.nrLoves.text = nrLovesCount.toString()
 

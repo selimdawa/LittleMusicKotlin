@@ -15,19 +15,21 @@ import com.example.jean.jcplayer.general.JcStatus
 import com.example.jean.jcplayer.model.JcAudio
 import com.flatcode.littlemusic.R
 import com.flatcode.littlemusic.databinding.ActivityFavoritesBinding
+import com.flatcode.littlemusic.db.SongDao
 import com.flatcode.littlemusic.ui.album.AlbumSongsActivity
 import com.flatcode.littlemusic.ui.artist.ArtistSongsActivity
 import com.flatcode.littlemusic.ui.category.CategorySongsActivity
 import com.flatcode.littlemusic.ui.song.SongAdapter
 import com.flatcode.littlemusic.utils.BaseActivity
 import com.flatcode.littlemusic.utils.DATA
+import com.flatcode.littlemusic.utils.SongCacheManager
 import com.flatcode.littlemusic.utils.checkFavorite
 import com.flatcode.littlemusic.utils.checkLove
 import com.flatcode.littlemusic.utils.openActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class FavoritesActivity : BaseActivity() {
@@ -37,6 +39,9 @@ class FavoritesActivity : BaseActivity() {
     private var adapter: SongAdapter? = null
     private val jcAudios = ArrayList<JcAudio>()
 
+    @Inject
+    lateinit var songDao: SongDao
+
     private val jcPlayerListener = object : JcPlayerManagerListener {
         override fun onPreparedAudio(status: JcStatus) {
             val index = jcAudios.indexOf(status.jcAudio)
@@ -44,7 +49,10 @@ class FavoritesActivity : BaseActivity() {
         }
 
         override fun onCompletedAudio() {}
-        override fun onPaused(status: JcStatus) {}
+        override fun onPaused(status: JcStatus) {
+            changeSelectedSong(-1)
+        }
+
         override fun onContinueAudio(status: JcStatus) {
             val index = jcAudios.indexOf(status.jcAudio)
             if (index != -1) changeSelectedSong(index)
@@ -52,7 +60,10 @@ class FavoritesActivity : BaseActivity() {
 
         override fun onPlaying(status: JcStatus) {}
         override fun onTimeChanged(status: JcStatus) {}
-        override fun onStopped(status: JcStatus) {}
+        override fun onStopped(status: JcStatus) {
+            changeSelectedSong(-1)
+        }
+
         override fun onJcpError(throwable: Throwable) {}
     }
 
@@ -116,11 +127,14 @@ class FavoritesActivity : BaseActivity() {
 
     private fun setupRecyclerView() {
         adapter = SongAdapter(
-            onItemClick = { _, position ->
-            changeSelectedSong(position)
-            binding.player.jcPlayer.playAudio(jcAudios[position])
-            binding.player.jcPlayer.visibility = View.VISIBLE
-        },
+            onItemClick = { song, position ->
+                changeSelectedSong(position)
+                if (position in jcAudios.indices) {
+                    binding.player.jcPlayer.playAudio(jcAudios[position])
+                    binding.player.jcPlayer.visibility = View.VISIBLE
+                }
+                SongCacheManager.cacheSongAudio(applicationContext, song, songDao)
+            },
             onFavoriteClick = { song, view -> (view as? ImageView)?.checkFavorite(song.id) },
             onLoveClick = { song, view -> (view as? ImageView)?.checkLove(song.id) },
             onArtistClick = { id, name ->
@@ -157,11 +171,7 @@ class FavoritesActivity : BaseActivity() {
 
                         jcAudios.clear()
                         songs.forEach { song ->
-                            jcAudios.add(
-                                JcAudio.createFromURL(
-                                    song.name ?: "", song.songLink ?: ""
-                                )
-                            )
+                            jcAudios.add(SongCacheManager.getJcAudio(song))
                         }
 
                         if (songs.isNotEmpty()) {

@@ -21,9 +21,12 @@ import com.flatcode.littlemusic.utils.DATA
 import com.flatcode.littlemusic.utils.checkFavorite
 import com.flatcode.littlemusic.utils.checkLove
 import com.flatcode.littlemusic.utils.openActivity
+import com.flatcode.littlemusic.db.SongDao
+import com.flatcode.littlemusic.utils.SongCacheManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MySongsFragment : Fragment() {
@@ -33,6 +36,9 @@ class MySongsFragment : Fragment() {
     private val viewModel: MySongsViewModel by viewModels()
     private var adapter: SongAdapter? = null
     private val jcAudios = ArrayList<JcAudio>()
+
+    @Inject
+    lateinit var songDao: SongDao
 
     private val jcPlayerListener = object : JcPlayerManagerListener {
         override fun onPreparedAudio(status: JcStatus) {
@@ -121,11 +127,7 @@ class MySongsFragment : Fragment() {
 
                         jcAudios.clear()
                         songs.forEach { song ->
-                            jcAudios.add(
-                                JcAudio.createFromURL(
-                                    song.name ?: "", song.songLink ?: ""
-                                )
-                            )
+                            jcAudios.add(SongCacheManager.getJcAudio(song))
                         }
 
                         if (songs.isNotEmpty()) {
