@@ -1,23 +1,26 @@
 package com.flatcode.littlemusicadmin.ui.album
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import com.flatcode.littlemusicadmin.utils.BaseActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.lifecycleScope
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
-import com.canhub.cropper.CropImageView
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumAddBinding
-import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.utils.getFileExtension
+import com.flatcode.littlemusicadmin.utils.isNetworkAvailable
+import com.flatcode.littlemusicadmin.utils.startCropActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -39,13 +42,44 @@ class AlbumAddActivity : BaseActivity() {
     private var selectedArtistId: String? = null
     private var selectedArtistTitle: String? = null
 
-    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
-        if (result.isSuccessful) {
-            imageUri = result.uriContent
-            binding.image.setImageURI(imageUri)
+    private val cropImageLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                imageUri = result.data?.let { intent ->
+                    IntentCompat.getParcelableExtra(intent, "CROP_RESULT_URI", Uri::class.java)
+                }
+                binding.image.setImageURI(null)
+                binding.image.setImageURI(imageUri)
+            }
+        }
+
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                cropImageLauncher.launch(context.startCropActivity(it, 1, 1, false))
+            }
+        }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                pickImageLauncher.launch("image/*")
+            } else {
+                Toast.makeText(context, "Permission denied...", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private fun checkPermissionAndPickImage() {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
         } else {
-            val error = result.error
-            Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+
+        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
+            pickImageLauncher.launch("image/*")
+        } else {
+            requestPermissionLauncher.launch(permission)
         }
     }
 
@@ -68,18 +102,7 @@ class AlbumAddActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.add_new_album)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.image.setOnClickListener {
-            cropImage.launch(
-                CropImageContractOptions(
-                    uri = null, cropImageOptions = CropImageOptions(
-                        minCropResultWidth = DATA.MIX_SQUARE,
-                        minCropResultHeight = DATA.MIX_SQUARE,
-                        aspectRatioX = 1,
-                        aspectRatioY = 1,
-                        fixAspectRatio = true,
-                        cropShape = CropImageView.CropShape.OVAL
-                    )
-                )
-            )
+            checkPermissionAndPickImage()
         }
         binding.category.setOnClickListener { categoryPickDialog() }
         binding.artist.setOnClickListener { artistPickDialog() }
@@ -97,6 +120,8 @@ class AlbumAddActivity : BaseActivity() {
             Toast.makeText(context, "Enter Category...", Toast.LENGTH_SHORT).show()
         } else if (imageUri == null) {
             Toast.makeText(context, "Pick Image...", Toast.LENGTH_SHORT).show()
+        } else if (!isNetworkAvailable()) {
+            Toast.makeText(context, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
         } else {
             viewModel.addAlbum(
                 name,

@@ -20,6 +20,9 @@ class AlbumSongsViewModel @Inject constructor(
     private val _songs = MutableStateFlow<List<Song>>(emptyList())
     val songs: StateFlow<List<Song>> = _songs
 
+    private val _albumImage = MutableStateFlow("")
+    val albumImage: StateFlow<String> = _albumImage
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -29,6 +32,17 @@ class AlbumSongsViewModel @Inject constructor(
     fun setType(type: String, albumId: String) {
         _currentType.value = type
         getData(albumId)
+    }
+
+    fun loadAlbumInfo(albumId: String?) {
+        if (albumId.isNullOrEmpty()) return
+        viewModelScope.launch {
+            musicRepository.getAlbumById(albumId).collectLatest { album ->
+                if (album != null && !album.image.isNullOrEmpty()) {
+                    _albumImage.value = album.image!!
+                }
+            }
+        }
     }
 
     fun getData(albumId: String?) {

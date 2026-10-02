@@ -63,6 +63,19 @@ fun Context.isNetworkAvailable(): Boolean {
     return capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
 }
 
+fun Context.startCropActivity(
+    uri: Uri, aspectRatioX: Int = 1, aspectRatioY: Int = 1, isOval: Boolean = false
+): Intent {
+    return Intent(this, CropActivity::class.java).apply {
+        putExtra("IMAGE_URI", uri)
+        putExtra("ASPECT_RATIO_X", aspectRatioX)
+        putExtra("ASPECT_RATIO_Y", aspectRatioY)
+        putExtra("IS_OVAL", isOval)
+        putExtra("MIN_WIDTH", DATA.MIX_SQUARE)
+        putExtra("MIN_HEIGHT", DATA.MIX_SQUARE)
+    }
+}
+
 fun ImageView.loadImage(isUser: Boolean, url: String?) {
     val defaultRes = if (isUser) R.drawable.basic_user else R.color.image_profile
     try {

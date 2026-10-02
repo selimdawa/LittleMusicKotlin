@@ -82,6 +82,7 @@ class AlbumSongsActivity : BaseActivity() {
         setupRecyclerView()
         observeViewModel()
 
+        viewModel.loadAlbumInfo(albumId)
         viewModel.getData(albumId)
     }
 
@@ -201,6 +202,14 @@ class AlbumSongsActivity : BaseActivity() {
                         } else {
                             binding.recyclerView.visibility = View.GONE
                             binding.emptyText.visibility = View.VISIBLE
+                        }
+                    }
+                }
+                launch {
+                    viewModel.albumImage.collect { imageUrl ->
+                        if (imageUrl.isNotEmpty()) {
+                            binding.image.loadImage(imageUrl, false)
+                            binding.imageBlur.loadBlurImage(imageUrl, 50, false)
                         }
                     }
                 }

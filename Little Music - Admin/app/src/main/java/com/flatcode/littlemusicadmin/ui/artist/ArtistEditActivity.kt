@@ -1,24 +1,29 @@
 package com.flatcode.littlemusicadmin.ui.artist
 
+import android.Manifest
 import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import com.flatcode.littlemusicadmin.utils.BaseActivity
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
-import com.canhub.cropper.CropImageView
+import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityArtistAddBinding
 import com.flatcode.littlemusicadmin.model.Artist
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.isNetworkAvailable
 import com.flatcode.littlemusicadmin.utils.loadImage
+import com.flatcode.littlemusicadmin.utils.startCropActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -32,13 +37,44 @@ class ArtistEditActivity : BaseActivity() {
     private var imageUri: Uri? = null
     private var dialog: AlertDialog? = null
 
-    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
-        if (result.isSuccessful) {
-            imageUri = result.uriContent
-            binding.image.setImageURI(imageUri)
+    private val cropImageLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                imageUri = result.data?.let { intent ->
+                    IntentCompat.getParcelableExtra(intent, "CROP_RESULT_URI", Uri::class.java)
+                }
+                binding.image.setImageURI(null)
+                binding.image.setImageURI(imageUri)
+            }
+        }
+
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                cropImageLauncher.launch(activity.startCropActivity(it, 1, 1, false))
+            }
+        }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                pickImageLauncher.launch("image/*")
+            } else {
+                Toast.makeText(activity, "Permission denied...", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private fun checkPermissionAndPickImage() {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
         } else {
-            val error = result.error
-            Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+
+        if (ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED) {
+            pickImageLauncher.launch("image/*")
+        } else {
+            requestPermissionLauncher.launch(permission)
         }
     }
 
@@ -58,19 +94,7 @@ class ArtistEditActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.edit_artist)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.image.setOnClickListener {
-            cropImage.launch(
-                CropImageContractOptions(
-                    uri = null,
-                    cropImageOptions = CropImageOptions(
-                        minCropResultWidth = DATA.MIX_SQUARE,
-                        minCropResultHeight = DATA.MIX_SQUARE,
-                        aspectRatioX = 1,
-                        aspectRatioY = 1,
-                        fixAspectRatio = true,
-                        cropShape = CropImageView.CropShape.OVAL
-                    )
-                )
-            )
+            checkPermissionAndPickImage()
         }
         binding.toolbar.ok.setOnClickListener { validateData() }
     }
@@ -84,6 +108,8 @@ class ArtistEditActivity : BaseActivity() {
             Toast.makeText(activity, "Enter name...", Toast.LENGTH_SHORT).show()
         } else if (TextUtils.isEmpty(aboutTheArtist)) {
             Toast.makeText(activity, "Enter Description...", Toast.LENGTH_SHORT).show()
+        } else if (!isNetworkAvailable()) {
+            Toast.makeText(activity, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
         } else {
             if (imageUri == null) {
                 update(DATA.EMPTY)
@@ -135,7 +161,7 @@ class ArtistEditActivity : BaseActivity() {
         val hashMap = HashMap<String?, Any>()
         hashMap[DATA.NAME] = DATA.EMPTY + name
         hashMap[DATA.ABOUT_THE_ARTIST] = DATA.EMPTY + aboutTheArtist
-        if (imageUri != null && imageUrl!!.isNotEmpty()) {
+        if (imageUri != null && !imageUrl.isNullOrEmpty()) {
             hashMap[DATA.IMAGE] = DATA.EMPTY + imageUrl
         }
         val reference = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS)
@@ -154,7 +180,7 @@ class ArtistEditActivity : BaseActivity() {
         val reference = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS)
         reference.child(artistId!!).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val item = snapshot.getValue(Artist::class.java)!!
+                val item = snapshot.getValue(Artist::class.java) ?: return
                 val name = item.name
                 val aboutTheArtist = item.aboutTheArtist
                 val image = item.image

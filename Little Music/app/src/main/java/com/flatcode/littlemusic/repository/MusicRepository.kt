@@ -81,14 +81,27 @@ class MusicRepository @Inject constructor(
             albumDao.getAllAlbums(),
             artistDao.getAllArtists()
         ) { songs, categories, albums, artists ->
-            val catMap = categories.associateBy { it.id }
-            val albumMap = albums.associateBy { it.id }
-            val artistMap = artists.associateBy { it.id }
+            val catMapById = categories.associateBy { it.id }
+            val catMapByName = categories.associateBy { it.name }
+
+            val albumMapById = albums.associateBy { it.id }
+            val albumMapByName = albums.associateBy { it.name }
+
+            val artistMapById = artists.associateBy { it.id }
+            val artistMapByName = artists.associateBy { it.name }
 
             songs.map { song ->
-                song.categoryName = catMap[song.categoryId]?.name ?: song.categoryName
-                song.albumName = albumMap[song.albumId]?.name ?: song.albumName
-                song.artistName = artistMap[song.artistId]?.name ?: song.artistName
+                val cat = catMapById[song.categoryId] ?: catMapByName[song.categoryId]
+                val album = albumMapById[song.albumId] ?: albumMapByName[song.albumId]
+                val artist = artistMapById[song.artistId] ?: artistMapByName[song.artistId]
+
+                val resolvedCat = cat?.name ?: song.categoryName ?: (if (song.categoryId?.startsWith("-") == true) "" else song.categoryId)
+                val resolvedAlbum = album?.name ?: song.albumName ?: (if (song.albumId?.startsWith("-") == true) "" else song.albumId)
+                val resolvedArtist = artist?.name ?: song.artistName ?: (if (song.artistId?.startsWith("-") == true) "" else song.artistId)
+
+                song.categoryName = resolvedCat
+                song.albumName = resolvedAlbum
+                song.artistName = resolvedArtist
                 song
             }
         }
@@ -97,6 +110,11 @@ class MusicRepository @Inject constructor(
     fun getAlbums(orderBy: String = DATA.TIMESTAMP): Flow<List<Album>> {
         syncAlbums(orderBy)
         return albumDao.getAllAlbums()
+    }
+
+    fun getAlbumById(albumId: String): Flow<Album?> {
+        syncAlbums()
+        return albumDao.getAlbumById(albumId)
     }
 
     fun getArtists(orderBy: String = DATA.TIMESTAMP): Flow<List<Artist>> {

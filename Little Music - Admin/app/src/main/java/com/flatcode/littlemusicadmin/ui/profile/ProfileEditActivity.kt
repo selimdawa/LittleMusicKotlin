@@ -1,24 +1,28 @@
 package com.flatcode.littlemusicadmin.ui.profile
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import com.flatcode.littlemusicadmin.utils.BaseActivity
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
-import com.canhub.cropper.CropImageView
+import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityProfileEditBinding
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.isNetworkAvailable
 import com.flatcode.littlemusicadmin.utils.loadImage
+import com.flatcode.littlemusicadmin.utils.startCropActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -33,13 +37,44 @@ class ProfileEditActivity : BaseActivity() {
     private var imageUri: Uri? = null
     private var dialog: AlertDialog? = null
 
-    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
-        if (result.isSuccessful) {
-            imageUri = result.uriContent
-            binding.profileImage.setImageURI(imageUri)
+    private val cropImageLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                imageUri = result.data?.let { intent ->
+                    IntentCompat.getParcelableExtra(intent, "CROP_RESULT_URI", Uri::class.java)
+                }
+                binding.profileImage.setImageURI(null)
+                binding.profileImage.setImageURI(imageUri)
+            }
+        }
+
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                cropImageLauncher.launch(context.startCropActivity(it, 1, 1, true))
+            }
+        }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                pickImageLauncher.launch("image/*")
+            } else {
+                Toast.makeText(context, "Permission denied...", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private fun checkPermissionAndPickImage() {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
         } else {
-            val error = result.error
-            Toast.makeText(this, "Error! $error", Toast.LENGTH_SHORT).show()
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+
+        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
+            pickImageLauncher.launch("image/*")
+        } else {
+            requestPermissionLauncher.launch(permission)
         }
     }
 
@@ -57,18 +92,7 @@ class ProfileEditActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.edit_profile)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.image.setOnClickListener {
-            cropImage.launch(
-                CropImageContractOptions(
-                    uri = null, cropImageOptions = CropImageOptions(
-                        minCropResultWidth = DATA.MIX_SQUARE,
-                        minCropResultHeight = DATA.MIX_SQUARE,
-                        aspectRatioX = 1,
-                        aspectRatioY = 1,
-                        fixAspectRatio = true,
-                        cropShape = CropImageView.CropShape.OVAL
-                    )
-                )
-            )
+            checkPermissionAndPickImage()
         }
         binding.go.setOnClickListener { validateData() }
     }
@@ -78,6 +102,8 @@ class ProfileEditActivity : BaseActivity() {
         username = binding.nameEt.text.toString().trim { it <= ' ' }
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(context, "Enter name...", Toast.LENGTH_SHORT).show()
+        } else if (!isNetworkAvailable()) {
+            Toast.makeText(context, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
         } else {
             if (imageUri == null) {
                 updateProfile(DATA.EMPTY)
@@ -126,7 +152,7 @@ class ProfileEditActivity : BaseActivity() {
         dialog!!.show()
         val hashMap = HashMap<String?, Any>()
         hashMap[DATA.USER_NAME] = DATA.EMPTY + username
-        if (imageUri != null && imageUrl!!.isNotEmpty()) {
+        if (imageUri != null && !imageUrl.isNullOrEmpty()) {
             hashMap[DATA.PROFILE_IMAGE] = DATA.EMPTY + imageUrl
         }
         val reference = FirebaseDatabase.getInstance().getReference(DATA.USERS)

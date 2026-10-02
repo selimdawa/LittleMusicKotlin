@@ -1,5 +1,6 @@
 package com.flatcode.littlemusic.db
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.flatcode.littlemusic.model.Album
@@ -13,11 +14,9 @@ import com.flatcode.littlemusic.model.Song
 import com.flatcode.littlemusic.model.User
 
 @Database(
-    entities = [
-        Song::class, Category::class, User::class, Album::class, Artist::class,
-        FavoriteEntity::class, InterestedEntity::class, SliderEntity::class, SettingEntity::class
-    ],
+    entities = [Song::class, Category::class, User::class, Album::class, Artist::class, FavoriteEntity::class, InterestedEntity::class, SliderEntity::class, SettingEntity::class],
     version = 3,
+    autoMigrations = [AutoMigration(from = 1, to = 2), AutoMigration(from = 2, to = 3)],
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

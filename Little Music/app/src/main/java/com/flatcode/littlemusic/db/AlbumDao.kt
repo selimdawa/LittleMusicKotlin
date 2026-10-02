@@ -14,6 +14,9 @@ interface AlbumDao {
     @Query("SELECT * FROM albums ORDER BY name ASC")
     fun getAllAlbums(): Flow<List<Album>>
 
+    @Query("SELECT * FROM albums WHERE id = :id")
+    fun getAlbumById(id: String): Flow<Album?>
+
     @Query("SELECT COUNT(*) FROM albums")
     fun getAlbumsCount(): Flow<Int>
 

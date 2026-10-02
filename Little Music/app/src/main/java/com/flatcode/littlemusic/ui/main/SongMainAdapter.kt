@@ -17,10 +17,6 @@ import com.flatcode.littlemusic.utils.incrementViewCount
 import com.flatcode.littlemusic.utils.isFavorite
 import com.flatcode.littlemusic.utils.isLoves
 import com.flatcode.littlemusic.utils.nrLoves
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import java.util.Locale
 
 class SongMainAdapter(
@@ -96,25 +92,27 @@ class SongMainAdapter(
             val albumName = item.albumName ?: ""
             val artistName = item.artistName ?: ""
 
+            val displayArtist = if (artistName.startsWith("-")) "" else artistName
+            val displayAlbum = if (albumName.startsWith("-")) "" else albumName
+            val displayCategory = if (categoryName.startsWith("-")) "" else categoryName
+
             binding.name.text = name
 
-            if (artistName.isNotEmpty()) {
-                binding.artist.text = artistName
-            } else {
+            binding.artist.text = displayArtist
+            if (displayArtist.isEmpty() && artistId.isNotEmpty()) {
                 binding.artist.dataName(DATA.ARTISTS, artistId)
             }
 
-            if (albumName.isNotEmpty()) {
-                binding.album.text = albumName
-            } else {
+            binding.album.text = displayAlbum
+            if (displayAlbum.isEmpty() && albumId.isNotEmpty()) {
                 binding.album.dataName(DATA.ALBUMS, albumId)
             }
 
-            if (categoryName.isNotEmpty()) {
-                binding.category.text = categoryName
-            } else {
+            binding.category.text = displayCategory
+            if (displayCategory.isEmpty() && categoryId.isNotEmpty()) {
                 binding.category.dataName(DATA.CATEGORIES, categoryId)
             }
+
             binding.duration.text = item.duration?.toLongOrNull()?.convertDuration() ?: "00:00"
             binding.nrLoves.text = nrLovesCount.toString()
 
@@ -125,9 +123,23 @@ class SongMainAdapter(
             binding.favorite.setOnClickListener { onFavoriteClick(item, it) }
             binding.love.setOnClickListener { onLoveClick(item, it) }
 
-            setupIntentData(DATA.ARTISTS, artistId, DATA.ARTIST)
-            setupIntentData(DATA.ALBUMS, albumId, DATA.ALBUM)
-            setupIntentData(DATA.CATEGORIES, categoryId, DATA.CATEGORY)
+            binding.artist.setOnClickListener {
+                if (artistId.isNotEmpty()) {
+                    onArtistClick(artistId, binding.artist.text.toString())
+                }
+            }
+
+            binding.album.setOnClickListener {
+                if (albumId.isNotEmpty()) {
+                    onAlbumClick(albumId, binding.album.text.toString(), "")
+                }
+            }
+
+            binding.category.setOnClickListener {
+                if (categoryId.isNotEmpty()) {
+                    onCategoryClick(categoryId, binding.category.text.toString())
+                }
+            }
 
             binding.play.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
@@ -148,33 +160,6 @@ class SongMainAdapter(
                 binding.play.visibility = View.VISIBLE
                 binding.pause.visibility = View.GONE
             }
-        }
-
-        private fun setupIntentData(database: String, dataId: String, type: String) {
-            val reference = FirebaseDatabase.getInstance().getReference(database)
-            reference.child(dataId).addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val name = snapshot.child(DATA.NAME).value?.toString() ?: ""
-                    val image = snapshot.child(DATA.IMAGE).value?.toString() ?: ""
-
-                    val textView = when (type) {
-                        DATA.ARTIST -> binding.artist
-                        DATA.ALBUM -> binding.album
-                        DATA.CATEGORY -> binding.category
-                        else -> null
-                    }
-
-                    textView?.setOnClickListener {
-                        when (type) {
-                            DATA.ARTIST -> onArtistClick(dataId, name)
-                            DATA.ALBUM -> onAlbumClick(dataId, name, image)
-                            DATA.CATEGORY -> onCategoryClick(dataId, name)
-                        }
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {}
-            })
         }
     }
 
