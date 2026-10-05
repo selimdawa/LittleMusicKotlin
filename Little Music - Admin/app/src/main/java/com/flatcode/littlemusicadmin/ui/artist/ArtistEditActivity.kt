@@ -2,7 +2,6 @@ package com.flatcode.littlemusicadmin.ui.artist
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -10,7 +9,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import com.cloudinary.android.MediaManager
@@ -21,6 +19,7 @@ import com.flatcode.littlemusicadmin.databinding.ActivityArtistAddBinding
 import com.flatcode.littlemusicadmin.model.Artist
 import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.ProgressDialog
 import com.flatcode.littlemusicadmin.utils.isNetworkAvailable
 import com.flatcode.littlemusicadmin.utils.loadImage
 import com.flatcode.littlemusicadmin.utils.startCropActivity
@@ -35,7 +34,7 @@ class ArtistEditActivity : BaseActivity() {
     var activity: Activity = this@ArtistEditActivity
     var artistId: String? = null
     private var imageUri: Uri? = null
-    private var dialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
 
     private val cropImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -71,7 +70,10 @@ class ArtistEditActivity : BaseActivity() {
             Manifest.permission.READ_EXTERNAL_STORAGE
         }
 
-        if (ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                activity, permission
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             pickImageLauncher.launch("image/*")
         } else {
             requestPermissionLauncher.launch(permission)
@@ -85,10 +87,10 @@ class ArtistEditActivity : BaseActivity() {
 
         artistId = intent.getStringExtra(DATA.ARTIST_ID)
 
-        dialog = AlertDialog.Builder(activity).apply {
+        dialog = ProgressDialog(this).apply {
             setTitle("Please wait...")
-            setCancelable(false)
-        }.create()
+            setCanceledOnTouchOutside(false)
+        }
         loadInfo()
 
         binding.toolbar.nameSpace.setText(R.string.edit_artist)
@@ -109,7 +111,8 @@ class ArtistEditActivity : BaseActivity() {
         } else if (TextUtils.isEmpty(aboutTheArtist)) {
             Toast.makeText(activity, "Enter Description...", Toast.LENGTH_SHORT).show()
         } else if (!isNetworkAvailable()) {
-            Toast.makeText(activity, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                .show()
         } else {
             if (imageUri == null) {
                 update(DATA.EMPTY)
@@ -120,15 +123,13 @@ class ArtistEditActivity : BaseActivity() {
     }
 
     private fun uploadImage() {
-        dialog!!.setMessage("Updating Artist...")
-        dialog!!.show()
+        dialog?.setMessage("Updating Artist...")
+        dialog?.show()
         val filePathAndName = "Images/Artists/$artistId"
 
         try {
-            MediaManager.get().upload(imageUri)
-                .unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
-                .option("public_id", filePathAndName)
-                .callback(object : UploadCallback {
+            MediaManager.get().upload(imageUri).unsigned(DATA.CLOUDINARY_UPLOAD_PRESET)
+                .option("public_id", filePathAndName).callback(object : UploadCallback {
                     override fun onStart(requestId: String) {}
                     override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
                     override fun onSuccess(requestId: String, resultData: Map<*, *>) {
@@ -137,7 +138,7 @@ class ArtistEditActivity : BaseActivity() {
                     }
 
                     override fun onError(requestId: String, error: ErrorInfo?) {
-                        dialog!!.dismiss()
+                        dialog?.dismiss()
                         Toast.makeText(
                             activity,
                             "Failed to upload image due to " + error?.description,
@@ -146,18 +147,18 @@ class ArtistEditActivity : BaseActivity() {
                     }
 
                     override fun onReschedule(requestId: String, error: ErrorInfo?) {
-                        dialog!!.dismiss()
+                        dialog?.dismiss()
                     }
                 }).dispatch()
         } catch (e: Exception) {
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(activity, "Error: " + e.message, Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun update(imageUrl: String?) {
-        dialog!!.setMessage("Updating artist image...")
-        dialog!!.show()
+        dialog?.setMessage("Updating artist image...")
+        dialog?.show()
         val hashMap = HashMap<String?, Any>()
         hashMap[DATA.NAME] = DATA.EMPTY + name
         hashMap[DATA.ABOUT_THE_ARTIST] = DATA.EMPTY + aboutTheArtist
@@ -166,11 +167,11 @@ class ArtistEditActivity : BaseActivity() {
         }
         val reference = FirebaseDatabase.getInstance().getReference(DATA.ARTISTS)
         reference.child(artistId!!).updateChildren(hashMap).addOnSuccessListener {
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(activity, "Artist updated...", Toast.LENGTH_SHORT).show()
             finish()
         }.addOnFailureListener { e: Exception ->
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(activity, "Failed to update db duo to " + e.message, Toast.LENGTH_SHORT)
                 .show()
         }

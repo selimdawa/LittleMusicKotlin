@@ -4,9 +4,9 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.databinding.ActivityForgetPasswordBinding
+import com.flatcode.littlemusicadmin.utils.BaseActivity
+import com.flatcode.littlemusicadmin.utils.ProgressDialog
 import com.google.firebase.auth.FirebaseAuth
 
 class ForgetPasswordActivity : BaseActivity() {
@@ -14,7 +14,7 @@ class ForgetPasswordActivity : BaseActivity() {
     private lateinit var binding: ActivityForgetPasswordBinding
     private val context: Context = this@ForgetPasswordActivity
     private var auth: FirebaseAuth? = null
-    private var dialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,10 +22,10 @@ class ForgetPasswordActivity : BaseActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
-        dialog = AlertDialog.Builder(this).apply {
+        dialog = ProgressDialog(this).apply {
             setTitle("Please wait...")
-            setCancelable(false)
-        }.create()
+            setCanceledOnTouchOutside(false)
+        }
 
         binding.go.setOnClickListener { validateDate() }
         binding.login.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
@@ -44,15 +44,15 @@ class ForgetPasswordActivity : BaseActivity() {
     }
 
     private fun recoverPassword() {
-        dialog!!.setMessage("Sending password recovery to instructions to $email")
-        dialog!!.show()
+        dialog?.setMessage("Sending password recovery to instructions to $email")
+        dialog?.show()
         auth!!.sendPasswordResetEmail(email).addOnCompleteListener {
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(
                 context, "Instructions to reset password sent to $email", Toast.LENGTH_SHORT
             ).show()
         }.addOnFailureListener { e: Exception ->
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(context, "Failed to send to due to " + e.message, Toast.LENGTH_SHORT)
                 .show()
         }

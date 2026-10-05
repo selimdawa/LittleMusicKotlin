@@ -215,10 +215,12 @@ fun Activity.dialogOptionDelete(
 }
 
 fun Context.dialogUpdateEditorsChoice(dialogDelete: Dialog, id: String?) {
-    val dialog = AlertDialog.Builder(this).apply {
+    val dialog = ProgressDialog(this).apply {
+        setTitle("Please wait...")
         setMessage("Updating Editors Choice...")
-        setCancelable(false)
-    }.show()
+        setCanceledOnTouchOutside(false)
+        show()
+    }
     val hashMap = HashMap<String?, Any>()
     hashMap[DATA.EDITORS_CHOICE] = 0
     val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
@@ -238,11 +240,12 @@ fun Activity.deleteDb(
     db: String?, idDb: String?, childDb: String?, db2: String?, idDb2: String?,
     childDb2: String?, db3: String?, idDb3: String?, childDb3: String?,
 ) {
-    val dialog = AlertDialog.Builder(this).apply {
-        setTitle("Please wait")
+    val dialog = ProgressDialog(this).apply {
+        setTitle("Please wait...")
         setMessage("Deleting $name ...")
-        setCancelable(false)
-    }.show()
+        setCanceledOnTouchOutside(false)
+        show()
+    }
     val reference = FirebaseDatabase.getInstance().getReference(nameDb!!)
     reference.child(id!!).removeValue().addOnSuccessListener {
         if ((db != null) && (idDb != null) && (childDb != null)) idDb.incrementItemRemoveCount(
@@ -266,10 +269,12 @@ fun Activity.deleteDb(
 }
 
 fun Activity.addToEditorsChoice(id: String?, number: Int) {
-    val dialog = AlertDialog.Builder(this).apply {
+    val dialog = ProgressDialog(this).apply {
+        setTitle("Please wait...")
         setMessage("Updating Editors Choice...")
-        setCancelable(false)
-    }.show()
+        setCanceledOnTouchOutside(false)
+        show()
+    }
     val hashMap = HashMap<String?, Any>()
     hashMap[DATA.EDITORS_CHOICE] = number
     val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)

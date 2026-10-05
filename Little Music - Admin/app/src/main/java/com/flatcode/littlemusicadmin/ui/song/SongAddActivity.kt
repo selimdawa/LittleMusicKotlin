@@ -9,13 +9,14 @@ import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivitySongAddBinding
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.ProgressDialog
 import com.flatcode.littlemusicadmin.utils.convertDuration
 import com.flatcode.littlemusicadmin.utils.incrementItemCount
 import com.flatcode.littlemusicadmin.utils.isNetworkAvailable
@@ -31,11 +32,9 @@ class SongAddActivity : BaseActivity() {
     var audioUri: Uri? = null
     var metadataRetriever: MediaMetadataRetriever? = null
 
-    //byte[] art;
     var nameSong: String? = null
-    var durations //album_art = "",;
-            : String? = null
-    private var dialog: AlertDialog? = null
+    var durations: String? = null
+    private var dialog: ProgressDialog? = null
     private var categoryId: ArrayList<String>? = null
     private var categoryList: ArrayList<String>? = null
     private var albumId: ArrayList<String>? = null
@@ -48,10 +47,10 @@ class SongAddActivity : BaseActivity() {
         binding = ActivitySongAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dialog = AlertDialog.Builder(this).apply {
+        dialog = ProgressDialog(this).apply {
             setTitle("Please wait...")
-            setCancelable(false)
-        }.create()
+            setCanceledOnTouchOutside(false)
+        }
 
         loadCategories()
         loadAlbums()
@@ -129,7 +128,8 @@ class SongAddActivity : BaseActivity() {
         if (message == "No file Selected") {
             Toast.makeText(this, "Please selected an image!", Toast.LENGTH_SHORT).show()
         } else if (!isNetworkAvailable()) {
-            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                .show()
         } else {
             uploadFile()
         }
@@ -137,8 +137,8 @@ class SongAddActivity : BaseActivity() {
 
     private fun uploadFile() {
         Toast.makeText(this, "Uploads please wait!", Toast.LENGTH_SHORT).show()
-        dialog!!.setMessage("Uploads Song...")
-        dialog!!.show()
+        dialog?.setMessage("Uploads Song...")
+        dialog?.show()
         val ref = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         val id = ref.push().key
         val filePathAndName = "Songs/$selectedArtistTitle/$id"
@@ -151,18 +151,18 @@ class SongAddActivity : BaseActivity() {
                     override fun onStart(requestId: String) {}
                     override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
                         val progress = 100.0 * bytes / totalBytes
-                        dialog!!.setMessage("uploaded " + progress.toInt() + "%.....")
+                        dialog?.setMessage("uploaded " + progress.toInt() + "%.....")
                     }
 
                     override fun onSuccess(requestId: String, resultData: Map<*, *>) {
                         val uploadedSongUrl = resultData["secure_url"]?.toString() ?: ""
-                        dialog!!.dismiss()
+                        dialog?.dismiss()
                         Toast.makeText(this@SongAddActivity, "Ok", Toast.LENGTH_SHORT).show()
                         uploadInfoToDB(uploadedSongUrl, id, ref)
                     }
 
                     override fun onError(requestId: String, error: ErrorInfo?) {
-                        dialog!!.dismiss()
+                        dialog?.dismiss()
                         Toast.makeText(
                             this@SongAddActivity,
                             "Error ! " + error?.description,
@@ -171,18 +171,18 @@ class SongAddActivity : BaseActivity() {
                     }
 
                     override fun onReschedule(requestId: String, error: ErrorInfo?) {
-                        dialog!!.dismiss()
+                        dialog?.dismiss()
                     }
                 }).dispatch()
         } catch (e: Exception) {
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(this, "Error ! " + e.message, Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun uploadInfoToDB(uploadedSongUrl: String, id: String?, ref: DatabaseReference) {
-        dialog!!.setMessage("Uploading song info...")
-        dialog!!.show()
+        dialog?.setMessage("Uploading song info...")
+        dialog?.show()
 
         //setup data to upload
         val hashMap = HashMap<String?, Any?>()
@@ -209,10 +209,11 @@ class SongAddActivity : BaseActivity() {
             if (selectedAlbumId != null) selectedAlbumId!!.incrementItemCount(
                 DATA.ALBUMS, DATA.SONGS_COUNT
             )
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(activity, "Successfully uploaded...", Toast.LENGTH_SHORT).show()
+            finish()
         }.addOnFailureListener { e: Exception ->
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(
                 activity, "Failure to upload to db due to :" + e.message, Toast.LENGTH_SHORT
             ).show()

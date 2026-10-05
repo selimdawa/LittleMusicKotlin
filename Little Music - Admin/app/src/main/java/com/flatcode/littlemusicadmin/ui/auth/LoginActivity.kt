@@ -5,11 +5,11 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Patterns
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.databinding.ActivityLoginBinding
 import com.flatcode.littlemusicadmin.ui.main.MainActivity
+import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.ProgressDialog
 import com.flatcode.littlemusicadmin.utils.openActivity
 import com.google.firebase.auth.FirebaseAuth
 
@@ -18,7 +18,7 @@ class LoginActivity : BaseActivity() {
     private lateinit var binding: ActivityLoginBinding
     var context: Context = this@LoginActivity
     private var auth: FirebaseAuth? = null
-    private var dialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,10 +26,10 @@ class LoginActivity : BaseActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
-        dialog = AlertDialog.Builder(this).apply {
+        dialog = ProgressDialog(this).apply {
             setTitle("Please wait...")
-            setCancelable(false)
-        }.create()
+            setCanceledOnTouchOutside(false)
+        }
 
         binding.forget.setOnClickListener { context.openActivity<ForgetPasswordActivity>() }
         binding.loginBtn.setOnClickListener { validateDate() }
@@ -54,20 +54,21 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun loginUser() {
-        dialog!!.setMessage("Logging In...")
-        dialog!!.show()
+        dialog?.setMessage("Logging In...")
+        dialog?.show()
         try {
             auth!!.signInWithEmailAndPassword(email, password).addOnCanceledListener {
-                dialog!!.dismiss()
+                dialog?.dismiss()
                 Toast.makeText(context, "Error!", Toast.LENGTH_SHORT).show()
             }.addOnSuccessListener {
+                dialog?.dismiss()
                 context.openActivity<MainActivity>(clear = true)
             }.addOnFailureListener { e: Exception ->
-                dialog!!.dismiss()
+                dialog?.dismiss()
                 Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
-            }.addOnCompleteListener { dialog!!.show() }
+            }
         } catch (e: Exception) {
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(context, DATA.EMPTY + e.message, Toast.LENGTH_SHORT).show()
         }
     }

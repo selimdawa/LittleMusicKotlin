@@ -20,6 +20,7 @@ import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityAlbumAddBinding
 import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.ProgressDialog
 import com.flatcode.littlemusicadmin.utils.getFileExtension
 import com.flatcode.littlemusicadmin.utils.isNetworkAvailable
 import com.flatcode.littlemusicadmin.utils.startCropActivity
@@ -38,7 +39,7 @@ class AlbumEditActivity : BaseActivity() {
     private var context: Context = this@AlbumEditActivity
     private var albumId: String? = null
     private var imageUri: Uri? = null
-    private var dialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
 
     private var selectedCategoryId: String? = null
     private var selectedCategoryTitle: String? = null
@@ -79,7 +80,10 @@ class AlbumEditActivity : BaseActivity() {
             Manifest.permission.READ_EXTERNAL_STORAGE
         }
 
-        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                context, permission
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             pickImageLauncher.launch("image/*")
         } else {
             requestPermissionLauncher.launch(permission)
@@ -94,10 +98,10 @@ class AlbumEditActivity : BaseActivity() {
 
         albumId = intent.getStringExtra(DATA.ALBUM_ID)
 
-        dialog = AlertDialog.Builder(context).apply {
+        dialog = ProgressDialog(this).apply {
             setTitle("Please wait...")
-            setCancelable(false)
-        }.create()
+            setCanceledOnTouchOutside(false)
+        }
 
         initUI()
         observeViewModel()
@@ -126,7 +130,8 @@ class AlbumEditActivity : BaseActivity() {
         } else if (TextUtils.isEmpty(selectedCategoryId)) {
             Toast.makeText(context, "Enter Category...", Toast.LENGTH_SHORT).show()
         } else if (!isNetworkAvailable()) {
-            Toast.makeText(context, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                .show()
         } else {
             viewModel.updateAlbum(
                 albumId!!,
@@ -174,10 +179,10 @@ class AlbumEditActivity : BaseActivity() {
         lifecycleScope.launch {
             viewModel.isLoading.collectLatest { isLoading ->
                 if (isLoading) {
-                    dialog!!.setMessage("Updating Album...")
-                    dialog!!.show()
+                    dialog?.setMessage("Updating Album...")
+                    dialog?.show()
                 } else {
-                    dialog!!.dismiss()
+                    dialog?.dismiss()
                 }
             }
         }
@@ -209,9 +214,7 @@ class AlbumEditActivity : BaseActivity() {
         }
 
         val items = categories.map { it.name }.toTypedArray()
-        AlertDialog.Builder(context)
-            .setTitle("Pick Category")
-            .setItems(items) { _, which ->
+        AlertDialog.Builder(context).setTitle("Pick Category").setItems(items) { _, which ->
                 selectedCategoryTitle = categories[which].name
                 selectedCategoryId = categories[which].id
                 binding.category.text = selectedCategoryTitle
@@ -226,9 +229,7 @@ class AlbumEditActivity : BaseActivity() {
         }
 
         val items = artists.map { it.name }.toTypedArray()
-        AlertDialog.Builder(context)
-            .setTitle("Pick Artist")
-            .setItems(items) { _, which ->
+        AlertDialog.Builder(context).setTitle("Pick Artist").setItems(items) { _, which ->
                 selectedArtistTitle = artists[which].name
                 selectedArtistId = artists[which].id
                 binding.artist.text = selectedArtistTitle

@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import com.cloudinary.android.MediaManager
@@ -20,6 +19,7 @@ import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivityCategoryAddBinding
 import com.flatcode.littlemusicadmin.utils.BaseActivity
 import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.ProgressDialog
 import com.flatcode.littlemusicadmin.utils.isNetworkAvailable
 import com.flatcode.littlemusicadmin.utils.startCropActivity
 import com.google.firebase.database.DatabaseReference
@@ -31,7 +31,7 @@ class CategoryAddActivity : BaseActivity() {
     var activity: Activity? = null
     var context: Context = also { activity = it }
     private var imageUri: Uri? = null
-    private var dialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
 
     private val cropImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -67,7 +67,10 @@ class CategoryAddActivity : BaseActivity() {
             Manifest.permission.READ_EXTERNAL_STORAGE
         }
 
-        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                context, permission
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             pickImageLauncher.launch("image/*")
         } else {
             requestPermissionLauncher.launch(permission)
@@ -79,10 +82,10 @@ class CategoryAddActivity : BaseActivity() {
         binding = ActivityCategoryAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dialog = AlertDialog.Builder(context).apply {
+        dialog = ProgressDialog(this).apply {
             setTitle("Please wait...")
-            setCancelable(false)
-        }.create()
+            setCanceledOnTouchOutside(false)
+        }
 
         binding.toolbar.nameSpace.setText(R.string.add_new_category)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
@@ -103,15 +106,16 @@ class CategoryAddActivity : BaseActivity() {
         } else if (imageUri == null) {
             Toast.makeText(context, "Pick Image...", Toast.LENGTH_SHORT).show()
         } else if (!isNetworkAvailable()) {
-            Toast.makeText(context, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                .show()
         } else {
             uploadToStorage()
         }
     }
 
     private fun uploadToStorage() {
-        dialog!!.setMessage("Uploading Category...")
-        dialog!!.show()
+        dialog?.setMessage("Uploading Category...")
+        dialog?.show()
         val ref = FirebaseDatabase.getInstance().getReference(DATA.CATEGORIES)
         val id = ref.push().key
         val filePathAndName = "Images/Category/$id"
@@ -127,7 +131,7 @@ class CategoryAddActivity : BaseActivity() {
                     }
 
                     override fun onError(requestId: String, error: ErrorInfo?) {
-                        dialog!!.dismiss()
+                        dialog?.dismiss()
                         Toast.makeText(
                             context,
                             "Category upload failed due to : " + error?.description,
@@ -136,18 +140,18 @@ class CategoryAddActivity : BaseActivity() {
                     }
 
                     override fun onReschedule(requestId: String, error: ErrorInfo?) {
-                        dialog!!.dismiss()
+                        dialog?.dismiss()
                     }
                 }).dispatch()
         } catch (e: Exception) {
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(context, "Error: " + e.message, Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun uploadInfoDB(uploadedImageUrl: String, id: String?, ref: DatabaseReference) {
-        dialog!!.setMessage("Uploading Category info...")
-        dialog!!.show()
+        dialog?.setMessage("Uploading Category info...")
+        dialog?.show()
 
         //setup data to upload
         val hashMap = HashMap<String?, Any?>()
@@ -161,11 +165,11 @@ class CategoryAddActivity : BaseActivity() {
         hashMap[DATA.ALBUMS_COUNT] = DATA.ZERO
         assert(id != null)
         ref.child(id!!).setValue(hashMap).addOnSuccessListener {
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(context, "Successfully uploaded...", Toast.LENGTH_SHORT).show()
             finish()
         }.addOnFailureListener { e: Exception ->
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(
                 context, "Failure to upload to db due to : " + e.message, Toast.LENGTH_SHORT
             ).show()

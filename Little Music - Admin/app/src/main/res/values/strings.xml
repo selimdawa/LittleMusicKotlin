@@ -94,4 +94,7 @@
     <string name="favorites_count">Favorites count</string>
     <string name="back">Back</string>
     <string name="no_internet_connection">No internet connection</string>
+
+    <string name="please_wait">Please wait&#8230;</string>
+    <string name="loading">Loading&#8230;</string>
 </resources>

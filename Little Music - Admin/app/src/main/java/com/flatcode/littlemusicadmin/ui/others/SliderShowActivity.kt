@@ -18,6 +18,7 @@ import com.cloudinary.android.callback.UploadCallback
 import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivitySliderShowBinding
 import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.ProgressDialog
 import com.flatcode.littlemusicadmin.utils.loadImage
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -31,7 +32,7 @@ class SliderShowActivity : BaseActivity() {
     private var activity: Activity? = null
     private val context: Context = also { activity = it }
     private var imageUri: Uri? = null
-    private var dialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
     private var imageNumber = 0
     private var item = 0
 
@@ -71,10 +72,10 @@ class SliderShowActivity : BaseActivity() {
         binding.toolbar.nameSpace.setText(R.string.slider_show)
         binding.toolbar.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        dialog = AlertDialog.Builder(context).apply {
+        dialog = ProgressDialog(this).apply {
             setTitle("Please wait...")
-            setCancelable(false)
-        }.create()
+            setCanceledOnTouchOutside(false)
+        }
 
         binding.addOne.setOnClickListener { startSliderCrop(1) }
         binding.addTwo.setOnClickListener { startSliderCrop(2) }
@@ -269,8 +270,8 @@ class SliderShowActivity : BaseActivity() {
     }
 
     private fun uploadImage(name: String) {
-        dialog!!.setMessage("Posting photo...")
-        dialog!!.show()
+        dialog?.setMessage("Posting photo...")
+        dialog?.show()
         val filePathAndName = "Images/SliderShow/" + (DATA.EMPTY + name)
 
         try {
@@ -284,34 +285,34 @@ class SliderShowActivity : BaseActivity() {
                     }
 
                     override fun onError(requestId: String, error: ErrorInfo?) {
-                        dialog!!.dismiss()
+                        dialog?.dismiss()
                         Toast.makeText(context, "Error! " + error?.description, Toast.LENGTH_SHORT)
                             .show()
                     }
 
                     override fun onReschedule(requestId: String, error: ErrorInfo?) {
-                        dialog!!.dismiss()
+                        dialog?.dismiss()
                     }
                 }).dispatch()
         } catch (e: Exception) {
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(context, "Error! " + e.message, Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun updateImage(imageUrl: String, name: String) {
-        dialog!!.setMessage("Posting photo...")
-        dialog!!.show()
+        dialog?.setMessage("Posting photo...")
+        dialog?.show()
         val hashMap = HashMap<String, Any>()
         if (imageUri != null) {
             hashMap[DATA.EMPTY + name] = DATA.EMPTY + imageUrl
         }
         val reference = FirebaseDatabase.getInstance().getReference(DATA.SLIDER_SHOW)
         reference.updateChildren(hashMap).addOnSuccessListener {
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(context, "The photo has been posted", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener { e: Exception ->
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(context, "Error! " + e.message, Toast.LENGTH_SHORT).show()
         }
     }

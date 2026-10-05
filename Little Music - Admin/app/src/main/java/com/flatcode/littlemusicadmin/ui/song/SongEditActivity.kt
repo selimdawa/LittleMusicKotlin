@@ -10,6 +10,7 @@ import com.flatcode.littlemusicadmin.R
 import com.flatcode.littlemusicadmin.databinding.ActivitySongEditBinding
 import com.flatcode.littlemusicadmin.model.Song
 import com.flatcode.littlemusicadmin.utils.DATA
+import com.flatcode.littlemusicadmin.utils.ProgressDialog
 import com.flatcode.littlemusicadmin.utils.convertDuration
 import com.flatcode.littlemusicadmin.utils.incrementItemCount
 import com.flatcode.littlemusicadmin.utils.incrementItemRemoveCount
@@ -32,7 +33,7 @@ class SongEditActivity : BaseActivity() {
     private var artistId: ArrayList<String>? = null
     private var albumList: ArrayList<String>? = null
     private var albumId: ArrayList<String>? = null
-    private var dialog: AlertDialog? = null
+    private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +45,10 @@ class SongEditActivity : BaseActivity() {
         artist = intent.getStringExtra(DATA.ARTIST_ID)
         album = intent.getStringExtra(DATA.ALBUM_ID)
 
-        dialog = AlertDialog.Builder(activity).apply {
+        dialog = ProgressDialog(this).apply {
             setTitle("Please wait...")
-            setCancelable(false)
-        }.create()
+            setCanceledOnTouchOutside(false)
+        }
 
         loadCategories()
         loadArtists()
@@ -86,8 +87,8 @@ class SongEditActivity : BaseActivity() {
     }
 
     private fun update() {
-        dialog!!.setMessage("Updating Song...")
-        dialog!!.show()
+        dialog?.setMessage("Updating Song...")
+        dialog?.show()
         val hashMap = HashMap<String?, Any>()
         hashMap[DATA.NAME] = DATA.EMPTY + name
         hashMap[DATA.CATEGORY_ID] = DATA.EMPTY + selectedCategoryId
@@ -95,7 +96,7 @@ class SongEditActivity : BaseActivity() {
         hashMap[DATA.ALBUM_ID] = DATA.EMPTY + selectedAlbumId
         val reference = FirebaseDatabase.getInstance().getReference(DATA.SONGS)
         reference.child(songId!!).updateChildren(hashMap).addOnSuccessListener {
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(activity, "Song updated...", Toast.LENGTH_SHORT).show()
         }.addOnCompleteListener {
             if (selectedCategoryId != category) {
@@ -118,7 +119,7 @@ class SongEditActivity : BaseActivity() {
             }
             finish()
         }.addOnFailureListener { e: Exception ->
-            dialog!!.dismiss()
+            dialog?.dismiss()
             Toast.makeText(
                 activity, "Failed to update db duo to : " + e.message, Toast.LENGTH_SHORT
             ).show()
@@ -243,8 +244,7 @@ class SongEditActivity : BaseActivity() {
             categories[i] = categoryList!![i]
         }
         val builder = AlertDialog.Builder(activity)
-        builder.setTitle("Pick Category")
-            .setItems(categories) { _, which ->
+        builder.setTitle("Pick Category").setItems(categories) { _, which ->
                 selectedCategoryTitle = categoryList!![which]
                 selectedCategoryId = categoryId!![which]
                 binding.category.text = selectedCategoryTitle
