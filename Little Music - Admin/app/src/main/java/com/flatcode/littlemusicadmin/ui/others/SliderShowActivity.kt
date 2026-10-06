@@ -58,7 +58,7 @@ class SliderShowActivity : BaseActivity() {
                     fixAspectRatio = true,
                     cropShape = CropImageView.CropShape.OVAL,
                     guidelines = CropImageView.Guidelines.ON,
-                    multiTouchEnabled = true
+                    multiTouchEnabled = false
                 )
             )
         )

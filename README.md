@@ -129,7 +129,6 @@ app/src/main/java/com/flatcode/littlemusic/
 #### Admin App
 ```text
 app/src/main/java/com/flatcode/littlemusicadmin/
-├── db/                 # Room Database Configuration & DAOs
 ├── di/                 # Dependency Injection (Hilt modules)
 ├── model/              # Data Entities & Models
 ├── repository/         # Repository Pattern Implementation
