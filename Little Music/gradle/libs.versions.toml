@@ -2,7 +2,7 @@
 agp = "9.4.1"
 androidImageCropper = "4.5.0"
 autoImageSlider = "1.0.1"
-firebaseBom = "34.19.0"
+firebaseBom = "35.0.0"
 coil = "3.6.3"
 jcplayer = "2.7.2"
 fragment = "1.9.1"
@@ -10,18 +10,18 @@ coreKtx = "1.19.1"
 appcompat = "1.8.0"
 material = "1.14.0"
 activity = "1.13.0"
-materialRipple = "1.0.1"
-multiwaveheader = "1.0.1"
-bubbleBottom = "1.0.2"
+materialRipple = "1.0.2"
+multiwaveheader = "1.0.0"
+bubbleBottom = "1.0.3"
 googleServices = "4.5.0"
-multicolors = "1.0.10"
+multicolors = "1.1.0"
 hilt = "2.60.1"
 room = "2.8.5"
 navigation = "2.10.2"
 coroutines = "1.11.0"
 lifecycle = "2.11.0"
 timber = "5.0.1"
-cloudinary = "3.1.2"
+cloudinary = "3.1.3"
 ksp = "2.3.12"
 kotlin = "2.4.20"
 
@@ -40,9 +40,9 @@ jcplayer = { module = "com.github.jeancsanchez:JcPlayer", version.ref = "jcplaye
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
-multicolors = { module = "com.github.selimdawa:MultiColors", version.ref = "multicolors" }
+multicolors = { module = "io.github.selimdawa:multi-colors", version.ref = "multicolors" }
 material-ripple = { module = "io.github.selimdawa:material-ripple-effect", version.ref = "materialRipple" }
-multiwaveheader = { module = "com.github.selimdawa:MultiWave", version.ref = "multiwaveheader" }
+multiwaveheader = { module = "io.github.selimdawa:multi-wave", version.ref = "multiwaveheader" }
 bubblebottom = { module = "io.github.selimdawa:bubble-bottom", version.ref = "bubbleBottom" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
