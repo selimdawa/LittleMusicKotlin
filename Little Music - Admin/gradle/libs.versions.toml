@@ -1,4 +1,4 @@
-﻿[versions]
+[versions]
 agp = "9.4.1"
 androidImageCropper = "4.5.0"
 firebaseBom = "35.0.0"
