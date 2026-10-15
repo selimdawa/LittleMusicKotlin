@@ -286,7 +286,8 @@ class CategorySongsActivity : BaseActivity() {
                 }
                 launch {
                     viewModel.isLoading.collect { isLoading ->
-                        binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                        val isEmpty = (songAdapter?.itemCount ?: 0) == 0 && (albumAdapter?.itemCount ?: 0) == 0
+                        binding.progress.visibility = if (isLoading && isEmpty) View.VISIBLE else View.GONE
                     }
                 }
             }

@@ -27,16 +27,32 @@ class ArtistsViewModel @Inject constructor(
 
     fun setType(type: String) {
         _currentType.value = type
-        getData()
+        if (_artists.value.isNotEmpty()) {
+            _artists.value = sortArtists(_artists.value, type)
+        } else {
+            getData()
+        }
     }
 
     fun getData() {
         viewModelScope.launch {
-            _isLoading.value = true
+            if (_artists.value.isEmpty()) {
+                _isLoading.value = true
+            }
             musicRepository.getArtists(_currentType.value).collect { list ->
-                _artists.value = list
+                _artists.value = sortArtists(list, _currentType.value)
                 _isLoading.value = false
             }
+        }
+    }
+
+    private fun sortArtists(list: List<Artist>, type: String): List<Artist> {
+        return when (type) {
+            DATA.SONGS_COUNT -> list.sortedByDescending { it.songsCount }
+            DATA.ALBUMS_COUNT -> list.sortedByDescending { it.albumsCount }
+            DATA.INTERESTED_COUNT -> list.sortedByDescending { it.interestedCount }
+            DATA.NAME -> list.sortedBy { it.name?.lowercase() ?: "" }
+            else -> list.sortedByDescending { it.timestamp }
         }
     }
 }

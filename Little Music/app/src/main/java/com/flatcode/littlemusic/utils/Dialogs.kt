@@ -1,6 +1,5 @@
 package com.flatcode.littlemusic.utils
 
-import android.R
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -21,7 +20,7 @@ fun Context.closeApp() {
     val dialogBinding = DialogCloseAppBinding.inflate(activity.layoutInflater)
     val alertDialog = MaterialAlertDialogBuilder(this).setView(dialogBinding.root).create()
 
-    alertDialog.window?.setBackgroundDrawableResource(R.color.transparent)
+    alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
     dialogBinding.yes.setOnClickListener {
         activity.finish()
@@ -44,7 +43,7 @@ fun Context.dialogLogout() {
     val dialogBinding = DialogLogoutBinding.inflate(activity.layoutInflater)
     val alertDialog = MaterialAlertDialogBuilder(this).setView(dialogBinding.root).create()
 
-    alertDialog.window?.setBackgroundDrawableResource(R.color.transparent)
+    alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
     dialogBinding.yes.setOnClickListener {
         FirebaseAuth.getInstance().signOut()
@@ -69,7 +68,7 @@ fun Context.dialogAboutApp() {
     val dialogBinding = DialogAboutAppBinding.inflate(activity.layoutInflater)
     val alertDialog = MaterialAlertDialogBuilder(this).setView(dialogBinding.root).create()
 
-    alertDialog.window?.setBackgroundDrawableResource(R.color.transparent)
+    alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
     dialogBinding.website.setOnClickListener {
         val intent = Intent(Intent.ACTION_VIEW, DATA.WEB_SITE.toUri())
@@ -104,7 +103,7 @@ fun Context.dialogAboutArtist(imageDb: String?, nameDb: String?, aboutDb: String
     val dialogBinding = DialogAboutArtistBinding.inflate(activity.layoutInflater)
     val alertDialog = MaterialAlertDialogBuilder(this).setView(dialogBinding.root).create()
 
-    alertDialog.window?.setBackgroundDrawableResource(R.color.transparent)
+    alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
     dialogBinding.image.loadImage(imageDb, false)
     dialogBinding.name.text = nameDb ?: ""

@@ -186,7 +186,7 @@ class FavoritesActivity : BaseActivity() {
                 }
                 launch {
                     viewModel.isLoading.collect { isLoading ->
-                        binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                        binding.progress.visibility = if (isLoading && (adapter?.itemCount ?: 0) == 0) View.VISIBLE else View.GONE
                     }
                 }
             }

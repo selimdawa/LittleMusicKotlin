@@ -28,22 +28,31 @@ class MyAlbumsViewModel @Inject constructor(
 
     fun setType(type: String) {
         _currentType.value = type
-        getData()
+        if (_albums.value.isNotEmpty()) {
+            _albums.value = sortAlbums(_albums.value, type)
+        } else {
+            getData()
+        }
     }
 
     fun getData() {
         viewModelScope.launch {
-            _isLoading.value = true
+            if (_albums.value.isEmpty()) {
+                _isLoading.value = true
+            }
             musicRepository.getInterestedAlbums(DATA.FirebaseUserUid).collectLatest { list ->
-                val sorted = when (_currentType.value) {
-                    DATA.SONGS_COUNT -> list.sortedByDescending { it.songsCount }
-                    DATA.INTERESTED_COUNT -> list.sortedByDescending { it.interestedCount }
-                    DATA.NAME -> list.sortedBy { it.name?.lowercase() ?: "" }
-                    else -> list.sortedByDescending { it.timestamp }
-                }
-                _albums.value = sorted
+                _albums.value = sortAlbums(list, _currentType.value)
                 _isLoading.value = false
             }
+        }
+    }
+
+    private fun sortAlbums(list: List<Album>, type: String): List<Album> {
+        return when (type) {
+            DATA.SONGS_COUNT -> list.sortedByDescending { it.songsCount }
+            DATA.INTERESTED_COUNT -> list.sortedByDescending { it.interestedCount }
+            DATA.NAME -> list.sortedBy { it.name?.lowercase() ?: "" }
+            else -> list.sortedByDescending { it.timestamp }
         }
     }
 }

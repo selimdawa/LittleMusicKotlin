@@ -39,7 +39,7 @@ class PrivacyPolicyActivity : BaseActivity() {
 
         lifecycleScope.launch {
             viewModel.isLoading.collectLatest { isLoading ->
-                binding.progress.visibility = if (isLoading) View.VISIBLE else View.GONE
+                binding.progress.visibility = if (isLoading && binding.text.text.isNullOrEmpty()) View.VISIBLE else View.GONE
             }
         }
     }

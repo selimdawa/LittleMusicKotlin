@@ -28,23 +28,32 @@ class MyCategoriesViewModel @Inject constructor(
 
     fun setType(type: String) {
         _currentType.value = type
-        getData()
+        if (_categories.value.isNotEmpty()) {
+            _categories.value = sortCategories(_categories.value, type)
+        } else {
+            getData()
+        }
     }
 
     fun getData() {
         viewModelScope.launch {
-            _isLoading.value = true
+            if (_categories.value.isEmpty()) {
+                _isLoading.value = true
+            }
             musicRepository.getInterestedCategories(DATA.FirebaseUserUid).collectLatest { list ->
-                val sorted = when (_currentType.value) {
-                    DATA.SONGS_COUNT -> list.sortedByDescending { it.songsCount }
-                    DATA.ALBUMS_COUNT -> list.sortedByDescending { it.albumsCount }
-                    DATA.INTERESTED_COUNT -> list.sortedByDescending { it.interestedCount }
-                    DATA.NAME -> list.sortedBy { it.name?.lowercase() ?: "" }
-                    else -> list.sortedByDescending { it.timestamp }
-                }
-                _categories.value = sorted
+                _categories.value = sortCategories(list, _currentType.value)
                 _isLoading.value = false
             }
+        }
+    }
+
+    private fun sortCategories(list: List<Category>, type: String): List<Category> {
+        return when (type) {
+            DATA.SONGS_COUNT -> list.sortedByDescending { it.songsCount }
+            DATA.ALBUMS_COUNT -> list.sortedByDescending { it.albumsCount }
+            DATA.INTERESTED_COUNT -> list.sortedByDescending { it.interestedCount }
+            DATA.NAME -> list.sortedBy { it.name?.lowercase() ?: "" }
+            else -> list.sortedByDescending { it.timestamp }
         }
     }
 }

@@ -287,9 +287,13 @@ class HomeFragment : Fragment() {
                     }
                 }
                 launch {
-                    viewModel.sliderImages.collect { images ->
-                        if (images.isNotEmpty()) {
-                            binding.imageSlider.setSliderAdapter(ImageSliderAdapter(images))
+                    viewModel.sliderImages.collect { list ->
+                        if (list.isNotEmpty()) {
+                            try {
+                                _binding?.imageSlider?.setSliderAdapter(ImageSliderAdapter(list))
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
                         }
                     }
                 }
@@ -340,7 +344,7 @@ class HomeFragment : Fragment() {
             songs.forEach { song ->
                 jcAudios.add(SongCacheManager.getJcAudio(song))
             }
-            binding.player.jcPlayer.initPlaylist(jcAudios, jcPlayerListener)
+            _binding?.player?.jcPlayer?.initPlaylist(jcAudios, jcPlayerListener)
         } else {
             recyclerView?.visibility = View.GONE
             empty?.visibility = View.VISIBLE

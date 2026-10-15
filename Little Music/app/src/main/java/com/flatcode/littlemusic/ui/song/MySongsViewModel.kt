@@ -28,7 +28,11 @@ class MySongsViewModel @Inject constructor(
 
     fun setType(type: String) {
         _currentType.value = type
-        getData()
+        if (_songs.value.isNotEmpty()) {
+            _songs.value = sortSongs(_songs.value, type)
+        } else {
+            getData()
+        }
     }
 
     fun setDB(db: String) {
@@ -38,7 +42,9 @@ class MySongsViewModel @Inject constructor(
 
     fun getData() {
         viewModelScope.launch {
-            _isLoading.value = true
+            if (_songs.value.isEmpty()) {
+                _isLoading.value = true
+            }
             val typeDB = _currentDB.value
             val orderBy = _currentType.value
 
@@ -53,10 +59,19 @@ class MySongsViewModel @Inject constructor(
                                 else -> false
                             }
                         }
-                        _songs.value = filtered
+                        _songs.value = sortSongs(filtered, _currentType.value)
                         _isLoading.value = false
                     }
                 }
+        }
+    }
+
+    private fun sortSongs(list: List<Song>, type: String): List<Song> {
+        return when (type) {
+            DATA.VIEWS_COUNT -> list.sortedByDescending { it.viewsCount }
+            DATA.LOVES_COUNT -> list.sortedByDescending { it.lovesCount }
+            DATA.NAME -> list.sortedBy { it.name?.lowercase() ?: "" }
+            else -> list.sortedByDescending { it.timestamp }
         }
     }
 }

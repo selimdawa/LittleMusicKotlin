@@ -103,8 +103,9 @@ class MainFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collectLatest { isLoading ->
-                binding.bar.visibility = if (isLoading) View.VISIBLE else View.GONE
-                binding.recyclerView.visibility = if (isLoading) View.GONE else View.VISIBLE
+                val isEmpty = (adapter?.itemCount ?: 0) == 0
+                binding.bar.visibility = if (isLoading && isEmpty) View.VISIBLE else View.GONE
+                binding.recyclerView.visibility = if (isLoading && isEmpty) View.GONE else View.VISIBLE
             }
         }
     }

@@ -28,21 +28,31 @@ class FavoritesViewModel @Inject constructor(
 
     fun setType(type: String) {
         _currentType.value = type
-        getData()
+        if (_songs.value.isNotEmpty()) {
+            _songs.value = sortSongs(_songs.value, type)
+        } else {
+            getData()
+        }
     }
 
     fun getData() {
         viewModelScope.launch {
+            if (_songs.value.isEmpty()) {
+                _isLoading.value = true
+            }
             musicRepository.getFavoriteSongs(DATA.FirebaseUserUid).collectLatest { favoriteSongs ->
-                val sortedSongs = when (_currentType.value) {
-                    DATA.VIEWS_COUNT -> favoriteSongs.sortedByDescending { it.viewsCount }
-                    DATA.LOVES_COUNT -> favoriteSongs.sortedByDescending { it.lovesCount }
-                    DATA.NAME -> favoriteSongs.sortedBy { it.name }
-                    else -> favoriteSongs.sortedByDescending { it.timestamp }
-                }
-                _songs.value = sortedSongs
+                _songs.value = sortSongs(favoriteSongs, _currentType.value)
                 _isLoading.value = false
             }
+        }
+    }
+
+    private fun sortSongs(list: List<Song>, type: String): List<Song> {
+        return when (type) {
+            DATA.VIEWS_COUNT -> list.sortedByDescending { it.viewsCount }
+            DATA.LOVES_COUNT -> list.sortedByDescending { it.lovesCount }
+            DATA.NAME -> list.sortedBy { it.name?.lowercase() ?: "" }
+            else -> list.sortedByDescending { it.timestamp }
         }
     }
 }
