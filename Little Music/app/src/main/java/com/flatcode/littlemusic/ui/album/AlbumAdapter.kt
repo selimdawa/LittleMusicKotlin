@@ -20,6 +20,7 @@ class AlbumAdapter(
 ) : ListAdapter<Album, AlbumAdapter.ViewHolder>(DiffCallback), Filterable {
 
     var fullList: List<Album> = emptyList()
+    var currentQuery: String = ""
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemAlbumBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -33,8 +34,9 @@ class AlbumAdapter(
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
+                currentQuery = constraint?.toString() ?: ""
                 val results = FilterResults()
-                val query = constraint?.toString()?.uppercase(Locale.getDefault()) ?: ""
+                val query = currentQuery.uppercase(Locale.getDefault())
                 val filteredList = if (query.isEmpty()) {
                     fullList
                 } else {
@@ -56,7 +58,11 @@ class AlbumAdapter(
 
     fun setList(list: List<Album>) {
         fullList = list
-        submitList(list)
+        if (currentQuery.isNotEmpty()) {
+            filter.filter(currentQuery)
+        } else {
+            submitList(list)
+        }
     }
 
     inner class ViewHolder(private val binding: ItemAlbumBinding) :

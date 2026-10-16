@@ -67,6 +67,8 @@ class CategorySongsActivity : BaseActivity() {
 
     private var isAlbum = true
     private var isSong = false
+    private var albumsCount = 0
+    private var songsCount = 0
 
     private var categoryId: String? = null
     private var categoryName: String? = null
@@ -76,7 +78,6 @@ class CategorySongsActivity : BaseActivity() {
         binding = ActivityCategorySongsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         Timber.i("CategorySongsActivity Created")
-
 
         categoryId = intent.getStringExtra(DATA.CATEGORY_ID)
         categoryName = intent.getStringExtra(DATA.CATEGORY_NAME)
@@ -152,6 +153,8 @@ class CategorySongsActivity : BaseActivity() {
             binding.switchBarSongs.scrollSwitch.visibility = View.VISIBLE
             binding.player.jcPlayer.pause()
             binding.player.jcPlayer.visibility = View.GONE
+            binding.toolbar.number.text = getString(R.string.count_format, songsCount)
+            updateVisibility()
             viewModel.getSongs(categoryId)
             if (DATA.searchStatus) onBackPressedDispatcher.onBackPressed()
         }
@@ -172,6 +175,8 @@ class CategorySongsActivity : BaseActivity() {
             isSong = false
             binding.switchBarSongs.scrollSwitch.visibility = View.GONE
             binding.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
+            binding.toolbar.number.text = getString(R.string.count_format, albumsCount)
+            updateVisibility()
             viewModel.getAlbums(categoryId)
             if (DATA.searchStatus) onBackPressedDispatcher.onBackPressed()
         }
@@ -245,43 +250,35 @@ class CategorySongsActivity : BaseActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.albums.collect { albums ->
+                        albumsCount = albums.size
+                        albumAdapter?.setList(albums)
                         if (isAlbum) {
-                            albumAdapter?.setList(albums)
                             binding.toolbar.number.text =
-                                getString(R.string.count_format, albums.size)
-                            binding.progress.visibility = View.GONE
-                            if (albums.isNotEmpty()) {
-                                binding.recyclerAlbums.visibility = View.VISIBLE
-                                binding.emptyText.visibility = View.GONE
-                            } else {
-                                binding.recyclerAlbums.visibility = View.GONE
-                                binding.emptyText.visibility = View.VISIBLE
-                            }
+                                getString(R.string.count_format, albumsCount)
                         }
+                        binding.progress.visibility = View.GONE
+                        updateVisibility()
                     }
                 }
                 launch {
                     viewModel.songs.collect { songs ->
-                        if (isSong) {
-                            songAdapter?.setList(songs)
-                            binding.toolbar.number.text =
-                                getString(R.string.count_format, songs.size)
+                        songsCount = songs.size
+                        songAdapter?.setList(songs)
 
-                            jcAudios.clear()
-                            songs.forEach { song ->
-                                jcAudios.add(SongCacheManager.getJcAudio(song))
-                            }
-
-                            binding.progress.visibility = View.GONE
-                            if (songs.isNotEmpty()) {
-                                binding.recyclerSongs.visibility = View.VISIBLE
-                                binding.emptyText.visibility = View.GONE
-                                binding.player.jcPlayer.initPlaylist(jcAudios, jcPlayerListener)
-                            } else {
-                                binding.recyclerSongs.visibility = View.GONE
-                                binding.emptyText.visibility = View.VISIBLE
-                            }
+                        jcAudios.clear()
+                        songs.forEach { song ->
+                            jcAudios.add(SongCacheManager.getJcAudio(song))
                         }
+
+                        if (songs.isNotEmpty()) {
+                            binding.player.jcPlayer.initPlaylist(jcAudios, jcPlayerListener)
+                        }
+                        if (isSong) {
+                            binding.toolbar.number.text =
+                                getString(R.string.count_format, songsCount)
+                        }
+                        binding.progress.visibility = View.GONE
+                        updateVisibility()
                     }
                 }
                 launch {
@@ -294,6 +291,28 @@ class CategorySongsActivity : BaseActivity() {
         }
     }
 
+    private fun updateVisibility() {
+        if (isAlbum) {
+            binding.recyclerSongs.visibility = View.GONE
+            if (albumsCount > 0) {
+                binding.recyclerAlbums.visibility = View.VISIBLE
+                binding.emptyText.visibility = View.GONE
+            } else {
+                binding.recyclerAlbums.visibility = View.GONE
+                binding.emptyText.visibility = View.VISIBLE
+            }
+        } else {
+            binding.recyclerAlbums.visibility = View.GONE
+            if (songsCount > 0) {
+                binding.recyclerSongs.visibility = View.VISIBLE
+                binding.emptyText.visibility = View.GONE
+            } else {
+                binding.recyclerSongs.visibility = View.GONE
+                binding.emptyText.visibility = View.VISIBLE
+            }
+        }
+    }
+
     private fun changeSelectedSong(index: Int) {
         songAdapter?.let {
             val previousSelected = it.selectedPosition
@@ -302,7 +321,6 @@ class CategorySongsActivity : BaseActivity() {
             it.notifyItemChanged(index)
         }
     }
-
 
     override fun onPause() {
         binding.player.jcPlayer.pause()

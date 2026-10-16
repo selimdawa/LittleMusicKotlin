@@ -68,6 +68,8 @@ class ArtistSongsActivity : BaseActivity() {
 
     private var isAlbum = true
     private var isSong = false
+    private var albumsCount = 0
+    private var songsCount = 0
 
     private var artistId: String? = null
     private var artistName: String? = null
@@ -155,6 +157,8 @@ class ArtistSongsActivity : BaseActivity() {
             binding.switchBarSongs.scrollSwitch.visibility = View.VISIBLE
             binding.player.jcPlayer.pause()
             binding.player.jcPlayer.visibility = View.GONE
+            binding.toolbar.number.text = getString(R.string.count_format, songsCount)
+            updateVisibility()
             viewModel.getSongs(artistId)
             if (DATA.searchStatus) onBackPressedDispatcher.onBackPressed()
         }
@@ -180,6 +184,8 @@ class ArtistSongsActivity : BaseActivity() {
             isSong = false
             binding.switchBarSongs.scrollSwitch.visibility = View.GONE
             binding.switchBarAlbums.scrollSwitch.visibility = View.VISIBLE
+            binding.toolbar.number.text = getString(R.string.count_format, albumsCount)
+            updateVisibility()
             viewModel.getAlbums(artistId)
             if (DATA.searchStatus) onBackPressedDispatcher.onBackPressed()
         }
@@ -250,43 +256,35 @@ class ArtistSongsActivity : BaseActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.albums.collect { albums ->
+                        albumsCount = albums.size
+                        albumAdapter?.setList(albums)
                         if (isAlbum) {
-                            albumAdapter?.setList(albums)
                             binding.toolbar.number.text =
-                                getString(R.string.count_format, albums.size)
-                            binding.progress.visibility = View.GONE
-                            if (albums.isNotEmpty()) {
-                                binding.recyclerAlbums.visibility = View.VISIBLE
-                                binding.emptyText.visibility = View.GONE
-                            } else {
-                                binding.recyclerAlbums.visibility = View.GONE
-                                binding.emptyText.visibility = View.VISIBLE
-                            }
+                                getString(R.string.count_format, albumsCount)
                         }
+                        binding.progress.visibility = View.GONE
+                        updateVisibility()
                     }
                 }
                 launch {
                     viewModel.songs.collect { songs ->
-                        if (isSong) {
-                            songAdapter?.setList(songs)
-                            binding.toolbar.number.text =
-                                getString(R.string.count_format, songs.size)
+                        songsCount = songs.size
+                        songAdapter?.setList(songs)
 
-                            jcAudios.clear()
-                            songs.forEach { song ->
-                                jcAudios.add(SongCacheManager.getJcAudio(song))
-                            }
-
-                            binding.progress.visibility = View.GONE
-                            if (songs.isNotEmpty()) {
-                                binding.recyclerSongs.visibility = View.VISIBLE
-                                binding.emptyText.visibility = View.GONE
-                                binding.player.jcPlayer.initPlaylist(jcAudios, jcPlayerListener)
-                            } else {
-                                binding.recyclerSongs.visibility = View.GONE
-                                binding.emptyText.visibility = View.VISIBLE
-                            }
+                        jcAudios.clear()
+                        songs.forEach { song ->
+                            jcAudios.add(SongCacheManager.getJcAudio(song))
                         }
+
+                        if (songs.isNotEmpty()) {
+                            binding.player.jcPlayer.initPlaylist(jcAudios, jcPlayerListener)
+                        }
+                        if (isSong) {
+                            binding.toolbar.number.text =
+                                getString(R.string.count_format, songsCount)
+                        }
+                        binding.progress.visibility = View.GONE
+                        updateVisibility()
                     }
                 }
                 launch {
@@ -295,6 +293,28 @@ class ArtistSongsActivity : BaseActivity() {
                         binding.progress.visibility = if (isLoading && isEmpty) View.VISIBLE else View.GONE
                     }
                 }
+            }
+        }
+    }
+
+    private fun updateVisibility() {
+        if (isAlbum) {
+            binding.recyclerSongs.visibility = View.GONE
+            if (albumsCount > 0) {
+                binding.recyclerAlbums.visibility = View.VISIBLE
+                binding.emptyText.visibility = View.GONE
+            } else {
+                binding.recyclerAlbums.visibility = View.GONE
+                binding.emptyText.visibility = View.VISIBLE
+            }
+        } else {
+            binding.recyclerAlbums.visibility = View.GONE
+            if (songsCount > 0) {
+                binding.recyclerSongs.visibility = View.VISIBLE
+                binding.emptyText.visibility = View.GONE
+            } else {
+                binding.recyclerSongs.visibility = View.GONE
+                binding.emptyText.visibility = View.VISIBLE
             }
         }
     }
