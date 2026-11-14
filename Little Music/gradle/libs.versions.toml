@@ -2,7 +2,7 @@
 agp = "9.5.1"
 androidImageCropper = "4.5.0"
 autoImageSlider = "1.0.1"
-firebaseBom = "35.1.0"
+firebaseBom = "35.2.0"
 coil = "3.6.3"
 jcplayer = "2.7.2"
 fragment = "1.9.1"
